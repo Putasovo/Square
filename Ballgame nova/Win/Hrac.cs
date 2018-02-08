@@ -20,7 +20,7 @@ namespace Mojehra
         private bool pohybVlevo, pohybVpravo, pohybNahoru, pohybDolu;
         private ushort krok, pulkrok;
         public bool prepocistSkore;
-        public bool vpoli = false, namiste, svislyVyjezd;
+        public bool vpoli = false, namiste = true, svislyVyjezd;
         public bool zleva, zhora, zprava, zdola;
         public int vychoziX, vychoziY;
         private int predesleX, predesleY;

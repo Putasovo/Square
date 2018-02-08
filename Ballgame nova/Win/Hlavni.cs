@@ -58,7 +58,7 @@ namespace Mojehra
         private Stavy gameState;
         private string staryState;
 
-        private float volumeSound = .9f, volumeHudby = .9f;
+        private float volumeSound = .5f, volumeHudby = .5f;
         private static Song levelwon, menu, intro;
         private static SoundEffect sezrani;
         private static SoundEffect quake; SoundEffectInstance zemetres;
@@ -517,6 +517,7 @@ namespace Mojehra
                                     //player.Update(keys); //povoli ovladani hrace
                                     player.UpdateMouse(Dotek(mouse));
                                 }
+                                else player.UpdateMouse(Point.Zero);
                                 //else player.Update(Point.Zero);
                                 if (uroven.performanceTest)
                                 {
@@ -527,7 +528,7 @@ namespace Mojehra
 
                             else
                             {
-                                if (player.alive && player.namiste) player.UpdateMouse(Dotek(mouse)); //player.UpdateBludiste(keys);
+                                if (player.alive && player.namiste) player.UpdateBludiste(Dotek(mouse)); //player.UpdateBludiste(keys);
                                 else player.UpdateBludiste(Point.Zero);
                                 foreach (Ball ball in balls)
                                 {
