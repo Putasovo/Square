@@ -29,7 +29,8 @@ namespace MojehraDroid
                 | SystemUiFlags.LayoutFullscreen
                 | SystemUiFlags.HideNavigation
                 | SystemUiFlags.Fullscreen
-                | SystemUiFlags.ImmersiveSticky);
+                //| SystemUiFlags.ImmersiveSticky
+                );
             SetContentView(view);
             //SetContentView((View)g.Services.GetService(typeof(View)));
             game.Run();
@@ -57,9 +58,13 @@ namespace MojehraDroid
             }
             public void OnSystemUiVisibilityChange(StatusBarVisibility v)
             {
-                if (targetView.SystemUiVisibility != ((StatusBarVisibility)SystemUiFlags.HideNavigation | (StatusBarVisibility)SystemUiFlags.Immersive))
+                if (targetView.SystemUiVisibility != ((StatusBarVisibility)SystemUiFlags.HideNavigation
+                    //| (StatusBarVisibility)SystemUiFlags.Immersive
+                    ))
                 {
-                    targetView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.HideNavigation | (StatusBarVisibility)SystemUiFlags.ImmersiveSticky;
+                    targetView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.HideNavigation 
+                        //| (StatusBarVisibility)SystemUiFlags.ImmersiveSticky
+                        ;
                 }
             }
         }

@@ -22,6 +22,7 @@ namespace MojehraDroid
         private static Rectangle plnaPredemPozice = new Rectangle(128, 0, 32, 32);
         private static Rectangle plnaPoziceAlt = new Rectangle(160, 0, 32, 32);
         private static Rectangle zpomalPozice = new Rectangle(192, 0, 32, 32);
+        private static Rectangle ozivovaciPozice = new Rectangle(224, 0, 32, 32);
         private static Rectangle zvyrazniMalaPozice1 = new Rectangle(192, 32, 16, 16);
         private static Rectangle zvyrazniMalaPozice2 = new Rectangle(208, 32, 16, 16);
         private static Rectangle zvyrazniMalaPozice3 = new Rectangle(192, 48, 16, 16);
@@ -46,14 +47,15 @@ namespace MojehraDroid
         private Rectangle vyslednaTextura, vyslednaTexturaExploze;
         private bool visible, animated, zvyrazni, exploduje;
         private byte alfaZvyrazneni; private Color barvaZvyrazneni = Color.White;
-        public bool pruchodna = true;
+        
         private short krokPlneni; private bool zaplnujese, licha;
         public Rectangle drawRectangle;
         private Vector2 pozice, origin;
         Vector2 velocity;
         private float rotace = 0.1f;
         // params
-        public bool okrajova, projeta, kvyplneni, plna, plnaPredem, cilova, zpomalovaci, mina;
+        public bool pruchodna = true;
+        public bool okrajova, projeta, kvyplneni, plna, plnaPredem, cilova, zpomalovaci, mina, ozivovaci;
         internal byte dosahMiny, casExploze;
         public bool prvni, druha;
         private bool debuguju;
@@ -124,8 +126,12 @@ namespace MojehraDroid
                 if (casExploze == 0)
                 {
                     exploduje = false;
-                    if (!mina) visible = plna = false;
-                    if (!pruchodna) ZpruchodnitHracovi();
+                    if (!mina)
+                    {
+                        plna = false;
+                        if (!ozivovaci) visible = false;
+                    }
+                    if (!pruchodna) ZpruchodnitHracovi(visible);
                 }
                 else if (casExploze < 8) vyslednaTexturaExploze = exploze7Pozice;
                 else if (casExploze < 16) vyslednaTexturaExploze = exploze6Pozice;
@@ -166,6 +172,21 @@ namespace MojehraDroid
             }
             else if (param == 1)    { prvni = true; visible = true; }
             else if (param == 2)    { druha = true; visible = true; }
+        }
+
+        internal void NastavOzivovaci(bool anone)
+        {
+            if (anone)
+            {
+                ozivovaci = true;
+                NastavSource(ozivovaciPozice);
+                visible = true;
+            }
+            else
+            {
+                ozivovaci = false;
+                visible = false;
+            }
         }
 
         internal void NastavZpomalovac(bool anone)
@@ -259,11 +280,12 @@ namespace MojehraDroid
             visible = plna = true; pruchodna = false;
             vyslednaTextura = nepruchodnaPozice;
         }
-        private void ZpruchodnitHracovi()
+        private void ZpruchodnitHracovi(bool ozivovaci)
         {
             pruchodna = true;
             //vyslednaTextura = plnaPozice;
             barvaDlazdice.A = byte.MaxValue;
+            if (ozivovaci) vyslednaTextura = ozivovaciPozice;
         }
         internal void ZnepruchodnitHraci()
         {
@@ -272,7 +294,7 @@ namespace MojehraDroid
             barvaDlazdice.A = 22;
         }
 
-        internal void Zaminovat(byte range)
+        internal void Zaminovat(byte range = 3)
         {
             dosahMiny = range;
             visible = mina = true;
@@ -285,12 +307,12 @@ namespace MojehraDroid
         }
         internal void Zborit(bool bouchla)
         {
-            plna = projeta = false;
+            if (!plnaPredem) plna = projeta = false;
             if (!bouchla)
             {
                 if (!mina)
                 {
-                    visible = plna = false;
+                    plna = visible = false;
                 }
                 else vyslednaTextura = minaSkrytaPozice;
             }

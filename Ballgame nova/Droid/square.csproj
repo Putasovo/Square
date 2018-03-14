@@ -19,7 +19,7 @@
     <AndroidSupportedAbis>armeabi-v7a%3bx86</AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions>.m4a</AndroidStoreUncompressedFileExtensions>
     <MandroidI18n />
-    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
     <MonoGamePlatform>Android</MonoGamePlatform>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Activity1.cs" />
     <Compile Include="Ball.cs" />
+    <Compile Include="Google.cs" />
     <Compile Include="Hrobecek.cs" />
     <Compile Include="SplashScreen.cs" />
     <Compile Include="Pozadi.cs" />

@@ -97,13 +97,6 @@
 /processorParam:TextureFormat=Color
 /build:gfx/oznacena2.png
 
-#begin AARDC.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:AARDC.spritefont
-
 #begin audio/applause.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -121,12 +114,6 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:audio/loser.wav
-
-#begin audio/win.ogg
-/importer:OggImporter
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:audio/win.ogg
 
 #begin audio/lost.wav
 /importer:WavImporter
@@ -170,12 +157,6 @@
 /processorParam:Quality=Best
 /build:audio/lost2.wav
 
-#begin audio/intro.ogg
-/importer:OggImporter
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:audio/intro.ogg
-
 #begin audio/level3.wav
 /importer:WavImporter
 /processor:SongProcessor
@@ -203,14 +184,12 @@
 #begin PressStart2P14.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:PressStart2P14.spritefont
 
 #begin PressStart2P20.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:PressStart2P20.spritefont
 
@@ -315,4 +294,34 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:gfx/hrob.png
+
+#begin audio/ozivKouli.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/ozivKouli.wav
+
+#begin audio/zpomalit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/zpomalit.wav
+
+#begin PressStart2P12.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:PressStart2P12.spritefont
+
+#begin audio/win.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:audio/win.wav
+
+#begin audio/intro.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:audio/intro.wav
 

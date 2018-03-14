@@ -28,18 +28,19 @@ namespace MojehraDroid
         private int indexPristiDlazdice;
         private ushort indexCiloveDlazdice;
 
-        Texture2D spriteHracovoZivot; Texture2D spriteHracovoSmrt; Texture2D spriteHracovo;
+        Texture2D spriteHracovo;
         private Rectangle souradniceVysledneTextury;
-        static Rectangle stoji, doprava, doleva, nahoru, dolu, strach;
+        static Rectangle stoji, doprava, doleva, nahoru, dolu, strach, mrtvy;
 
         internal Hrac(bool zije, ushort rychlost, ushort dimenze, int X, int Y, int fieldWidth, int fieldHeight,
-            Texture2D spriteZivy, Texture2D spriteMrtvy)
+            Texture2D sprite)
         {
             alive = zije; speed = rychlost; krok = dimenze; pulkrok = (ushort)(krok/2);
             hracovo = new Rectangle(X, Y, krok, krok);
-            stoji = new Rectangle(0, 0, krok, krok); strach = new Rectangle(160, 0, krok, krok);
-            doprava = new Rectangle(32, 0, krok, krok); doleva = new Rectangle(64, 0, krok, krok);
-            nahoru = new Rectangle(96, 0, krok, krok); dolu = new Rectangle(128, 0, krok, krok);
+            stoji = new Rectangle(0, krok, krok, krok); strach = new Rectangle(krok, krok, krok, krok);
+            mrtvy = new Rectangle(64, 32, krok, krok);
+            doprava = new Rectangle(0, 0, krok, krok); doleva = new Rectangle(32, 0, krok, krok);
+            nahoru = new Rectangle(64, 0, krok, krok); dolu = new Rectangle(96, 0, krok, krok);
             souradnice = new Point(hracovo.X, hracovo.Y);
             maxX = (ushort)(fieldWidth - dimenze);
             maxY = (ushort)(fieldHeight - dimenze);
@@ -47,7 +48,7 @@ namespace MojehraDroid
             sloupcu = (ushort)(maxX / krok);
             pulsirky = fieldWidth / 2;
             pulvysky = fieldHeight / 2;
-            spriteHracovoZivot = spriteZivy; spriteHracovoSmrt = spriteMrtvy; spriteHracovo = spriteHracovoZivot;
+            spriteHracovo = sprite;
         }
 
         /// <summary>
@@ -111,6 +112,10 @@ namespace MojehraDroid
             else if (Hlavni.tiles[indexDlazdice].mina)
             {
                 Hlavni.PripravZemetreseni(indexDlazdice);
+            }
+            else if (Hlavni.tiles[indexDlazdice].ozivovaci)
+            {
+                Hlavni.OzivKouli(indexDlazdice);
             }
         }
 
@@ -342,8 +347,7 @@ namespace MojehraDroid
             if ( animace == 0 )
             {
                 alive = false;
-                spriteHracovo = spriteHracovoSmrt;
-                souradniceVysledneTextury = stoji;
+                souradniceVysledneTextury = mrtvy;
                 scale = new Vector2(.8f,.8f);
             }
         }
@@ -353,7 +357,7 @@ namespace MojehraDroid
             animovan = false;
             vpoli = false; alive = true;
             hracovo.X = krok * 2; hracovo.Y = 0;
-            spriteHracovo = spriteHracovoZivot;
+            souradniceVysledneTextury = stoji;
             souradnice = new Point(hracovo.X, hracovo.Y);
             Hlavni.ZrusSrazkuKouli();
         }

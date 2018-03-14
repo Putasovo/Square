@@ -313,6 +313,11 @@ namespace MojehraDroid
             presnaPoloha = poloha;
         }
 
+        internal void ZivotZpet()
+        {
+            cinna = true;
+            if (utocna) { dobijeni = 10; }
+        }
         internal void Zasazen()
         {
             cinna = false;
