@@ -36,6 +36,7 @@ namespace MojehraDroid
         SpriteBatch spriteBatch;
         const ushort tileSize = 32;
         private const ushort windowWidth = tileSize * 15;
+        private const ushort windowWidthProOvladani = windowWidth - 1;
         private const short suggestedHeight = tileSize * 10;// WindowWidth / borderThick * 20; //16:10
         private readonly ushort windowHeight = suggestedHeight / tileSize * tileSize;
         private readonly Rectangle oknoHry;
@@ -863,7 +864,7 @@ namespace MojehraDroid
                     if (touch.State != TouchLocationState.Released)
                     {
                         //zadanyPohyb = touch.Position/ new Vector2( (float)Math.Truncate(scaleMatrix.M11), (float)Math.Truncate(scaleMatrix.M22) );
-                        zadanyPohyb.X = (float)Math.Truncate(touch.Position.X / scaleMatrix.M11);
+                        zadanyPohyb.X = MathHelper.Clamp(touch.Position.X / scaleMatrix.M11,0, windowWidthProOvladani);//jinak pude tukat mimo herni plochu
                         zadanyPohyb.Y = (float)Math.Truncate(touch.Position.Y / scaleMatrix.M22);
                         //if (zadanyPohyb.X > windowWidth) NapisVelkouZpravu14("X", 4444);
                         //if (zadanyPohyb.Y > windowHeight) NapisVelkouZpravu14("Y", 4444);

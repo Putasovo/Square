@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.putasovo.square" android:versionCode="7" android:installLocation="preferExternal" android:versionName="final">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.putasovo.square" android:versionCode="8" android:installLocation="preferExternal" android:versionName="final+bugfix">
 	<uses-sdk android:minSdkVersion="17" android:targetSdkVersion="19" />
 	<uses-configuration android:reqTouchScreen="finger" />
 	<uses-permission android:name="android.permission.VIBRATE" />
