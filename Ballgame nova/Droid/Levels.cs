@@ -12,11 +12,11 @@ namespace MojehraDroid
         private int koordinat;
         private static int dlazdic;
         internal bool zrodMonstrum, poSmeru, bludiste, performanceTest, bezOdchylky;
-        public List<Point> poziceKouli = new List<Point>();
-        public List<Point> poziceUtocnychKouli = new List<Point>();
+        public List<Point> poziceKouli = new List<Point>(4);
+        public List<Point> poziceUtocnychKouli = new List<Point>(4);
         internal string levelText;
         internal byte viteznychProcent;
-        internal byte epizoda = 3; internal byte cisloUrovne;
+        internal byte epizoda = 1; internal byte cisloUrovne;
         internal static string epizodaSplash;
         internal static bool zpomalovatUtocne;
 
@@ -393,7 +393,7 @@ namespace MojehraDroid
 
                 Hlavni.tiles[62].Zaminovat(2); Hlavni.tiles[66].Zaminovat(2);
 
-                //Hlavni.tiles[47].Znepruchodnit(); Hlavni.tiles[48].ZnepruchodnitHraci();
+                Hlavni.tiles[46].ZnepruchodnitHraci(); Hlavni.tiles[47].ZnepruchodnitHraci(); Hlavni.tiles[48].ZnepruchodnitHraci();
                 //Hlavni.tiles[49].Znepruchodnit(); Hlavni.tiles[50].Znepruchodnit();
                 //Hlavni.tiles[51].Znepruchodnit(); Hlavni.tiles[52].Znepruchodnit();
                 //Hlavni.tiles[53].Znepruchodnit(); Hlavni.tiles[54].Znepruchodnit();

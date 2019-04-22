@@ -393,7 +393,9 @@ namespace Mojehra
 
             gameState = Mojehra.Stavy.Menu;
             GetScore();
-            if (rekordSkore > 0) NapisVelkouZpravu("Your best: " + rekordSkore.ToString(), 8000, -9999, 200, true, true, Color.Yellow);
+            if (rekordSkore > 0)
+                NapisVelkouZpravu($"Your best: {rekordSkore.ToString()}", 8000, -9999, 200, true, true, Color.Yellow);
+
             BuildMenu(); BuildMenuOptions();
             animovatDlazdici = true;
             BuildTiles(columns, rows, tileSize);//muzu az po assetech
@@ -406,7 +408,7 @@ namespace Mojehra
             {
                 if (!uroven.bludiste)
                 {
-                    string skladba = "level" + uroven.cisloUrovne.ToString();
+                    string skladba = $"level{uroven.cisloUrovne.ToString()}";
                     if (skladby.Contains(skladba))
                     {
                         Song level = Content.Load<Song>(@"audio/" + skladba);
@@ -1389,7 +1391,7 @@ namespace Mojehra
                 }
             }
             if (debug) procentaString = SectiPlneDlazdice() + " / " + (tiles.Count - okrajovychDlazdic).ToString();
-            else procentaString = "There are " + pocetVnitrnichDlazdic + " tiles to fill";
+            else procentaString = $"There are {pocetVnitrnichDlazdic} tiles to fill";
             pocetDlazdic = (ushort)tiles.Count;
             pocetVnitrnichDlazdic = (ushort)tilesVnitrni.Count;
         }
@@ -1420,8 +1422,11 @@ namespace Mojehra
                     }
                 }
             }
-            if (debug) procentaString = SectiPlneDlazdice() + " / " + (tiles.Count - okrajovychDlazdic).ToString();
-            else procentaString = "There are " + pocetVnitrnichDlazdic + " tiles to fill";
+
+            if (debug)
+                procentaString = SectiPlneDlazdice() + " / " + (tiles.Count - okrajovychDlazdic).ToString();
+            else
+                procentaString = $"There are {pocetVnitrnichDlazdic} tiles to fill";
 
             for (byte i = 0; i < rowsVnitrni; i++)
             {
@@ -1547,8 +1552,11 @@ namespace Mojehra
                 }
                 pricistSkore = VyznacCestuVycistiSpocti();
                 OdznacProjete();
-                if (BlahoprejSkore(pricistSkore)) PosliLeticiSkore(pricistSkore + " + " + bonus, player.hracovo.Location, 60);
-                else PosliLeticiSkore(pricistSkore.ToString(), player.hracovo.Location, 60);
+                if (BlahoprejSkore(pricistSkore))
+                    PosliLeticiSkore($"{pricistSkore} + {bonus}", player.hracovo.Location, 60);
+                else
+                    PosliLeticiSkore(pricistSkore.ToString(), player.hracovo.Location, 60);
+
                 ZkontrolujVitezstvi();
                 //if (debug) chciPausu = true;
             }
@@ -1575,8 +1583,10 @@ namespace Mojehra
             {
                 //procentaString = plnychDlazdic + " / " + pocetVnitrnichDlazdic; 
                 int zbyva = potrebnychPlnych - plnychDlazdic;
-                if (zbyva > potrebnychPlnych / 8) procentaString = "To do: " + zbyva;
-                else procentaString = "Only " + zbyva + " more!";
+                if (zbyva > potrebnychPlnych / 8)
+                    procentaString = $"To do: {zbyva}";
+                else
+                    procentaString = $"Only {zbyva} more!";
             }
         }
 
@@ -1587,7 +1597,7 @@ namespace Mojehra
             ZastavKoule(); ZastavAgresivniKoule();
             short delayedBonus = ZpetnePlneni();
             if (delayedBonus > 0)
-                NapisVelkouZpravu("You Win" + Environment.NewLine + "Delayed Bonus: " + delayedBonus, 10000, -9999, -9999, true, true, Color.Aqua);
+                NapisVelkouZpravu($"You Win{Environment.NewLine}Delayed Bonus: {delayedBonus}", 10000, -9999, -9999, true, true, Color.Aqua);
             else
                 NapisVelkouZpravu("You Win", 10000, -9999, -9999, true, true, Color.Aqua);
             exces = (short)(plnychDlazdic - potrebnychPlnych);
@@ -1894,8 +1904,7 @@ namespace Mojehra
                         int j = i + 1;//tohle chci pocitat od jedne
                         int radek = j / columnsVnitrni;
                         int sloupec = j / rowsVnitrni;
-                        debugPrvniDlazdice = "Vybrana dlazdice: " + i +
-                             " radek: " + radek + "/" + rows + " sloupec: " + sloupec + "/" + columns;
+                        debugPrvniDlazdice = $"Vybrana dlazdice: {i} radek: {radek} / {rows} sloupec: {sloupec} / {columns}";
                         debugText[2] = debugPrvniDlazdice;
                     }
                     else tiles[i].prvni = true;
@@ -1990,7 +1999,7 @@ namespace Mojehra
                 else epizodaSplash = "Episode 2";
             }
             else epizodaSplash = "Tests";
-            splashScreen.KresliSplash(true, epizodaSplash + Environment.NewLine + Environment.NewLine + "Level " + uroven.cisloUrovne, false);
+            splashScreen.KresliSplash(true, $"epizodaSplash{Environment.NewLine}{Environment.NewLine} Level {uroven.cisloUrovne}", false);
             //NapisVelkouZpravu("Level " + Level.cisloUrovne, 7000, -9999, -9999, false, true);
             if (uroven.levelText != null) procentaString = uroven.levelText;
             if (uroven.viteznychProcent != 0) procentProVitezstvi = uroven.viteznychProcent;
@@ -2128,7 +2137,7 @@ namespace Mojehra
             bonus = 0;
             if (pricistSkore > minBonus)
             {
-                NapisVelkouZpravu("Awesome! " + pricistSkore + " squares", 3000, -9999, 100, false, true);
+                NapisVelkouZpravu($"Awesome! {pricistSkore} squares", 3000, -9999, 100, false, true);
                 bonus = (short)((pricistSkore - minBonus) * 2);
                 ton2.Play();
                 return true;

@@ -80,6 +80,7 @@ namespace MojehraDroid
         public void Respawn()
         {
             obdelnik.Location = vychozi;
+            poSmeruHodin = !poSmeruHodin;
         }
 
         public void Draw(SpriteBatch SB)

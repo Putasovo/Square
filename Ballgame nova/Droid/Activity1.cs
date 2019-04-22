@@ -34,14 +34,14 @@ namespace MojehraDroid
             SetContentView(view);
             //SetContentView((View)g.Services.GetService(typeof(View)));
             game.Run();
-            //if (g.vypnout)
+            //if (g.vypnout) //nepouziju, protoze android si je ma vypinat sam
             //{
             //    FinishAffinity();
             //    Java.Lang.JavaSystem.Exit(0);
             // tutovka Process.KillProcess(Process.MyPid());
             //}
         }
-
+        //nepouziju, protoze android si je ma vypinat sam
         //protected override void OnRestart()
         //{
         //    g.vypnout = false;

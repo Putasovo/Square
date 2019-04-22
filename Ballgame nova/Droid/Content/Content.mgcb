@@ -97,24 +97,6 @@
 /processorParam:TextureFormat=Color
 /build:gfx/oznacena2.png
 
-#begin audio/applause.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:audio/applause.wav
-
-#begin audio/explosion.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:audio/explosion.wav
-
-#begin audio/loser.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:audio/loser.wav
-
 #begin audio/lost.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

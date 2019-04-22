@@ -1,48 +1,46 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MojehraDroid
 {
-    internal class Ball
+    internal class Ball : IDisposable
     {
+        private readonly float vyslednaRotace = 0f;
+        private static readonly float nahoru = 0f;
+        private static readonly float doprava = MathHelper.Pi * 3 / 2;
+        private static readonly float dolu = MathHelper.Pi;
+        private static readonly float doleva = MathHelper.ToRadians(90);
+        //private float doleva = MathHelper.Pi / 2;
+        private static readonly Vector2 originRotace = new Vector2(16, 16);
+
         private float prolnuti;
         private Color color1, color2;
         private short dobijeni = -1;
         public bool srazena, cinna, utocna;
         public bool utocnaLeva, utocnaHorni, utocnaPrava, utocnaDolni;
         private Vector2 velocity, vychoziVelocity, minVelocity, maxVelocity;
-        private System.Random rand = new System.Random();
-        byte[] nahodnyBajt = new byte[1];
+        private Random rand = new Random();
+        private byte[] nahodnyBajt = new byte[1];
         private System.Security.Cryptography.RNGCryptoServiceProvider safeRand = new System.Security.Cryptography.RNGCryptoServiceProvider();
         public Rectangle rect = new Rectangle(0, 0, 32, 32);
         private Rectangle rectBall = new Rectangle(0, 0, 32, 32);
         private Rectangle rectRed = new Rectangle(32, 0, 32, 32);
         private Rectangle rectNabijeci = new Rectangle(64, 0, 32, 32);
         private Rectangle rectZnicena = new Rectangle(96, 0, 32, 32);
-        private Rectangle sourceUtocnaLeva = new Rectangle(0, 0, 32, 32);
-        private Rectangle sourceUtocnaHorni = new Rectangle(32, 0, 32, 32);
-        private Rectangle sourceUtocnaPrava = new Rectangle(64, 0, 32, 32);
-        private Rectangle sourceUtocnaDolni = new Rectangle(96, 0, 32, 32);
-        //private Rectangle sourceVysledny;
-        private float vyslednaRotace = 0f;
-        private float nahoru = 0f;
-        private float doprava = MathHelper.Pi*3/2;
-        private float dolu = MathHelper.Pi;
-        private float doleva = MathHelper.ToRadians(90);
-        //private float doleva = MathHelper.Pi / 2;
-        private Vector2 originRotace = new Vector2(16,16);
+
         private Point novaPoloha;
-        Vector2 presnaPoloha;
-        private int pravyOkrajDesky, dolniOkrajDesky, levyOkrajDesky, horniOkrajDesky;
-        private byte rozmer, polomer;
+        private Vector2 presnaPoloha;
+        private readonly int pravyOkrajDesky, dolniOkrajDesky, levyOkrajDesky, horniOkrajDesky;
+        private readonly byte rozmer, polomer;
         private float odchylka;
         private float faktorCasu;
-        public float faktorRychlosti = 0.01f;
+        private float faktorRychlosti = 0.01f;
         private int flipped;
         private bool svislyObrat, vodorovnyObrat, povolVariace, predchoziObrat;
         private int indexDlazdice;
-        private ushort maxIndexDlazdice;
+        private readonly ushort maxIndexDlazdice;
         SoundEffect narazDoCesty;
 
         /// <summary>
@@ -74,25 +72,27 @@ namespace MojehraDroid
             cinna = rigidita;
             if (attackDown)
             {
-                utocna = utocnaDolni = attackDown; vyslednaRotace = nahoru;
-                //sourceVysledny = sourceUtocnaDolni;
+                utocna = utocnaDolni = attackDown;
+                vyslednaRotace = nahoru;
             }
             else if (attackLeft)
             {
-                utocna = utocnaLeva = attackLeft; vyslednaRotace = doleva;
-                //sourceVysledny = sourceUtocnaLeva;
+                utocna = utocnaLeva = attackLeft;
+                vyslednaRotace = doleva;
             }
             else if (attackRight)
             {
-                utocna = utocnaPrava = attackRight; vyslednaRotace = doprava;
-                //sourceVysledny = sourceUtocnaLeva;
+                utocna = utocnaPrava = attackRight;
+                vyslednaRotace = doprava;
             }
             else if (attackUp)
             {
-                utocna = utocnaHorni = attackUp; vyslednaRotace = dolu;
-                //sourceVysledny = sourceUtocnaHorni;
+                utocna = utocnaHorni = attackUp;
+                vyslednaRotace = dolu;
             }
+
             narazDoCesty = kolize;
+
             if (!bludiste)
             {
                 pravyOkrajDesky = windowX - dimension;
@@ -105,6 +105,7 @@ namespace MojehraDroid
                 pravyOkrajDesky = windowX;
                 dolniOkrajDesky = windowY -1;// bez -1 by byl prekrocen indexdlazdice
             }
+
             odchylka = ( (float)(rand.NextDouble() - 0.5f ) * .11f); //pro jedinecnost
             velocity.X += +odchylka; velocity.Y += +odchylka;
             vychoziVelocity = velocity;
@@ -117,7 +118,23 @@ namespace MojehraDroid
                 color2 = new Color(0, 0, 0, 0);
             }
             else dobijeni = -100;
-            povolVariace = true;
+
+            povolVariace = true; // zatim jsem nikdy nepouzil false
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // dispose managed resources
+                safeRand.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         internal void Update(int time)
@@ -253,6 +270,7 @@ namespace MojehraDroid
             velocity.Y = velocity.Y * -1;
             svislyObrat = true; predchoziObrat = false;
         }
+
         private void OdrazVodorovne()
         {
             //Hlavni.hrajOdraz = true;
@@ -303,6 +321,11 @@ namespace MojehraDroid
             }
         }
 
+        public void NasobRychlost(float nasobic)
+        {
+            faktorRychlosti *= nasobic;
+        }
+
         public void NastavRychlost(float rychlost)
         {
             faktorRychlosti = rychlost;
@@ -313,7 +336,7 @@ namespace MojehraDroid
             presnaPoloha = poloha;
         }
 
-        internal void ZivotZpet()
+        internal void Obzivni()
         {
             cinna = true;
             if (utocna) { dobijeni = 10; }

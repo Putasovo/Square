@@ -76,7 +76,7 @@ namespace MojehraDroid
                     UrciKamJet(souradnice);
                 }
                 else { namiste = false; }
-                Hejbni(vpoli);
+                Hejbni(ref vpoli);
             }
         }
 
@@ -97,7 +97,7 @@ namespace MojehraDroid
                     UrciKamJet(souradnice);
                 }
                 else { namiste = false; }
-                Hejbni(vpoli);
+                Hejbni(ref vpoli);
             }
         }
 
@@ -141,7 +141,7 @@ namespace MojehraDroid
         //    return cislo;
         //}
 
-        private void Hejbni(bool masebat)
+        private void Hejbni(ref bool masebat)
         {
             if (pohybVlevo && hracovo.X > 0)
             {

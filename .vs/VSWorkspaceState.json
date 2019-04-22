@@ -2,8 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\Ballgame nova",
+    "\\Ballgame nova\\Droid",
+    "\\Ballgame nova\\Droid\\Properties",
     "\\Ballgame nova\\packages"
   ],
-  "SelectedNode": "\\Ballgame nova\\Ballgame.sln",
+  "SelectedNode": "\\Ballgame nova\\Droid\\square.csproj",
   "PreviewInSolutionExplorer": false
 }

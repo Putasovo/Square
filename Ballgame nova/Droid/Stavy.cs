@@ -28,8 +28,9 @@ namespace MojehraDroid
         public static Color E2druha = new Color(59, 31, 32, 100);
         internal static Color modra = new Color(22, 22, 150, 127);
         internal static Color vyblitamodra = new Color(22, 22, 100, 127);
-        internal static Color oblibena = new Color(55, 200, 200, 127);
-        internal static Color vyblitaOblibena = new Color(66, 188, 188, 127);
+        internal static Color oblibena = new Color(50, 181, 181, 127);
+        internal static Color vyblitaOblibena = new Color(66, 158, 188, 127);
+
         internal static void NastavBarvy(Color prvni, Color druha)
         {
             prvniBarva = prvni; druhaBarva = druha;

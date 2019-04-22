@@ -19,7 +19,7 @@
     <AndroidSupportedAbis>armeabi-v7a%3bx86</AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions>.m4a</AndroidStoreUncompressedFileExtensions>
     <MandroidI18n />
-    <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
     <MonoGamePlatform>Android</MonoGamePlatform>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
@@ -76,7 +76,6 @@
   <ItemGroup>
     <Compile Include="Activity1.cs" />
     <Compile Include="Ball.cs" />
-    <Compile Include="Google.cs" />
     <Compile Include="Hrobecek.cs" />
     <Compile Include="SplashScreen.cs" />
     <Compile Include="Pozadi.cs" />
@@ -85,16 +84,15 @@
     <Compile Include="HlavniDroid.cs" />
     <Compile Include="Hrac.cs" />
     <Compile Include="Levels.cs" />
-    <Compile Include="NumberBoard.cs" />
-    <Compile Include="NumberTile.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stavy.cs" />
     <Compile Include="Tile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\gfx\explode.bmp" />
-    <Content Include="Content\gfx\openingscreen.png" />
+    <None Include="Content\audio\ozivKouli.wav" />
+    <None Include="Content\gfx\explode.bmp" />
+    <None Include="Content\gfx\openingscreen.png" />
     <None Include="Content\PressStart2P14.spritefont" />
     <None Include="Content\PressStart2P20.spritefont" />
     <None Include="Assets\AboutAssets.txt" />
@@ -123,9 +121,6 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\audio\applause.wav" />
-    <None Include="Content\audio\explosion.wav" />
-    <None Include="Content\audio\loser.wav" />
     <None Include="Content\audio\lost.wav" />
     <None Include="Content\audio\ton1.wav" />
     <None Include="Content\gfx\monstrum.png" />
@@ -135,11 +130,11 @@
     <None Include="Content\gfx\hrac.png" />
     <None Include="Content\gfx\hracMrtvy.png" />
     <None Include="Content\gfx\hrob.png" />
-    <Content Include="Content\gfx\oznacena.png" />
-    <Content Include="Content\gfx\oznacena2.png" />
-    <Content Include="Content\gfx\square64.png" />
-    <Content Include="Content\gfx\tile - Copy.png" />
-    <Content Include="Content\gfx\tile.png" />
+    <None Include="Content\gfx\oznacena.png" />
+    <None Include="Content\gfx\oznacena2.png" />
+    <None Include="Content\gfx\square64.png" />
+    <None Include="Content\gfx\tile - Copy.png" />
+    <None Include="Content\gfx\tile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
