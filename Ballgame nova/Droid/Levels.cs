@@ -526,7 +526,7 @@ namespace MojehraDroid
             }
             poziceUtocnychKouli.Add(new Point(sloupcuUvnitr / 2, radkuUvnitr / 2));
             int indexVedlejsi = radku / 2 * sloupcu + sloupcu / 2;
-            if (flipCoin()) indexVedlejsi -= sloupcu;
+            if (FlipCoin()) indexVedlejsi -= sloupcu;
             Hlavni.tiles[indexVedlejsi].VyplnitPredemZvyditelnit();
             levelText = "More than you think";
             bezOdchylky = true;
@@ -576,7 +576,7 @@ namespace MojehraDroid
         private void Level20()
         {
             koordinat = (sloupcuUvnitr * 2 + (sloupcuUvnitr - 7) / 2);
-            if (flipCoin()) koordinat -= sloupcuUvnitr;
+            if (FlipCoin()) koordinat -= sloupcuUvnitr;
             byte i = byte.MinValue;
             while (i < 5)
             {
@@ -613,8 +613,8 @@ namespace MojehraDroid
         {
             numBalls = 2;
             koordinat = (ushort)(sloupcu * 2 + 3);
-            if (flipCoin()) koordinat++;
-            if (flipCoin()) koordinat+=sloupcu;
+            if (FlipCoin()) koordinat++;
+            if (FlipCoin()) koordinat+=sloupcu;
             Hlavni.tiles[koordinat].VyplnitPredemZvyditelnit();
             Hlavni.tiles[koordinat + 1].VyplnitPredemZvyditelnit();
             Hlavni.tiles[koordinat + sloupcu].VyplnitPredemZvyditelnit();
@@ -628,7 +628,7 @@ namespace MojehraDroid
             levelText = "Nowhere is safe?";
             numBalls = 2; zrodMonstrum = true;
             koordinat = (ushort)(sloupcu * 3 + 4);
-            if (flipCoin()) koordinat--;
+            if (FlipCoin()) koordinat--;
             Hlavni.tiles[koordinat].VyplnitPredemZvyditelnit();
             Hlavni.tiles[koordinat + 1].VyplnitPredemZvyditelnit();
             Hlavni.tiles[dlazdic - sloupcu * 2 - 5].VyplnitPredemZvyditelnit();
@@ -659,7 +659,7 @@ namespace MojehraDroid
             numBalls = 3; numAttackBalls = 1;
             levelText = "There you don't go";
             koordinat = (ushort)(sloupcu * 3 + 4);
-            if (flipCoin()) koordinat -= sloupcu;
+            if (FlipCoin()) koordinat -= sloupcu;
             Hlavni.tiles[koordinat].Znepruchodnit(); Hlavni.tiles[koordinat + 2].Znepruchodnit();
             Hlavni.tiles[koordinat + sloupcu + 1].Znepruchodnit();
             koordinat += (ushort)(sloupcu * 2);
@@ -681,7 +681,7 @@ namespace MojehraDroid
             Hlavni.tiles[koordinat + 3].Znepruchodnit();
             Hlavni.tiles[koordinat + 4].Znepruchodnit();
             //Hlavni.tiles[koordinat + 5].Znepruchodnit();
-            if (flipCoin()) Hlavni.tiles[koordinat + sloupcu + 4].NastavZpomalovac(true);
+            if (FlipCoin()) Hlavni.tiles[koordinat + sloupcu + 4].NastavZpomalovac(true);
             else Hlavni.tiles[koordinat + sloupcu * 2 + 4].NastavZpomalovac(true);
             Hlavni.tiles[koordinat + sloupcu + 5].Znepruchodnit();
             Hlavni.tiles[koordinat + sloupcu + 6].Znepruchodnit();
@@ -727,8 +727,8 @@ namespace MojehraDroid
         private void Level16() //level se zemetresenim
         {
             koordinat = sloupcu * 3;
-            if (flipCoin()) koordinat += sloupcu;
-            if (flipCoin()) koordinat--;
+            if (FlipCoin()) koordinat += sloupcu;
+            if (FlipCoin()) koordinat--;
             Hlavni.tilesVnitrni[koordinat].Zaminovat(3);
             Hlavni.tilesVnitrni[koordinat + sloupcu - 2].Zaminovat(5);
             numBalls = 1; numUtocnychBallsRight = 1;
@@ -806,7 +806,7 @@ namespace MojehraDroid
             Hlavni.tiles[koordinat + 3].Znepruchodnit();
             Hlavni.tiles[koordinat + 4].Znepruchodnit();
             //Hlavni.tiles[koordinat + 5].Znepruchodnit();
-            if (flipCoin()) Hlavni.tiles[koordinat + sloupcu + 4].NastavZpomalovac(true);
+            if (FlipCoin()) Hlavni.tiles[koordinat + sloupcu + 4].NastavZpomalovac(true);
             else Hlavni.tiles[koordinat + sloupcu * 2 + 4].NastavZpomalovac(true);
             Hlavni.tiles[koordinat + sloupcu + 5].Znepruchodnit();
             Hlavni.tiles[koordinat + sloupcu + 6].Znepruchodnit();
@@ -827,7 +827,7 @@ namespace MojehraDroid
         private void TestBomb()
         {
             koordinat = (sloupcu / 3);
-            if (flipCoin()) koordinat--;
+            if (FlipCoin()) koordinat--;
             while (koordinat < Hlavni.tiles.Count - sloupcu)
             {
                 koordinat += sloupcu;
@@ -916,7 +916,7 @@ namespace MojehraDroid
             return numAttackBalls;
         }
 
-        internal static bool flipCoin()
+        internal static bool FlipCoin()
         {
             Random rand = new Random();
             if (rand.Next(2) == 0) return false;

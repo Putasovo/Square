@@ -133,7 +133,6 @@
     <None Include="Content\gfx\oznacena.png" />
     <None Include="Content\gfx\oznacena2.png" />
     <None Include="Content\gfx\square64.png" />
-    <None Include="Content\gfx\tile - Copy.png" />
     <None Include="Content\gfx\tile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />

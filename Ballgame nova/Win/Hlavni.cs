@@ -62,14 +62,12 @@ namespace Mojehra
         private static Song levelwon, menu, intro;
         private static SoundEffect sezrani;
         private static SoundEffect quake; SoundEffectInstance zemetres;
-        private static SoundEffect ton1, odraz, kolize;//SoundEffectInstance rachot;
+        private static SoundEffect ton1, odraz, kolize; // SoundEffectInstance rachot;
         private static SoundEffectInstance ton2, ton3, instanceOdrazu;
         public static bool hrajOdraz;
 
         private static Texture2D openingScreen;
         private static Vector2 stred;
-
-        private static ushort maxDotyku;
 
         ushort waitFrames = 0; private uint krokIntra; private float trvaniAnimacky;
 
@@ -110,7 +108,8 @@ namespace Mojehra
         private ushort i = 0, plnychDlazdic, okrajovychDlazdic, potrebnychPlnych;
         public static byte zemetreseni; private const byte dobaZemetreseni = 60; private static int vybuchujuciMina; private static bool probihaVybuch;
         private static Texture2D tileSprite, explozeSprite;
-        private static Texture2D tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite;
+        private static Texture2D tileOznacenaSprite;
+        private static Texture2D tileOznacena2Sprite, tileDruhaSprite = null;
         private List<Tile> druheRadyTiles = new List<Tile>();
         public static List<Tile> tiles = new List<Tile>();
         public static List<Tile> tilesVnitrni = new List<Tile>();
@@ -356,10 +355,10 @@ namespace Mojehra
             ballSprite = Content.Load<Texture2D>(@"gfx/ball");
             tileSprite = Content.Load<Texture2D>(@"gfx/tile");
             tileOznacenaSprite = Content.Load<Texture2D>(@"gfx/oznacena");
-            //tileOznacena2Sprite = Content.Load<Texture2D>(@"gfx/oznacena2");
+            tileOznacena2Sprite = Content.Load<Texture2D>(@"gfx/oznacena2");
             hracsprite = Content.Load<Texture2D>(@"gfx/hrac");
             hracMrtvySprite = Content.Load<Texture2D>(@"gfx/hracMrtvy");
-            explozeSprite = Content.Load<Texture2D>(@"gfx/explode");
+             explozeSprite = Content.Load<Texture2D>(@"gfx/explode");
 
             if (sound)
             {
@@ -1999,7 +1998,7 @@ namespace Mojehra
                 else epizodaSplash = "Episode 2";
             }
             else epizodaSplash = "Tests";
-            splashScreen.KresliSplash(true, $"epizodaSplash{Environment.NewLine}{Environment.NewLine} Level {uroven.cisloUrovne}", false);
+            splashScreen.KresliSplash(true, $"{epizodaSplash}{Environment.NewLine}{Environment.NewLine} Level {uroven.cisloUrovne}", false);
             //NapisVelkouZpravu("Level " + Level.cisloUrovne, 7000, -9999, -9999, false, true);
             if (uroven.levelText != null) procentaString = uroven.levelText;
             if (uroven.viteznychProcent != 0) procentProVitezstvi = uroven.viteznychProcent;
@@ -2332,7 +2331,7 @@ namespace Mojehra
             else if (staryState == Mojehra.Stavy.Pause.ToString()) gameState = Mojehra.Stavy.Play;
             else { gameState = Mojehra.Stavy.Vitez; }
         }
-        private void checkPauseKey(GamePadState gamePadState)
+        private void CheckPauseKey(GamePadState gamePadState)
         {
             pauseKeyDownThisFrame = (gamePadState.Buttons.Back == ButtonState.Pressed);
             // If key was not down before, but is down now, toggle the pause setting
