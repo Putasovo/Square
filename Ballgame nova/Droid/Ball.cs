@@ -5,8 +5,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MojehraDroid
 {
-    internal class Ball : IDisposable
+    public class Ball : IDisposable
     {
+        public float FaktorRychlosti { get; set; } = 0.01f;
         private readonly float vyslednaRotace = 0f;
         private static readonly float nahoru = 0f;
         private static readonly float doprava = MathHelper.Pi * 3 / 2;
@@ -36,7 +37,6 @@ namespace MojehraDroid
         private readonly byte rozmer, polomer;
         private float odchylka;
         private float faktorCasu;
-        private float faktorRychlosti = 0.01f;
         private int flipped;
         private bool svislyObrat, vodorovnyObrat, povolVariace, predchoziObrat;
         private int indexDlazdice;
@@ -46,8 +46,8 @@ namespace MojehraDroid
         /// <summary>
         ///  Creates ball
         /// </summary>
-        /// <param name="balLoc"></param>
-        /// <param name="balVec"></param>
+        /// <param name="ballLoc"></param>
+        /// <param name="ballVec"></param>
         /// <param name="windowX">X</param>
         /// <param name="windowY">Y</param>
         /// <param name="dimension">dimenze</param>
@@ -58,16 +58,16 @@ namespace MojehraDroid
         /// <param name="attackDown">down</param>
         /// <param name="bludiste">bludiste</param>
         /// <param name="kolize">collide sound</param>
-        public Ball(Vector2 balLoc, Vector2 balVec, int windowX, int windowY, byte dimension, bool rigidita,
+        public Ball(Vector2 ballLoc, Vector2 ballVec, int windowX, int windowY, byte dimension, bool rigidita,
             bool attackLeft = false, bool attackUp = false, bool attackRight = false, bool attackDown = false,
             bool bludiste = false, SoundEffect kolize = null)
         {
             maxIndexDlazdice = (ushort)((windowX / dimension) * (windowY / dimension));
-            rect.X = MathHelper.Clamp((int)balLoc.X, dimension * 2, windowX - dimension);
-            rect.Y = MathHelper.Clamp((int)balLoc.Y, dimension * 2, windowY - dimension);
+            rect.X = MathHelper.Clamp((int)ballLoc.X, dimension * 2, windowX - dimension);
+            rect.Y = MathHelper.Clamp((int)ballLoc.Y, dimension * 2, windowY - dimension);
             presnaPoloha = new Vector2(rect.X, rect.Y);
             Hlavni.hitboxyKouli.Add(rect); //ted jen pro kontrolu stretu
-            velocity = balVec;
+            velocity = ballVec;
             rozmer = dimension; polomer = (byte)(dimension / 2);
             cinna = rigidita;
             if (attackDown)
@@ -142,7 +142,7 @@ namespace MojehraDroid
             if (cinna)
             { 
                 prolnuti = (float)dobijeni / 10;
-                faktorCasu = time * faktorRychlosti;
+                faktorCasu = time * FaktorRychlosti;
                 presnaPoloha += velocity * faktorCasu;
                 novaPoloha.X = (int)presnaPoloha.X;
                 novaPoloha.Y = (int)presnaPoloha.Y + polomer;
@@ -173,7 +173,7 @@ namespace MojehraDroid
         {
             prolnuti = (float)dobijeni / 10;
 
-            faktorCasu = time * faktorRychlosti;
+            faktorCasu = time * FaktorRychlosti;
             presnaPoloha += velocity * faktorCasu;
             if (minX != -9999 || maxX != 9999) if (presnaPoloha.X < minX || presnaPoloha.X > maxX) velocity.X *= -1;
             if (minY != -9999 || maxY != 9999) if (presnaPoloha.Y < minY || presnaPoloha.Y + rect.Height > maxY) velocity.Y *= -1;
@@ -323,12 +323,12 @@ namespace MojehraDroid
 
         public void NasobRychlost(float nasobic)
         {
-            faktorRychlosti *= nasobic;
+            FaktorRychlosti *= nasobic;
         }
 
         public void NastavRychlost(float rychlost)
         {
-            faktorRychlosti = rychlost;
+            FaktorRychlosti = rychlost;
         }
 
         public void NastavPolohu(Vector2 poloha)

@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MojehraDroid
+namespace Square
 {
     public class Zprava
     {
-        private Vector2 souradnice;
-        private string zprava;
-        private SpriteFont font;
+        private readonly string zprava;
+        private readonly SpriteFont font;
         private Color barva;
+        private Vector2 souradnice;        
         private int trvani;
         public bool hotova, vpyj, odpyj;
         //private bool animovan;
@@ -21,7 +21,7 @@ namespace MojehraDroid
             this.vpyj = vpyj; this.odpyj = odpyj;
         }
 
-        internal void Update(int milliseconds)
+        public void Update(int milliseconds)
         {
             trvani -= milliseconds;
             if (trvani <= 0) hotova = true;
@@ -34,7 +34,7 @@ namespace MojehraDroid
             }
         }
 
-        internal void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             if (!hotova)
                 spriteBatch.DrawString(font, zprava, souradnice, barva);

@@ -4,43 +4,50 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MojehraDroid
 {
-    public class Hrac
+    internal class Hrac
     {
-        private Point souradnice;
         internal bool alive;
-        public Rectangle hracovo = new Rectangle(0, 0, 32, 32);
         private bool animovan;
         private Vector2 scale, stredOtaceni, pozice;
-        private float rotace; private ushort kroku, celkemKroku;
-
-        private ushort maxX, maxY, radku, sloupcu;
-        ushort speed;
+        private float rotace; 
+        private ushort kroku, celkemKroku;
+        private readonly ushort maxX, maxY;
+        private readonly ushort radku, sloupcu;
+        private readonly ushort speed;
+        private readonly ushort krok, pulkrok;
         private bool pohybVlevo, pohybVpravo, pohybNahoru, pohybDolu;
-        private ushort krok, pulkrok;
-        public bool prepocistSkore;
-        public bool vpoli = false, namiste, svislyVyjezd;
-        public bool zleva, zhora, zprava, zdola;
-        public int vychoziX, vychoziY;
+        internal bool prepocistSkore;
+        internal bool vpoli = false, namiste, svislyVyjezd;
+        internal bool zleva, zhora, zprava, zdola;
+        internal int vychoziX, vychoziY;
         private int predesleX, predesleY;
+        private Point souradnice;
         private static int pulsirky, pulvysky;
-        int vysledek; int vysledekX; int vysledekY;
+        private int vysledek, vysledekX, vysledekY;
         internal int indexDlazdice;
         private int indexPristiDlazdice;
         private ushort indexCiloveDlazdice;
 
-        Texture2D spriteHracovo;
+        private readonly Texture2D spriteHracovo;
         private Rectangle souradniceVysledneTextury;
-        static Rectangle stoji, doprava, doleva, nahoru, dolu, strach, mrtvy;
+        private static Rectangle stoji, doprava, doleva, nahoru, dolu, strach, mrtvy;
+        internal Rectangle hracovo = new Rectangle(0, 0, 32, 32);
 
         internal Hrac(bool zije, ushort rychlost, ushort dimenze, int X, int Y, int fieldWidth, int fieldHeight,
             Texture2D sprite)
         {
-            alive = zije; speed = rychlost; krok = dimenze; pulkrok = (ushort)(krok/2);
+            alive = zije;
+            speed = rychlost; 
+            krok = dimenze;
+            pulkrok = (ushort)(krok/2);
             hracovo = new Rectangle(X, Y, krok, krok);
-            stoji = new Rectangle(0, krok, krok, krok); strach = new Rectangle(krok, krok, krok, krok);
+            stoji = new Rectangle(0, krok, krok, krok); 
+            strach = new Rectangle(krok, krok, krok, krok);
             mrtvy = new Rectangle(64, 32, krok, krok);
-            doprava = new Rectangle(0, 0, krok, krok); doleva = new Rectangle(32, 0, krok, krok);
-            nahoru = new Rectangle(64, 0, krok, krok); dolu = new Rectangle(96, 0, krok, krok);
+            doprava = new Rectangle(0, 0, krok, krok); 
+            doleva = new Rectangle(32, 0, krok, krok);
+            nahoru = new Rectangle(64, 0, krok, krok); 
+            dolu = new Rectangle(96, 0, krok, krok);
             souradnice = new Point(hracovo.X, hracovo.Y);
             maxX = (ushort)(fieldWidth - dimenze);
             maxY = (ushort)(fieldHeight - dimenze);
@@ -69,13 +76,15 @@ namespace MojehraDroid
                     {
                         souradnice = novasouradnice;
                         Hlavni.tiles[indexCiloveDlazdice].Odvyrazni();
-                        indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * Hlavni.columns);
+                        indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * Hlavni.columns);                        
                         Hlavni.tiles[indexCiloveDlazdice].Zvyrazni();
                         //souradnice.X = UrovnejSouradnici((int)souradnice.X);//bez castu nemuzu zkouset modulo                        
                     }
                     UrciKamJet(souradnice);
                 }
-                else { namiste = false; }
+                else 
+                    namiste = false;
+
                 Hejbni(ref vpoli);
             }
         }
@@ -89,15 +98,30 @@ namespace MojehraDroid
                     namiste = true;
                     predesleX = hracovo.X; predesleY = hracovo.Y;
                     ZpracujZvlastniDlazdice();
-                    if (Hlavni.tiles[indexDlazdice].cilova) prepocistSkore = true;
+                    if (Hlavni.tiles[indexDlazdice].cilova) 
+                        prepocistSkore = true;
                     else if (novaSouradnice != Point.Zero && souradnice != novaSouradnice)
-                    {
                         souradnice = novaSouradnice;
-                    }
+
                     UrciKamJet(souradnice);
                 }
                 else { namiste = false; }
                 Hejbni(ref vpoli);
+            }
+        }
+
+        private void ZpracujCestu()
+        {
+            Hlavni.tiles[indexDlazdice].OznacitJakoProjetou(true);
+            if (!vpoli && (!Hlavni.tiles[indexDlazdice].plna && !Hlavni.tiles[indexDlazdice].okrajova)) //dostal se na volnou dlazdici
+            {
+                vpoli = true;
+                Vyputoval();
+            }
+            else if (vpoli && (Hlavni.tiles[indexDlazdice].plna || Hlavni.tiles[indexDlazdice].okrajova)) //navrat do bezpeci
+            {
+                vpoli = false;
+                prepocistSkore = true;
             }
         }
 
@@ -116,21 +140,6 @@ namespace MojehraDroid
             else if (Hlavni.tiles[indexDlazdice].ozivovaci)
             {
                 Hlavni.OzivKouli(indexDlazdice);
-            }
-        }
-
-        private void ZpracujCestu()
-        {
-            Hlavni.tiles[indexDlazdice].OznacitJakoProjetou(true);
-            if (!vpoli && (!Hlavni.tiles[indexDlazdice].plna && !Hlavni.tiles[indexDlazdice].okrajova)) //dostal se na volnou dlazdici
-            {
-                vpoli = true;
-                Vyputoval();
-            }
-            else if (vpoli && (Hlavni.tiles[indexDlazdice].plna || Hlavni.tiles[indexDlazdice].okrajova)) //navrat do bezpeci
-            {
-                vpoli = false;
-                prepocistSkore = true;
             }
         }
 
@@ -193,7 +202,7 @@ namespace MojehraDroid
             if (souradnice.Y < hracovo.Y)
             {
                 indexPristiDlazdice = indexDlazdice - sloupcu - 1;
-                if (indexPristiDlazdice> 0 && Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (indexPristiDlazdice > 0 && Hlavni.tiles[indexPristiDlazdice].pruchodna)
                 {
                     pohybNahoru = true;
                     if (zleva) pohybVlevo = false;
@@ -326,14 +335,14 @@ namespace MojehraDroid
                     kroku -= 1;
                     rotace += .12f; //v radianech
                     spritebatch.Draw(spriteHracovo, pozice, souradniceVysledneTextury, Color.Yellow, rotace, stredOtaceni, scale, SpriteEffects.None, 1);
-                    if (kroku > celkemKroku/2) scale *= 1.01f;
+                    if (kroku > celkemKroku / 2) scale *= 1.01f;
                     else scale /= 1.04f;
                 }
             }
         }
 
         /// <summary>
-        /// 
+        /// Sprite animace, zatím jen smrti
         /// </summary>
         /// <param name="animace"> 0 = smrt </param>
         /// <param name="kroky"> doba animace</param>
@@ -344,21 +353,22 @@ namespace MojehraDroid
             stredOtaceni = new Vector2(pulkrok, krok);
             animovan = true;
             kroku = celkemKroku = kroky;
-            if ( animace == 0 )
+            if (animace == 0)
             {
                 alive = false;
                 souradniceVysledneTextury = mrtvy;
-                scale = new Vector2(.8f,.8f);
+                scale = new Vector2(.8f, .8f);
             }
         }
 
         internal void Respawn()
         {
             animovan = false;
-            vpoli = false; alive = true;
+            vpoli = false; 
+            alive = true;
             hracovo.X = krok * 2; hracovo.Y = 0;
-            souradniceVysledneTextury = stoji;
             souradnice = new Point(hracovo.X, hracovo.Y);
+            souradniceVysledneTextury = stoji;
             Hlavni.ZrusSrazkuKouli();
         }
 

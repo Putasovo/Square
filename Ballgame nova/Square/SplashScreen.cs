@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MojehraDroid
+namespace Square
 {
-    internal class SplashScreen
+    public class SplashScreen
     {
         /// <summary>
         /// by these main Update will decide whether to proceed
@@ -32,7 +32,9 @@ namespace MojehraDroid
             splash = new Color[splashRect.Width * splashRect.Height];
             splashScreen = new Texture2D(graphics.GraphicsDevice, splashRect.Width, splashRect.Height);
 
-            for (uint i = 0; i < splash.Length; ++i) splash[i] = Color.Black;
+            for (uint i = 0; i < splash.Length; ++i) 
+                splash[i] = Color.Black;
+
             splashScreen.SetData(splash);
             splashColor = Color.White;
 
@@ -40,7 +42,6 @@ namespace MojehraDroid
             polohaNapisu = rect.Center.ToVector2()*.8f;
             provedUpdate = true;
         }
-
 
         private void StahniStep()
         {
@@ -54,36 +55,39 @@ namespace MojehraDroid
             splashColor.A = splashStep;
         }
 
-        internal void Update()
+        public void Update()
         {
             if (kresliSplash)
             {
                 if (splashStep == byte.MaxValue)
                 {
                     zvysStep = false;
-                    if (vydrz > 0) vydrz--;
-                    else
+                    if (vydrz > 0) 
+                        vydrz--;
+                    else if (budeUpdate)
                     {
-                        if (budeUpdate)
-                        {
-                            if (!provedUpdate) provedUpdate = true;
-                            else budeUpdate = provedUpdate = false;
-                        }
+                        if (!provedUpdate) 
+                            provedUpdate = true;
+                        else 
+                            budeUpdate = provedUpdate = false;
                     }
                 }
-                else if (splashStep == byte.MinValue) //dokonceni
+                else if (splashStep == byte.MinValue) // dokonceni
                 {
                     kresliSplash = kreslitPismo = budeUpdate = false;
                     provedUpdate = true;
                     splashRect.X = okrajX;
                     splashColor.A = byte.MaxValue;
                 }
-                if (zvysStep) ZvedejStep();
-                else if (!budeUpdate && !provedUpdate && vydrz == 0) StahniStep();
+
+                if (zvysStep) 
+                    ZvedejStep();
+                else if (!budeUpdate && !provedUpdate && vydrz == 0)
+                    StahniStep();
             }
         }
 
-        internal void KresliSplash(bool okamzite, string text, bool zavedPriUpdejtu)
+        public void KresliSplash(bool okamzite, string text, bool zavedPriUpdejtu)
         {
             kresliSplash = true;
             vydrz = pozadovanaVydrz;
@@ -106,7 +110,7 @@ namespace MojehraDroid
             provedUpdate = zavedPriUpdejtu;
         }
 
-        internal void ZatemniSplash(bool zavedPriUpdejtu)
+        public void ZatemniSplash(bool zavedPriUpdejtu)
         {
             kresliSplash = zvysStep = true;
             vydrz = pozadovanaVydrz;
@@ -115,7 +119,7 @@ namespace MojehraDroid
             provedUpdate = zavedPriUpdejtu;
         }
 
-        internal void Draw(SpriteBatch sb)
+        public void Draw(SpriteBatch sb)
         {
             sb.Draw(splashScreen, splashRect, splashColor);
             if (kreslitPismo && vydrz > 0) sb.DrawString(pismo, napis, polohaNapisu, splashColor);

@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Mojehra
 {
@@ -10,38 +10,45 @@ namespace Mojehra
         private int xSpeed, ySpeed;
         private Point souradnice;
         internal bool alive;
-        public Rectangle hracovo = new Rectangle(0, 0, 32, 32);
         private bool animovan;
         private Vector2 scale, stredOtaceni, pozice;
-        private float rotace; private ushort kroku, celkemKroku;
-
-        private ushort maxX, maxY, radku, sloupcu;
-        ushort speed;
+        private float rotace; 
+        private ushort kroku, celkemKroku;
+        private readonly ushort maxX, maxY;
+        private readonly ushort radku, sloupcu;
+        private readonly ushort speed;
+        private readonly ushort krok, pulkrok;
         private bool pohybVlevo, pohybVpravo, pohybNahoru, pohybDolu;
-        private ushort krok, pulkrok;
         public bool prepocistSkore;
         public bool vpoli = false, namiste = true, svislyVyjezd;
         public bool zleva, zhora, zprava, zdola;
         public int vychoziX, vychoziY;
         private int predesleX, predesleY;
         private static int pulsirky, pulvysky;
-        int vysledek; int vysledekX; int vysledekY;
+        private int vysledek, vysledekX, vysledekY;
         internal int indexDlazdice;
         private int indexPristiDlazdice;
         private ushort indexCiloveDlazdice;
 
-        Texture2D spriteHracovoZivot; Texture2D spriteHracovoSmrt; Texture2D spriteHracovo;
+        private readonly Texture2D spriteHracovo;
         private Rectangle souradniceVysledneTextury;
-        static Rectangle stoji, doprava, doleva, nahoru, dolu, strach;
+        private static Rectangle stoji, doprava, doleva, nahoru, dolu, strach, mrtvy;
+        public Rectangle hracovo = new Rectangle(0, 0, 32, 32);
 
-        internal Hrac(bool zije, ushort rychlost, ushort dimenze, int X, int Y, int fieldWidth, int fieldHeight,
-            Texture2D spriteZivy, Texture2D spriteMrtvy)
+        internal Hrac(bool zije, ushort rychlost, ushort dimenze, int X, int Y, int fieldWidth, int fieldHeight, Texture2D sprite)
         {
-            alive = zije; speed = rychlost; krok = dimenze; pulkrok = (ushort)(krok / 2);
+            alive = zije;
+            speed = rychlost;
+            krok = dimenze;
+            pulkrok = (ushort)(krok / 2);
             hracovo = new Rectangle(X, Y, krok, krok);
-            stoji = new Rectangle(0, 0, krok, krok); strach = new Rectangle(160, 0, krok, krok);
-            doprava = new Rectangle(32, 0, krok, krok); doleva = new Rectangle(64, 0, krok, krok);
-            nahoru = new Rectangle(96, 0, krok, krok); dolu = new Rectangle(128, 0, krok, krok);
+            stoji = new Rectangle(0, krok, krok, krok);
+            strach = new Rectangle(krok, krok, krok, krok);
+            mrtvy = new Rectangle(64, 32, krok, krok);
+            doprava = new Rectangle(0, 0, krok, krok);
+            doleva = new Rectangle(32, 0, krok, krok);
+            nahoru = new Rectangle(64, 0, krok, krok);
+            dolu = new Rectangle(96, 0, krok, krok);
             souradnice = new Point(hracovo.X, hracovo.Y);
             maxX = (ushort)(fieldWidth - dimenze);
             maxY = (ushort)(fieldHeight - dimenze);
@@ -49,7 +56,7 @@ namespace Mojehra
             sloupcu = (ushort)(maxX / krok);
             pulsirky = fieldWidth / 2;
             pulvysky = fieldHeight / 2;
-            spriteHracovoZivot = spriteZivy; spriteHracovoSmrt = spriteMrtvy; spriteHracovo = spriteHracovoZivot;
+            spriteHracovo = sprite;
         }
 
         /// <summary>
@@ -68,7 +75,8 @@ namespace Mojehra
                     ZpracujCestu();
                     if (novasouradnice != Point.Zero && souradnice != novasouradnice)
                     {
-                        souradnice = novasouradnice;
+                        souradnice.X = novasouradnice.X < maxX + krok ? novasouradnice.X : maxX; // osekat kdyz jde klikat mimo plochu
+                        souradnice.Y = novasouradnice.Y < maxY + krok ? novasouradnice.Y : maxY;
                         Hlavni.tiles[indexCiloveDlazdice].Odvyrazni();
                         indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * Hlavni.columns);
                         Hlavni.tiles[indexCiloveDlazdice].Zvyrazni();
@@ -159,6 +167,10 @@ namespace Mojehra
             {
                 Hlavni.PripravZemetreseni(indexDlazdice);
             }
+            // else if (Hlavni.tiles[indexDlazdice].ozivovaci)
+            // {
+            //    Hlavni.OzivKouli(indexDlazdice);
+            // }
         }
 
         private void ZpracujCestu()
@@ -375,7 +387,7 @@ namespace Mojehra
         }
 
         /// <summary>
-        /// 
+        /// Sprite animace, zatím jen smrti
         /// </summary>
         /// <param name="animace"> 0 = smrt </param>
         /// <param name="kroky"> doba animace</param>
@@ -389,8 +401,7 @@ namespace Mojehra
             if (animace == 0)
             {
                 alive = false;
-                spriteHracovo = spriteHracovoSmrt;
-                souradniceVysledneTextury = stoji;
+                souradniceVysledneTextury = mrtvy;
                 scale = new Vector2(.8f, .8f);
             }
         }
@@ -398,10 +409,11 @@ namespace Mojehra
         internal void Respawn()
         {
             animovan = false;
-            vpoli = false; alive = true;
+            vpoli = false; 
+            alive = true;
             hracovo.X = krok * 2; hracovo.Y = 0;
-            spriteHracovo = spriteHracovoZivot;
             souradnice = new Point(hracovo.X, hracovo.Y);
+            souradniceVysledneTextury = stoji;
             Hlavni.ZrusSrazkuKouli();
         }
 

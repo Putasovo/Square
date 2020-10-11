@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace MojehraDroid
+namespace Square
 {
     /// <summary>
     /// An enumeration for possible game states
     /// </summary>
-    internal enum Stavy
+    public enum Stavy
     {
         Menu,
         Play,
@@ -15,7 +15,7 @@ namespace MojehraDroid
         Pause
     }
 
-    internal class Barvy
+    public class Barvy
     {
         public static Color prvniBarva = new Color(000, 000, 100, 100);
         public static Color druhaBarva = new Color(100, 150, 100, 100);
@@ -26,12 +26,12 @@ namespace MojehraDroid
         public static Color druhaViteznaBarva = new Color(200, 200, 100, 0);
         public static Color E2prvni = new Color(000, 000, 100, 100);
         public static Color E2druha = new Color(59, 31, 32, 100);
-        internal static Color modra = new Color(22, 22, 150, 127);
-        internal static Color vyblitamodra = new Color(22, 22, 100, 127);
-        internal static Color oblibena = new Color(50, 181, 181, 127);
-        internal static Color vyblitaOblibena = new Color(66, 158, 188, 127);
+        public static Color modra = new Color(22, 22, 150, 127);
+        public static Color vyblitamodra = new Color(22, 22, 100, 127);
+        public static Color oblibena = new Color(50, 181, 181, 127);
+        public static Color vyblitaOblibena = new Color(66, 158, 188, 127);
 
-        internal static void NastavBarvy(Color prvni, Color druha)
+        public static void NastavBarvy(Color prvni, Color druha)
         {
             prvniBarva = prvni; druhaBarva = druha;
         }

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.putasovo.square" android:versionCode="12" android:installLocation="preferExternal" android:versionName="Oreo support">
-	<uses-sdk android:minSdkVersion="17" android:targetSdkVersion="27" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.putasovo.square" android:versionCode="14" android:installLocation="preferExternal" android:versionName="small is cute">
+	<uses-sdk android:targetSdkVersion="30" />
 	<uses-configuration android:reqTouchScreen="finger" />
 	<uses-permission android:name="android.permission.VIBRATE" />
 	<application android:label="Mighty Square" android:icon="@drawable/Icon" />

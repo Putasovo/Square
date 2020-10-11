@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Mojehra
+namespace Square
 {
-    internal class Pozadi
+    public class Pozadi
     {
         #region Fields
         // drawing support
@@ -27,7 +27,7 @@ namespace Mojehra
             sprite = textura;
             vyskaStrany = (ushort)sprite.Height;
             sirkaStrany = (ushort)sprite.Width;
-            this.windowWidth = width; this.windowHeight = height;
+            windowWidth = width; windowHeight = height;
             columns = (ushort)(width / sirkaStrany);
             rows = (ushort)(height / vyskaStrany);
             Vydlazdickuj(nastridacku, stridatNepravidelne);
@@ -35,7 +35,7 @@ namespace Mojehra
             PripravPohyb();
             if (rotace != 0)
             {
-                otaceni = rotace; rotujici = true;//ale nezvladam nastavovat stred otaceni
+                otaceni = rotace; rotujici = true; // ale nezvladam nastavovat stred otaceni
             }
             if (rotace == 0f) rotujici = false;
             else rotujici = true;
@@ -116,13 +116,14 @@ namespace Mojehra
             }
         }
 
-        internal void DrawBezRotace(SpriteBatch sb)
+        public void DrawBezRotace(SpriteBatch sb)
         {
             foreach (Tile tile in tilesPozadi)
             {
                 tile.DrawJednoduse(sb);
             }
         }
+
         internal void DrawsRotaci(SpriteBatch sb) //blbne
         {
             foreach (Tile tile in tilesPozadi)
@@ -136,7 +137,7 @@ namespace Mojehra
             {
                 for (short j = -1; j <= columns; j++)
                 {
-                    Vector2 location = new Vector2(j * sirkaStrany, i * vyskaStrany);
+                    var location = new Vector2(j * sirkaStrany, i * vyskaStrany);
                     if (nastridacku)
                     {
                         if (i % 2 == 0) location.X += sirkaStrany / 2;
@@ -148,7 +149,7 @@ namespace Mojehra
                     // naokraji = true;
                     // okrajovychDlazdic++;
                     //}
-                    Tile tile = new Tile(sprite, null, null, null, null,
+                    var tile = new Tile(sprite, null, null, null, null,
                         location, pohyb, sirkaStrany, vyskaStrany, false, true, naokraji, false);
                     tile.NastavBarvu(barvaSnehu);
                     tilesPozadi.Add(tile);

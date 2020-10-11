@@ -50,8 +50,6 @@ namespace Mojehra
             }
         }
 
-
-
         TimeSpan Duration
         {
             get

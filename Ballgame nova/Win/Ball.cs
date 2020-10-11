@@ -1,55 +1,52 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Mojehra
 {
-    internal class Ball
+    public class Ball : IDisposable
     {
+        public float FaktorRychlosti { get; set; } = 0.01f;
+        private readonly float vyslednaRotace = 0f;
+        private static readonly float nahoru = 0f;
+        private static readonly float doprava = MathHelper.Pi * 3 / 2;
+        private static readonly float dolu = MathHelper.Pi;
+        private static readonly float doleva = MathHelper.ToRadians(90);
+        //private float doleva = MathHelper.Pi / 2;
+        private static readonly Vector2 originRotace = new Vector2(16, 16);
         private float prolnuti;
         private Color color1, color2;
         private short dobijeni = -1;
         public bool srazena, cinna, utocna;
         public bool utocnaLeva, utocnaHorni, utocnaPrava, utocnaDolni;
         private Vector2 velocity, vychoziVelocity, minVelocity, maxVelocity;
-        private System.Random rand = new System.Random();
-        byte[] nahodnyBajt = new byte[1];
+        private Random rand = new Random();
+        private byte[] nahodnyBajt = new byte[1];
         private System.Security.Cryptography.RNGCryptoServiceProvider safeRand = new System.Security.Cryptography.RNGCryptoServiceProvider();
         public Rectangle rect = new Rectangle(0, 0, 32, 32);
         private Rectangle rectBall = new Rectangle(0, 0, 32, 32);
         private Rectangle rectRed = new Rectangle(32, 0, 32, 32);
         private Rectangle rectNabijeci = new Rectangle(64, 0, 32, 32);
         private Rectangle rectZnicena = new Rectangle(96, 0, 32, 32);
-        private Rectangle sourceUtocnaLeva = new Rectangle(0, 0, 32, 32);
-        private Rectangle sourceUtocnaHorni = new Rectangle(32, 0, 32, 32);
-        private Rectangle sourceUtocnaPrava = new Rectangle(64, 0, 32, 32);
-        private Rectangle sourceUtocnaDolni = new Rectangle(96, 0, 32, 32);
-        //private Rectangle sourceVysledny;
-        private float vyslednaRotace = 0f;
-        private float nahoru = 0f;
-        private float doprava = MathHelper.Pi * 3 / 2;
-        private float dolu = MathHelper.Pi;
-        private float doleva = MathHelper.ToRadians(90);
-        //private float doleva = MathHelper.Pi / 2;
-        private Vector2 originRotace = new Vector2(16, 16);
+
         private Point novaPoloha;
-        Vector2 presnaPoloha;
-        private int pravyOkrajDesky, dolniOkrajDesky, levyOkrajDesky, horniOkrajDesky;
-        private byte rozmer, polomer;
+        private Vector2 presnaPoloha;
+        private readonly int pravyOkrajDesky, dolniOkrajDesky, levyOkrajDesky, horniOkrajDesky;
+        private readonly byte rozmer, polomer;
         private float odchylka;
-        private float faktorCasu;
-        public float faktorRychlosti = 0.01f;
+        private float faktorCasu;        
         private int flipped;
         private bool svislyObrat, vodorovnyObrat, povolVariace, predchoziObrat;
         private int indexDlazdice;
-        private ushort maxIndexDlazdice;
+        private readonly ushort maxIndexDlazdice;
         SoundEffect narazDoCesty;
 
         /// <summary>
         ///  Creates ball
         /// </summary>
-        /// <param name="balLoc"></param>
-        /// <param name="balVec"></param>
+        /// <param name="ballLoc"></param>
+        /// <param name="ballVec"></param>
         /// <param name="windowX">X</param>
         /// <param name="windowY">Y</param>
         /// <param name="dimension">dimenze</param>
@@ -60,39 +57,41 @@ namespace Mojehra
         /// <param name="attackDown">down</param>
         /// <param name="bludiste">bludiste</param>
         /// <param name="kolize">collide sound</param>
-        public Ball(Vector2 balLoc, Vector2 balVec, int windowX, int windowY, byte dimension, bool rigidita,
+        public Ball(Vector2 ballLoc, Vector2 ballVec, int windowX, int windowY, byte dimension, bool rigidita,
             bool attackLeft = false, bool attackUp = false, bool attackRight = false, bool attackDown = false,
             bool bludiste = false, SoundEffect kolize = null)
         {
             maxIndexDlazdice = (ushort)((windowX / dimension) * (windowY / dimension));
-            rect.X = MathHelper.Clamp((int)balLoc.X, dimension * 2, windowX - dimension);
-            rect.Y = MathHelper.Clamp((int)balLoc.Y, dimension * 2, windowY - dimension);
+            rect.X = MathHelper.Clamp((int)ballLoc.X, dimension * 2, windowX - dimension);
+            rect.Y = MathHelper.Clamp((int)ballLoc.Y, dimension * 2, windowY - dimension);
             presnaPoloha = new Vector2(rect.X, rect.Y);
             Hlavni.hitboxyKouli.Add(rect); //ted jen pro kontrolu stretu
-            velocity = balVec;
+            velocity = ballVec;
             rozmer = dimension; polomer = (byte)(dimension / 2);
             cinna = rigidita;
             if (attackDown)
             {
-                utocna = utocnaDolni = attackDown; vyslednaRotace = nahoru;
-                //sourceVysledny = sourceUtocnaDolni;
+                utocna = utocnaDolni = attackDown;
+                vyslednaRotace = nahoru;
             }
             else if (attackLeft)
             {
-                utocna = utocnaLeva = attackLeft; vyslednaRotace = doleva;
-                //sourceVysledny = sourceUtocnaLeva;
+                utocna = utocnaLeva = attackLeft;
+                vyslednaRotace = doleva;
             }
             else if (attackRight)
             {
-                utocna = utocnaPrava = attackRight; vyslednaRotace = doprava;
-                //sourceVysledny = sourceUtocnaLeva;
+                utocna = utocnaPrava = attackRight;
+                vyslednaRotace = doprava;
             }
             else if (attackUp)
             {
-                utocna = utocnaHorni = attackUp; vyslednaRotace = dolu;
-                //sourceVysledny = sourceUtocnaHorni;
+                utocna = utocnaHorni = attackUp;
+                vyslednaRotace = dolu;
             }
+
             narazDoCesty = kolize;
+
             if (!bludiste)
             {
                 pravyOkrajDesky = windowX - dimension;
@@ -103,9 +102,10 @@ namespace Mojehra
             else
             {
                 pravyOkrajDesky = windowX;
-                dolniOkrajDesky = windowY - 1;// bez -1 by byl prekrocen indexdlazdice
+                dolniOkrajDesky = windowY -1;// bez -1 by byl prekrocen indexdlazdice
             }
-            odchylka = ((float)(rand.NextDouble() - 0.5f) * .11f); //pro jedinecnost
+
+            odchylka = ( (float)(rand.NextDouble() - 0.5f ) * .11f); //pro jedinecnost
             velocity.X += +odchylka; velocity.Y += +odchylka;
             vychoziVelocity = velocity;
             minVelocity = velocity * .81f; maxVelocity = velocity * 1.2f;
@@ -117,15 +117,31 @@ namespace Mojehra
                 color2 = new Color(0, 0, 0, 0);
             }
             else dobijeni = -100;
-            povolVariace = true;
+
+            povolVariace = true; // zatim jsem nikdy nepouzil false
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // dispose managed resources
+                safeRand.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         internal void Update(int time)
         {
             if (cinna)
-            {
+            { 
                 prolnuti = (float)dobijeni / 10;
-                faktorCasu = time * faktorRychlosti;
+                faktorCasu = time * FaktorRychlosti;
                 presnaPoloha += velocity * faktorCasu;
                 novaPoloha.X = (int)presnaPoloha.X;
                 novaPoloha.Y = (int)presnaPoloha.Y + polomer;
@@ -156,7 +172,7 @@ namespace Mojehra
         {
             prolnuti = (float)dobijeni / 10;
 
-            faktorCasu = time * faktorRychlosti;
+            faktorCasu = time * FaktorRychlosti;
             presnaPoloha += velocity * faktorCasu;
             if (minX != -9999 || maxX != 9999) if (presnaPoloha.X < minX || presnaPoloha.X > maxX) velocity.X *= -1;
             if (minY != -9999 || maxY != 9999) if (presnaPoloha.Y < minY || presnaPoloha.Y + rect.Height > maxY) velocity.Y *= -1;
@@ -190,7 +206,7 @@ namespace Mojehra
             {
                 OdrazVodorovne();
             }
-
+            
             else if (
                 //indexDlazdice != Hlavni.tiles.Count && //ochrana když neni okraj - jinak musim vyplnit posledni roh
                 Hlavni.tiles[indexDlazdice + 1].plna)
@@ -253,6 +269,7 @@ namespace Mojehra
             velocity.Y = velocity.Y * -1;
             svislyObrat = true; predchoziObrat = false;
         }
+
         private void OdrazVodorovne()
         {
             //Hlavni.hrajOdraz = true;
@@ -290,7 +307,7 @@ namespace Mojehra
             {
                 flipped = 0;
                 safeRand.GetBytes(nahodnyBajt);
-                odchylka = (float)((nahodnyBajt[0] - 128) * .0015);
+                odchylka = (float)( (nahodnyBajt[0]-128) * .0015 );
                 //float odchylkaY = (float)((nahodnyBajt[0] - 128) * .0012);
                 //velocity += new Vector2(odchylka, odchylkaY);vede k extremum
                 //smerove deleni nutne, jinak mi pretece index
@@ -303,9 +320,14 @@ namespace Mojehra
             }
         }
 
+        public void NasobRychlost(float nasobic)
+        {
+            FaktorRychlosti *= nasobic;
+        }
+
         public void NastavRychlost(float rychlost)
         {
-            faktorRychlosti = rychlost;
+            FaktorRychlosti = rychlost;
         }
 
         public void NastavPolohu(Vector2 poloha)
@@ -313,6 +335,11 @@ namespace Mojehra
             presnaPoloha = poloha;
         }
 
+        internal void Obzivni()
+        {
+            cinna = true;
+            if (utocna) { dobijeni = 10; }
+        }
         internal void Zasazen()
         {
             cinna = false;
@@ -321,7 +348,7 @@ namespace Mojehra
         public void Draw(SpriteBatch spritebatch, Texture2D sprite)
         {
             if (cinna)
-            {
+            { 
                 if (dobijeni == -1)
                 {
                     if (srazena) spritebatch.Draw(sprite, rect, rectBall, Color.Crimson);
@@ -333,7 +360,7 @@ namespace Mojehra
                 {
                     spritebatch.Draw(sprite, rect.Location.ToVector2(), rectBall, Color.White); //zaklad
                     //pridavek
-                    spritebatch.Draw(sprite, rect.Location.ToVector2() + originRotace, rectNabijeci, Color.Lerp(color1, color2, prolnuti), vyslednaRotace, originRotace, 1f, SpriteEffects.None, 0);
+                    spritebatch.Draw(sprite, rect.Location.ToVector2()+originRotace, rectNabijeci, Color.Lerp(color1, color2, prolnuti), vyslednaRotace, originRotace, 1f, SpriteEffects.None, 0);
                 }
             }
             else spritebatch.Draw(sprite, rect.Location.ToVector2(), rectZnicena, Color.White);

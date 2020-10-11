@@ -2,28 +2,31 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Mojehra
+namespace Square
 {
-    internal class Monster
+    public class Monster
     {
-        private ushort delka, rychlost;
-        private Texture2D textura;
+        private readonly ushort rychlost;
+        private readonly Texture2D textura;
         public Rectangle obdelnik;
         private Rectangle source;
-        Point source1, source2, source3;
-        Point vychozi;
+        private Point source1, source2, source3;
+        private Point vychozi;
         private bool poSmeruHodin;
-        private ushort maxX, maxY, i=5;
+        private readonly ushort maxX, maxY;
+        private ushort i=5;
 
         public Monster(ushort length, ushort speed, Rectangle position, Texture2D texture, bool direction, ushort maxX, ushort maxY)
         {
-            this.delka = length; rychlost = speed; //this.krok = krok;
-            obdelnik = position; textura = texture;
-            vychozi = (obdelnik.Location);
-            source = new Rectangle(0,0, 32, 32);
-            source1 = new Point(0,0); source2 = new Point(32, 0); source3 = new Point(64, 0);
+            rychlost = speed;
+            obdelnik = position; 
+            textura = texture;
+            vychozi = obdelnik.Location;
+            source = new Rectangle(0, 0, length, length);
+            source1 = new Point(0, 0); source2 = new Point(length, 0); source3 = new Point(length * 2, 0);
             poSmeruHodin = direction;
-            this.maxX = maxX; this.maxY = maxY;
+            this.maxX = maxX;
+            this.maxY = maxY;
         }
 
         public void Update()
@@ -62,6 +65,17 @@ namespace Mojehra
             Animuj();
         }
 
+        public void Respawn()
+        {
+            obdelnik.Location = vychozi;
+            poSmeruHodin = !poSmeruHodin;
+        }
+
+        public void Draw(SpriteBatch SB)
+        {
+            SB.Draw(textura, obdelnik, source, Color.White);
+        }
+
         private void Animuj()
         {
             if (i != 0)
@@ -76,17 +90,5 @@ namespace Mojehra
             }
             i--;
         }
-
-        public void Respawn()
-        {
-            obdelnik.Location = vychozi;
-        }
-
-        public void Draw(SpriteBatch SB)
-        {
-            SB.Draw(textura, obdelnik, source, Color.White);
-        }
-
     }
-
 }

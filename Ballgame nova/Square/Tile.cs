@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using System;
 
-namespace Mojehra
+namespace Square
 {
     /// <summary>
     /// Dlazdice
@@ -13,15 +13,17 @@ namespace Mojehra
 
         // drawing support
         private Texture2D sprite, spriteExploze;
-        private Texture2D spriteOznaceny, spriteOznaceny2; //pro prvni nalezene
-        private Texture2D spriteDruha;
-        private static Rectangle minaPozice = new Rectangle(0, 0, 32, 32);
+        private readonly Texture2D spriteOznaceny;
+        private readonly Texture2D spriteOznaceny2;
+        private readonly Texture2D spriteDruha;
+        private static Rectangle minaPozice = new Rectangle(0,0,32,32);
         private static Rectangle minaSkrytaPozice = new Rectangle(14, 14, 3, 3);
         private static Rectangle cestaPozice = new Rectangle(32, 0, 32, 32);
         private static Rectangle cilovaPozice = new Rectangle(64, 0, 32, 32);
         private static Rectangle plnaPredemPozice = new Rectangle(128, 0, 32, 32);
         private static Rectangle plnaPoziceAlt = new Rectangle(160, 0, 32, 32);
         private static Rectangle zpomalPozice = new Rectangle(192, 0, 32, 32);
+        private static Rectangle ozivovaciPozice = new Rectangle(224, 0, 32, 32);
         private static Rectangle zvyrazniMalaPozice1 = new Rectangle(192, 32, 16, 16);
         private static Rectangle zvyrazniMalaPozice2 = new Rectangle(208, 32, 16, 16);
         private static Rectangle zvyrazniMalaPozice3 = new Rectangle(192, 48, 16, 16);
@@ -46,15 +48,16 @@ namespace Mojehra
         private Rectangle vyslednaTextura, vyslednaTexturaExploze;
         private bool visible, animated, zvyrazni, exploduje;
         private byte alfaZvyrazneni; private Color barvaZvyrazneni = Color.White;
-        public bool pruchodna = true;
+        
         private short krokPlneni; private bool zaplnujese, licha;
         public Rectangle drawRectangle;
         private Vector2 pozice, origin;
         Vector2 velocity;
         private float rotace = 0.1f;
         // params
-        public bool okrajova, projeta, kvyplneni, plna, plnaPredem, cilova, zpomalovaci, mina;
-        internal byte dosahMiny, casExploze;
+        public bool pruchodna = true;
+        public bool okrajova, projeta, kvyplneni, plna, plnaPredem, cilova, zpomalovaci, mina, ozivovaci;
+        public byte dosahMiny, casExploze;
         public bool prvni, druha;
         private bool debuguju;
         private Color barvaDlazdice;
@@ -67,7 +70,7 @@ namespace Mojehra
         /// <param name="sprite">sprites for the tile</param>
         /// <param name="location">location of first pixel</param>
         /// <param name="velocity">velocity</param>
-        internal Tile(Texture2D atlas, Texture2D exploze, Texture2D spriteOznaceny, Texture2D spriteOznaceny2, Texture2D spriteDruha,
+        public Tile(Texture2D atlas, Texture2D exploze, Texture2D spriteOznaceny, Texture2D spriteOznaceny2, Texture2D spriteDruha,
             Vector2 location, Vector2 velocity,
             int width, int height, bool animated, bool viditelna, bool naokraji, bool debug)
         {
@@ -81,7 +84,7 @@ namespace Mojehra
             this.debuguju = debug;
             this.okrajova = naokraji;
             barvaDlazdice = Color.White;
-            this.origin = location + new Vector2(width / 2); //stred
+            this.origin = location + new Vector2(width/2); //stred
             //kolem stredu if (animated) this.origin = new Vector2(Hlavni.columns * plnaPozice.Width / 2, Hlavni.rows * plnaPozice.Width / 2);
             if (animated)
             {
@@ -110,7 +113,7 @@ namespace Mojehra
         /// Updates the tile
         /// </summary>
         /// <param name="gameTime">game time</param>
-        internal void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             //if (debuguju && prvni) //prvni nalezena
             //{ vyslednaTextura = spriteOznaceny; }
@@ -124,8 +127,12 @@ namespace Mojehra
                 if (casExploze == 0)
                 {
                     exploduje = false;
-                    if (!mina) visible = plna = false;
-                    if (!pruchodna) ZpruchodnitHracovi();
+                    if (!mina)
+                    {
+                        plna = false;
+                        if (!ozivovaci) visible = false;
+                    }
+                    if (!pruchodna) ZpruchodnitHracovi(visible);
                 }
                 else if (casExploze < 8) vyslednaTexturaExploze = exploze7Pozice;
                 else if (casExploze < 16) vyslednaTexturaExploze = exploze6Pozice;
@@ -157,18 +164,33 @@ namespace Mojehra
             }
         }
 
-        internal void DebugDlazdice(short param)
+        public void DebugDlazdice(short param)
         {
             if (param == 0)
             {
                 prvni = false; druha = false;
                 if (!plna) visible = false;
             }
-            else if (param == 1) { prvni = true; visible = true; }
-            else if (param == 2) { druha = true; visible = true; }
+            else if (param == 1)    { prvni = true; visible = true; }
+            else if (param == 2)    { druha = true; visible = true; }
         }
 
-        internal void NastavZpomalovac(bool anone)
+        public void NastavOzivovaci(bool anone)
+        {
+            if (anone)
+            {
+                ozivovaci = true;
+                NastavSource(ozivovaciPozice);
+                visible = true;
+            }
+            else
+            {
+                ozivovaci = false;
+                visible = false;
+            }
+        }
+
+        public void NastavZpomalovac(bool anone)
         {
             if (anone)
             {
@@ -182,17 +204,17 @@ namespace Mojehra
             }
         }
 
-        internal void SudaNeboLicha(int index)
+        public void SudaNeboLicha(int index)
         {
-            if (index % 2 != 0) licha = true;
+            if (index % 2 != 0)
+                licha = true;
         }
 
-        internal void KVyplneni(bool anone)
+        public void KVyplneni(bool anone)
         {
-            if (debuguju)
-            {
-                if (okrajova == true) throw new System.ArgumentException("resis okrajovou?");
-            }
+#if (debuguju)
+            if (okrajova == true) throw new System.ArgumentException("resis okrajovou?");
+#endif
             if (anone)
             {
                 if (debuguju && kvyplneni == true) throw new System.ArgumentException("uz je oznacena");
@@ -201,12 +223,13 @@ namespace Mojehra
             }
             else kvyplneni = false;
         }
-        internal void OznacitJakoProjetou(bool anone)
+
+        public void OznacitJakoProjetou(bool anone)
         {
             if (anone)
             {
                 if (!visible)
-                {
+                { 
                     projeta = true;
                     vyslednaTextura = cestaPozice;
                 }
@@ -216,11 +239,13 @@ namespace Mojehra
                 projeta = false;
             }
         }
-        internal void OznacJakoDruhePole(bool anone)
+
+        public void OznacJakoDruhePole(bool anone)
         {
             //if (anone) vyslednaTextura = spriteDruha;
         }
-        internal void OznacJakoCilovou(bool anone)
+
+        public void OznacJakoCilovou(bool anone)
         {
             if (anone)
             {
@@ -229,68 +254,71 @@ namespace Mojehra
             }
             else cilova = visible = false;
         }
-        internal void Zneviditelnit()
+
+        public void Zneviditelnit()
         {
             visible = false;
         }
 
-        internal void VyplnitZvyditelnit()
+        public void VyplnitZvyditelnit()
         {
             visible = plna = zaplnujese = true; kvyplneni = false;
             krokPlneni = 16;
             vyslednaTextura = plna5Pozice;
         }
 
-        internal void VyplnitZvyditelnitOkamzite()
+        public void VyplnitZvyditelnitOkamzite()
         {
             visible = true; plna = true; kvyplneni = false;
             vyslednaTextura = plnaPozice;
         }
 
-        internal void VyplnitPredemZvyditelnit()
+        public void VyplnitPredemZvyditelnit()
         {
             plnaPredem = plna = visible = true;
             kvyplneni = false;
             vyslednaTextura = plnaPredemPozice;
         }
 
-        internal void Znepruchodnit()
+        public void Znepruchodnit()
         {
             visible = plna = true; pruchodna = false;
             vyslednaTextura = nepruchodnaPozice;
         }
-        private void ZpruchodnitHracovi()
+
+        private void ZpruchodnitHracovi(bool ozivovaci)
         {
             pruchodna = true;
             //vyslednaTextura = plnaPozice;
             barvaDlazdice.A = byte.MaxValue;
+            if (ozivovaci) vyslednaTextura = ozivovaciPozice;
         }
-        internal void ZnepruchodnitHraci()
+        public void ZnepruchodnitHraci()
         {
             visible = true; pruchodna = false;
             vyslednaTextura = nepruchodnaPozice;
             barvaDlazdice.A = 22;
         }
 
-        internal void Zaminovat(byte range)
+        public void Zaminovat(byte range = 3)
         {
             dosahMiny = range;
             visible = mina = true;
             vyslednaTextura = minaSkrytaPozice;
         }
-        internal void Odminovat()
+        public void Odminovat()
         {
             mina = false;
             vyslednaTextura = minaPozice;
         }
-        internal void Zborit(bool bouchla)
+        public void Zborit(bool bouchla)
         {
-            plna = projeta = false;
+            if (!plnaPredem) plna = projeta = false;
             if (!bouchla)
             {
                 if (!mina)
                 {
-                    visible = plna = false;
+                    plna = visible = false;
                 }
                 else vyslednaTextura = minaSkrytaPozice;
             }
@@ -302,22 +330,23 @@ namespace Mojehra
             }
         }
 
-        internal void Zvyrazni()
+        public void Zvyrazni()
         {
             zvyrazni = true;
             alfaZvyrazneni = 255;
         }
-        internal void Odvyrazni()
+
+        public void Odvyrazni()
         {
             zvyrazni = false;
         }
 
-
-        internal void NastavBarvu(Color barva)
+        public void NastavBarvu(Color barva)
         {
             barvaDlazdice = barva;
         }
-        internal void NastavSource(Rectangle novy)
+
+        public void NastavSource(Rectangle novy)
         {
             vyslednaTextura = novy;
         }
@@ -327,7 +356,7 @@ namespace Mojehra
         /// </summary>
         /// <param name="spriteBatch">sprite batch</param>
         /// puvodni animace: spriteBatch.Draw(sprite, null, drawRectangle, null, origin, rotace, null, Color.White, SpriteEffects.None, 0 );
-        internal void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             if ((visible || projeta) && !okrajova)
             {
@@ -356,26 +385,29 @@ namespace Mojehra
                     else if (alfaZvyrazneni > 70) spriteBatch.Draw(sprite, drawRectangle, zvyrazniMalaPozice3, barvaZvyrazneni);
                     else spriteBatch.Draw(sprite, drawRectangle, zvyrazniMalaPozice4, barvaZvyrazneni);
                 }
-
+                
                 //spriteBatch.Draw(sprite, drawRectangle, zvyrazniMalaPozice, new Color(byte.MaxValue, byte.MaxValue, byte.MaxValue, alfaZvyrazneni));
-                alfaZvyrazneni -= 3;
+                alfaZvyrazneni -= 3; 
             }
         }
 
-        internal void DrawZemetreseni(SpriteBatch spriteBatch, int posun)
+        public void DrawZemetreseni(SpriteBatch spriteBatch, int posun)
         {
-            pozice = (drawRectangle.Location.ToVector2()) + new Vector2(posun, posun);
-            if (visible) spriteBatch.Draw(sprite, pozice, vyslednaTextura, Color.Snow, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
-            if (exploduje) spriteBatch.Draw(sprite, drawRectangle, vyslednaTexturaExploze, Color.White);
+            pozice = drawRectangle.Location.ToVector2() + new Vector2(posun, posun);
+            if (visible)
+                spriteBatch.Draw(sprite, pozice, vyslednaTextura, Color.Snow, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+            
+            if (exploduje)
+                spriteBatch.Draw(sprite, drawRectangle, vyslednaTexturaExploze, Color.White);
         }
 
-        internal void DrawPlusOkrajove(SpriteBatch spriteBatch)
+        public void DrawPlusOkrajove(SpriteBatch spriteBatch)
         {
             if (visible)
             {
                 if (animated)
                 {
-                    pozice = (drawRectangle.Location.ToVector2());
+                    pozice = drawRectangle.Location.ToVector2();
                     //spriteBatch.Draw(sprite, null, drawRectangle, vyslednaTextura, origin, rotace, null, Color.Black);
                     spriteBatch.Draw(sprite, pozice, vyslednaTextura, Color.Black, rotace, origin, 1f, SpriteEffects.None, 0);
                 }
@@ -404,15 +436,15 @@ namespace Mojehra
             }
         }
 
-        internal void DrawJednoduse(SpriteBatch spriteBatch)
+        public void DrawJednoduse(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(sprite, drawRectangle, Color.White);
         }
 
-        internal void DrawSlozite(SpriteBatch sb, float otaceni, float scale)
+        public void DrawSlozite(SpriteBatch sb, float otaceni, float scale)
         {
-            sb.Draw(sprite, drawRectangle.Location.ToVector2(), minaPozice, barvaDlazdice, otaceni, origin, scale, SpriteEffects.None, 1);
+             sb.Draw(sprite, drawRectangle.Location.ToVector2(), minaPozice, barvaDlazdice, otaceni, origin, scale, SpriteEffects.None, 1);
         }
-        #endregion
+#endregion
     }
 }
