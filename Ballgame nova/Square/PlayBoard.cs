@@ -18,6 +18,7 @@ namespace Square
         private static Color[] barvaH;
         public static List<Tile> tiles;
         public static List<Tile> tilesVnitrni;
+        public static int sloupcu, radku;
 
         public static void Init(ushort tileSize, List<Tile> tiles, List<Tile> tilesVnitrni, ushort windowHeight, ushort windowWidth)
         {
@@ -26,6 +27,8 @@ namespace Square
             barvaH = new Color[borderThick * (windowWidth - borderThick * 2)];
             PlayBoard.tiles = tiles;
             PlayBoard.tilesVnitrni = tilesVnitrni;
+            sloupcu = windowWidth / tileSize;
+            radku = windowHeight / tileSize;
         }
 
         public static void VybarviOkraje(GraphicsDeviceManager graphics, Rectangle oknoHry, Color barvaVOkraje, Color barvaHOkraje)

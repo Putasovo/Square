@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 
-namespace Mojehra
+namespace Prototyp
 {
     public class Animation
     {
-        List<AnimationFrame> frames = new List<AnimationFrame>();
-        TimeSpan timeIntoAnimation;
+        private readonly List<AnimationFrame> frames = new List<AnimationFrame>();
+        private TimeSpan timeIntoAnimation;
+
         public Rectangle CurrentRectangle
         {
             get
@@ -17,7 +18,7 @@ namespace Mojehra
 
                 // See if we can find the frame
                 TimeSpan accumulatedTime = TimeSpan.Zero;
-                foreach (var frame in frames)
+                foreach (AnimationFrame frame in frames)
                 {
                     if (accumulatedTime + frame.Duration >= timeIntoAnimation)
                     {
@@ -50,12 +51,12 @@ namespace Mojehra
             }
         }
 
-        TimeSpan Duration
+        private TimeSpan Duration
         {
             get
             {
                 double totalSeconds = 0;
-                foreach (var frame in frames)
+                foreach (AnimationFrame frame in frames)
                 {
                     totalSeconds += frame.Duration.TotalSeconds;
                 }
@@ -66,7 +67,7 @@ namespace Mojehra
 
         public void AddFrame(Rectangle rectangle, TimeSpan duration)
         {
-            AnimationFrame newFrame = new AnimationFrame()
+            var newFrame = new AnimationFrame()
             {
                 SourceRectangle = rectangle,
                 Duration = duration
@@ -79,7 +80,6 @@ namespace Mojehra
         {
             double secondsIntoAnimation =
                 timeIntoAnimation.TotalSeconds + gameTime.ElapsedGameTime.TotalSeconds;
-
 
             double remainder = secondsIntoAnimation % Duration.TotalSeconds;
 

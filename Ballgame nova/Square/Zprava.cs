@@ -17,7 +17,7 @@ namespace Square
 
         public Zprava(Vector2 poloha, string text, Color barva, int trvaniZpravy, bool vpyj, bool odpyj, SpriteFont font)
         {
-            souradnice = poloha; zprava = text; this.font = font; trvani = trvaniZpravy; this.barva = barva;
+            souradnice = poloha; zprava = text; this.font = font; this.barva = barva; trvani = trvaniZpravy;
             this.vpyj = vpyj; this.odpyj = odpyj;
         }
 

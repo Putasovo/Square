@@ -1,14 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Android.OS;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using System;
 using Microsoft.Xna.Framework.Input.Touch;
-using System.IO;
-using System.IO.IsolatedStorage;
-using Android.OS;
 using Square;
 
 namespace MojehraDroid
@@ -19,14 +17,15 @@ namespace MojehraDroid
     public class Hlavni : Game
     {
         private static Vibrator vibrator;
-        private TouchCollection doteky;
         private GamePadState pad;
+        private TouchCollection doteky;
+        private static ushort maxDotyku;
 
         private bool debug = false; 
         private readonly bool soft = false; // software renderer
         private readonly bool easy = true; private readonly bool hard = false;
         private bool paused, pauseKeyDown, pauseKeyDownThisFrame, chciPausu, pausedByUser, pristeUzNekreslim;
-        static readonly Random rand = new Random();
+        private static readonly Random rand = new Random();
 
         private static Stavy gameState;
         private Stavy staryState;
@@ -35,7 +34,7 @@ namespace MojehraDroid
         private float casMilisekund, scaleOpening = 0;
         private bool sudyTik = true;
         private readonly GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private SpriteBatch spriteBatch;
         private const ushort tileSize = 32;
         private const ushort windowWidth = tileSize * 15;
         private const ushort windowWidthProOvladani = windowWidth - 1;
@@ -47,10 +46,11 @@ namespace MojehraDroid
         //ResolutionRenderer RendererOfRealResolution;
         private Matrix scaleMatrix = Matrix.Identity;
 
-        private SplashScreen splashScreen;
-        private static Hrobecek hrob; private static Texture2D hrobSprite;
-        private static Texture2D square64; //, snow;
         // private Pozadi pozadi;
+        private SplashScreen splashScreen;
+        private static Hrobecek hrob; 
+        private static Texture2D hrobSprite;
+        private static Texture2D square64; //, snow;
 
         private readonly bool sound = true;
         private readonly bool music = true;
@@ -58,15 +58,13 @@ namespace MojehraDroid
         private readonly List<string> skladby = new List<string>(8);
         private static Song levelwon, menu, stara, intro;
         private static SoundEffect sezrani, respawnball;
-        private static SoundEffect quake, zpomalit; SoundEffectInstance zemetres;
-        private static SoundEffect ton1, odraz, kolize;//SoundEffectInstance rachot;
+        private static SoundEffect quake, zpomalit; 
+        private SoundEffectInstance zemetres;
+        private static SoundEffect ton1, odraz, kolize; // SoundEffectInstance rachot;
         private static SoundEffectInstance ton2, ton3, instanceOdrazu;
-        // private static bool hrajOdraz;
 
         private static Texture2D openingScreen;
         private static Vector2 stred;
-
-        private static ushort maxDotyku;
 
         private ushort waitFrames = 0; 
         private uint krokIntra;
@@ -76,7 +74,6 @@ namespace MojehraDroid
         private Vector2 balLoc; 
         private static Vector2 ballVelocity;
         private static Texture2D ballSprite;
-        public static List<Rectangle> hitboxyKouli = new List<Rectangle>();
         private static readonly List<Ball> balls = new List<Ball>(8);
         private static readonly List<Ball> ballsUtocne = new List<Ball>(4);
         private static readonly List<Ball> ballsAll = new List<Ball>(16);
@@ -189,7 +186,6 @@ namespace MojehraDroid
                 if (!ball.cinna)
                 {
                     ball.Obzivni();
-                    respawnball.Play();
                     break;
                 }
             }
@@ -201,7 +197,6 @@ namespace MojehraDroid
                     if (!ball.cinna)
                     {
                         ball.Obzivni();
-                        respawnball.Play();
                         break;
                     }
                 }
@@ -266,16 +261,6 @@ namespace MojehraDroid
                 tiles[index + columns * vzdalenost].Zborit(true);
                 foreach (Ball ball in ballsAll) if (tiles[index + columns * vzdalenost].drawRectangle.Intersects(ball.rect)) ball.Zasazen();
             }
-        }
-
-        internal static void HrajOdraz()
-        {
-            if (instanceOdrazu.State == SoundState.Stopped) //stejne prekracuju limit at omezuju jak chci
-            {
-                instanceOdrazu.Pitch = 0;
-                instanceOdrazu.Play();
-            }
-            else if (instanceOdrazu.Pitch < .99f) instanceOdrazu.Pitch += .03f;
         }
 
         /// <summary>
@@ -467,13 +452,13 @@ namespace MojehraDroid
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (IsActive)//je okno videt?
+            if (IsActive) // je okno videt?
             {
-                if (waitFrames > 0) waitFrames -= 1;
+                if (waitFrames > 0) 
+                    waitFrames -= 1;
                 else
                 {
                     ModulujAlfu(gameTime.ElapsedGameTime.TotalSeconds);
-
                     pad = GamePad.GetState(PlayerIndex.One);
                     CheckPauseKey(pad);
 
@@ -624,7 +609,7 @@ namespace MojehraDroid
                             tile.Update(gameTime);
                         }
                         #endregion tiles
-                        //if (hrajOdraz) HrajOdraz();
+                        // if (hrajOdraz) HrajOdraz();
 
                         base.Update(gameTime);
                     }
@@ -707,7 +692,8 @@ namespace MojehraDroid
                             tile.DrawZemetreseni(spriteBatch, random);
                         }
                     }
-                    else if (!uroven.bludiste) ZkontrolujVitezstvi();
+                    else if (!uroven.bludiste) 
+                        ZkontrolujVitezstvi();
                 }
 
                 if (gameState == Stavy.Menu)
@@ -717,17 +703,16 @@ namespace MojehraDroid
                     if (scaleOpening <= 1) scaleOpening += .0083f;
                     Vector2 poloha = new Vector2(oknoHry.Center.X + tileSize - colorAmount*100, oknoHry.Center.Y);
                     float rotace = colorAmount*.6f - .2f;
-                    float scale = ((float)oknoHry.Height/69);
+                    float scale = ((float)oknoHry.Height / 69);
                     Vector2 stredOtaceni = new Vector2(32, 32);
 
                     spriteBatch.Draw(ballSprite, new Vector2(300, oknoHry.Height / 2), new Rectangle(0, 0, 32, 32), new Color(160,60,60,177),
-                        mujcas, new Vector2(60, oknoHry.Height/2), 1.7f, SpriteEffects.None, 1);
-                    spriteBatch.Draw(square64, poloha, new Rectangle(0,0,64,64), Color.White,
+                        mujcas, new Vector2(60, oknoHry.Height / 2), 1.7f, SpriteEffects.None, 1);
+                    spriteBatch.Draw(square64, poloha, new Rectangle(0, 0, 64, 64), Color.White,
                         rotace, stredOtaceni, scale, SpriteEffects.None, 1);
-                    spriteBatch.Draw( openingScreen, new Vector2(oknoHry.Center.X - scaleOpening * oknoHry.Center.X,
+                    spriteBatch.Draw(openingScreen, new Vector2(oknoHry.Center.X - scaleOpening * oknoHry.Center.X,
                          oknoHry.Center.Y - scaleOpening / .8f * oknoHry.Center.Y),
-                         openingScreen.Bounds, Color.White, 0f, Vector2.Zero, scaleOpening, SpriteEffects.None, 1
-                    );
+                         openingScreen.Bounds, Color.White, 0f, Vector2.Zero, scaleOpening, SpriteEffects.None, 1);
 
                     if (Storage.SaveGameExists)
                     {
@@ -762,14 +747,15 @@ namespace MojehraDroid
             }
 
             #region drawing texts
-            foreach (Zprava zprava in Texty) zprava.Draw(spriteBatch);
+            foreach (Zprava zprava in Texty) 
+                zprava.Draw(spriteBatch);
 
             if (debug)
             {
                 Vector2 poziceRadky = debugTextLocation;
                 for (i = 0; i < debugText.Count; i++)
                 {
-                    if ( debugText[i] != null )
+                    if (debugText[i] != null)
                     {
                         string text = debugText[i];
                         spriteBatch.DrawString(font12, text, poziceRadky, Color.Cyan);
@@ -829,8 +815,10 @@ namespace MojehraDroid
             else if (colorAmount <= 0 && preklop == true)
                 preklop = false;
 
-            if (preklop == false) { colorAmount += deltaSeconds; }
-            else { colorAmount -= deltaSeconds; }
+            if (preklop == false) 
+                colorAmount += deltaSeconds;
+            else 
+                colorAmount -= deltaSeconds;
         }
 
         private Point Dotek(TouchCollection touchCollection)
@@ -898,12 +886,13 @@ namespace MojehraDroid
                 //{ borderV.Offset(1, 0); }
                 //else { borderV.Width -= 1; }
 
-                if (letiZrovnaText) PosliTextSectiSkore();
+                if (letiZrovnaText) 
+                    PosliTextSectiSkore();
                 else
                 {
                     if (skore > 0)
                     {
-                        if (waitFrames%4 == 0)
+                        if (waitFrames % 4 == 0)
                         {
                             skore--; skoreString = skore.ToString();
                             Storage.SkoreTotal++;
@@ -1088,7 +1077,8 @@ namespace MojehraDroid
 
             player = new Hrac(true, 4, tileSize, -tileSize * 10, rows * tileSize / 2 - tileSize / 2, windowWidth, windowHeight, hracsprite);
             player.NastavTexturu(new Rectangle(0, 0, tileSize, tileSize));
-            sloupcuAnimace = ++columns;
+            sloupcuAnimace = columns;
+            sloupcuAnimace++;
             BuildTiles(sloupcuAnimace, rows, tileSize);
             foreach (Tile tile in tiles)
             {
@@ -1288,7 +1278,7 @@ namespace MojehraDroid
                 else balLoc.Y = Y;
 
                 balls.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, false, false, false, false, uroven.bludiste, kolize));
+                    rigid, false, false, false, false, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
 
@@ -1345,7 +1335,7 @@ namespace MojehraDroid
                 }
             }
             ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, leva, prava, nahoru, dolu, uroven.bludiste, kolize));
+                    rigid, leva, prava, nahoru, dolu, uroven.bludiste, respawnball, kolize, odraz));
         }
 
         private void SpawnBallDown()
@@ -1358,7 +1348,7 @@ namespace MojehraDroid
             if (nalezena != uroven.numUtocnychBallsDown)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, false, false, false, true, uroven.bludiste, kolize));
+                    rigid, false, false, false, true, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
 
@@ -1372,7 +1362,7 @@ namespace MojehraDroid
             if (nalezena != uroven.numUtocnychBallsUp)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, false, true, false, false, uroven.bludiste, kolize));
+                    rigid, false, true, false, false, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
 
@@ -1386,7 +1376,7 @@ namespace MojehraDroid
             if (nalezena != uroven.numUtocnychBallsRight)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, false, false, true, false, uroven.bludiste, kolize));
+                    rigid, false, false, true, false, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
 
@@ -1400,7 +1390,7 @@ namespace MojehraDroid
             if (nalezena < uroven.numUtocnychBallsLeft)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, true, false, false, false, uroven.bludiste, kolize));
+                    rigid, true, false, false, false, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
 
@@ -2029,7 +2019,7 @@ namespace MojehraDroid
             return false;
         }
 
-        private bool ZjistiKoliziPoleKoule()
+        private static bool ZjistiKoliziPoleKoule()
         {
             foreach (Tile tile in tilesVnitrni) //!!! bude vic prazdnych prostoru
             {

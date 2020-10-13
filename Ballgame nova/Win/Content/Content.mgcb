@@ -98,6 +98,12 @@
 /processorParam:Quality=Best
 /build:audio/odraz.wav
 
+#begin audio/ozivKouli.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:audio/ozivKouli.wav
+
 #begin audio/ton1.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

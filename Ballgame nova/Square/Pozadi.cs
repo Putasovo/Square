@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,28 +7,22 @@ namespace Square
 {
     public class Pozadi
     {
-        #region Fields
-        // drawing support
-        private Texture2D sprite;
-        private ushort windowWidth, windowHeight, rows, columns, sirkaStrany, vyskaStrany;
-        private Point puvodni;
+        private const float scale = 1F;
+        private readonly Texture2D sprite;
         private Vector2 pohyb, presnaPoloha;
-        System.Collections.Generic.List<Tile> tilesPozadi = new System.Collections.Generic.List<Tile>();
-        private ushort pocetDlazdicPozadi;
+        private readonly List<Tile> tilesPozadi = new List<Tile>();
         private short cilovyX, cilovyY, stareX, stareY, rozdil;
         private bool doleva, nahoru, rotujici;
-        private float otaceni, hustotaVodorovne, scale;
-        private Color barvaSnehu = new Color(255, 255, 255, 11);
-        #endregion
+        private float otaceni, hustotaVodorovne;
+        private readonly Color barvaSnehu = new Color(255, 255, 255, 11);
+        private readonly ushort rows, columns, sirkaStrany, vyskaStrany;
 
         public Pozadi(Texture2D textura, ushort width, ushort height, Vector2 motion, float rotace = 0f,
             bool nastridacku = false, bool stridatNepravidelne = false, float hustotaVodorovne = 1)
         {
-            puvodni = new Point(0, 0);
             sprite = textura;
             vyskaStrany = (ushort)sprite.Height;
             sirkaStrany = (ushort)sprite.Width;
-            windowWidth = width; windowHeight = height;
             columns = (ushort)(width / sirkaStrany);
             rows = (ushort)(height / vyskaStrany);
             Vydlazdickuj(nastridacku, stridatNepravidelne);
@@ -39,7 +34,6 @@ namespace Square
             }
             if (rotace == 0f) rotujici = false;
             else rotujici = true;
-            scale = 1f;
             this.hustotaVodorovne = hustotaVodorovne;
         }
 
@@ -131,6 +125,7 @@ namespace Square
                 tile.DrawSlozite(sb, otaceni, 1f);
             }
         }
+
         private void Vydlazdickuj(bool nastridacku, bool nepravidelne)
         {
             for (short i = -1; i <= rows; i++)
@@ -140,8 +135,11 @@ namespace Square
                     var location = new Vector2(j * sirkaStrany, i * vyskaStrany);
                     if (nastridacku)
                     {
-                        if (i % 2 == 0) location.X += sirkaStrany / 2;
-                        if (nepravidelne) if (j % 2 != 0) location.Y += vyskaStrany / 2;
+                        if (i % 2 == 0) 
+                            location.X += sirkaStrany / 2;
+                        if (nepravidelne) 
+                            if (j % 2 != 0)
+                                location.Y += vyskaStrany / 2;
                     }
                     bool naokraji = false;
                     ///if ((location.X == 0||location.X == windowWidth) || (location.Y == 0||location.Y == windowHeight))
@@ -160,7 +158,6 @@ namespace Square
                     //}
                 }
             }
-            pocetDlazdicPozadi = (ushort)tilesPozadi.Count;
         }
 
         internal void NastavSmerPohybu(Vector2 novySmer)

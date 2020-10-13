@@ -1,11 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using System;
-using System.Runtime.InteropServices;
 using Square;
 
 namespace Mojehra
@@ -32,7 +31,7 @@ namespace Mojehra
         private float casMilisekund, scaleOpening = 0;
         private bool sudyTik = true;
         private readonly GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private SpriteBatch spriteBatch;
         private const ushort tileSize = 32;
         private const ushort windowWidth = tileSize * 15;
         private const short suggestedHeight = tileSize * 10; // WindowWidth / borderThick * 20; // 16:10
@@ -43,24 +42,26 @@ namespace Mojehra
         //ResolutionRenderer RendererOfRealResolution;
         private Matrix scaleMatrix = Matrix.Identity;
 
-        private SplashScreen splashScreen;
-        private static Hrobecek hrob; private static Texture2D hrobSprite;
         private Pozadi pozadi;
-        private static Texture2D square64, snow;
+        private SplashScreen splashScreen;
+        private static Hrobecek hrob; 
+        private static Texture2D hrobSprite;
+        private static Texture2D square64; //, snow;
 
         private readonly bool sound = true;
         private readonly bool music = true;
         private readonly MediaQueue musicFronta = new MediaQueue();
         private readonly List<string> skladby = new List<string>();        
         private static Song levelwon, menu, stara, intro;
-        private static SoundEffect sezrani;
-        private static SoundEffect quake, zpomalit; SoundEffectInstance zemetres;
+        private static SoundEffect sezrani, respawnball;
+        private static SoundEffect quake, zpomalit;
+        private SoundEffectInstance zemetres;
         private static SoundEffect ton1, odraz, kolize; // SoundEffectInstance rachot;
         private static SoundEffectInstance ton2, ton3, instanceOdrazu;
-        private static bool hrajOdraz;
 
         private static Texture2D openingScreen;
         private static Vector2 stred;
+
         private ushort waitFrames = 0; 
         private uint krokIntra; 
         private float trvaniAnimacky;
@@ -68,8 +69,7 @@ namespace Mojehra
         private short numBalls, numAttackBalls;
         private Vector2 balLoc;
         private static Vector2 ballVelocity;
-        private static Texture2D ballSprite;
-        public static List<Rectangle> hitboxyKouli = new List<Rectangle>();
+        private static Texture2D ballSprite;        
         private static readonly List<Ball> balls = new List<Ball>();
         private static readonly List<Ball> ballsUtocne = new List<Ball>();
         private static readonly List<Ball> ballsAll = new List<Ball>();
@@ -114,7 +114,7 @@ namespace Mojehra
         private short mAlphaValue = 1, mFadeIncrement = 3;
         private double mFadeDelay = .035;
 
-        private float _colorAmount;
+        private float colorAmount;
         private bool preklop;
 
         private Hrac player;
@@ -227,16 +227,6 @@ namespace Mojehra
             graphics.IsFullScreen = false;
             //graphics.PreferredBackBufferWidth = 800;
             //graphics.PreferredBackBufferHeight = 480;
-        }
-
-        internal static void HrajOdraz()
-        {
-            if (instanceOdrazu.State == SoundState.Stopped) //stejne prekracuju limit at omezuju jak chci
-            {
-                instanceOdrazu.Pitch = 0;
-                instanceOdrazu.Play();
-            }
-            else if (instanceOdrazu.Pitch < .99f) instanceOdrazu.Pitch += .03f;
         }
 
         /// <summary>
@@ -392,7 +382,6 @@ namespace Mojehra
             //ton2 = Content.Load<SoundEffect>(@"audio/ton2");
             odraz = Content.Load<SoundEffect>(@"audio/odraz");
             instanceOdrazu = odraz.CreateInstance();
-            //winSound = Content.Load<SoundEffect>(@"audio/applause");
             kolize = Content.Load<SoundEffect>(@"audio/lost");
             sezrani = Content.Load<SoundEffect>(@"audio/lost2");
             //zvukKolizeKouli = Content.Load<SoundEffect>(@"audio/explosion");
@@ -400,6 +389,7 @@ namespace Mojehra
             //rachot.Volume = .3f;
             quake = Content.Load<SoundEffect>(@"audio/zemetreseni");
             zpomalit = Content.Load<SoundEffect>(@"audio/zpomalit");
+            respawnball = Content.Load<SoundEffect>(@"audio/ozivKouli");
             zemetres = quake.CreateInstance();
         }
 
@@ -430,11 +420,13 @@ namespace Mojehra
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (IsActive)//je okno videt?
+            if (IsActive) // je okno videt?
             {
-                if (waitFrames > 0) waitFrames -= 1;
+                if (waitFrames > 0) 
+                    waitFrames -= 1;
                 else
                 {
+                    ModulujAlfu(gameTime.ElapsedGameTime.TotalSeconds);
                     keys = Keyboard.GetState(); mouse = Mouse.GetState();
                     pad = GamePad.GetState(PlayerIndex.One);
                     if (pad.Buttons.Back == ButtonState.Pressed || keys.IsKeyDown(Keys.Escape))
@@ -589,7 +581,7 @@ namespace Mojehra
                             tile.Update(gameTime);
                         }
                         #endregion tiles
-                        if (hrajOdraz) HrajOdraz();
+                        // if (hrajOdraz) HrajOdraz();
 
                         base.Update(gameTime);
                     }
@@ -606,7 +598,7 @@ namespace Mojehra
             //RendererOfRealResolution.Draw(); RendererOfRealResolution.SetupFullViewport();
             //background color
             MenBarvuPozadi(gameTime);
-            GraphicsDevice.Clear(Color.Lerp(Barvy.prvniBarva, Barvy.druhaBarva, _colorAmount));
+            GraphicsDevice.Clear(Color.Lerp(Barvy.prvniBarva, Barvy.druhaBarva, colorAmount));
 
             if (gameState == Stavy.Vitez)
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, scaleMatrix);
@@ -673,7 +665,8 @@ namespace Mojehra
                             tile.DrawZemetreseni(spriteBatch, random);
                         }
                     }
-                    else if (!uroven.bludiste) ZkontrolujVitezstvi();
+                    else if (!uroven.bludiste) 
+                        ZkontrolujVitezstvi();
                 }
 
                 if (gameState == Stavy.Menu)
@@ -681,8 +674,8 @@ namespace Mojehra
                     casMilisekund += gameTime.ElapsedGameTime.Milliseconds;
                     float mujcas = casMilisekund / 777;
                     if (scaleOpening <= 1) scaleOpening += .0083f;
-                    Vector2 poloha = new Vector2(oknoHry.Center.X + tileSize - _colorAmount * 100, oknoHry.Center.Y);
-                    float rotace = _colorAmount * .6f - .2f;
+                    Vector2 poloha = new Vector2(oknoHry.Center.X + tileSize - colorAmount * 100, oknoHry.Center.Y);
+                    float rotace = colorAmount * .6f - .2f;
                     float scale = ((float)oknoHry.Height / 69);
                     Vector2 stredOtaceni = new Vector2(32, 32);
 
@@ -692,8 +685,7 @@ namespace Mojehra
                         rotace, stredOtaceni, scale, SpriteEffects.None, 1);
                     spriteBatch.Draw(openingScreen, new Vector2(oknoHry.Center.X - scaleOpening * oknoHry.Center.X,
                          oknoHry.Center.Y - scaleOpening / .8f * oknoHry.Center.Y),
-                         openingScreen.Bounds, Color.White, 0f, Vector2.Zero, scaleOpening, SpriteEffects.None, 1
-                    );
+                         openingScreen.Bounds, Color.White, 0f, Vector2.Zero, scaleOpening, SpriteEffects.None, 1);
 
                     if (Storage.SaveGameExists)
                     {
@@ -706,13 +698,8 @@ namespace Mojehra
                     if (casMilisekund > 22000 && casMilisekund < 22033)
                         NapisVelkouZpravu14("Press Enter to play", 14000, -9999, -9999, true, true, Color.Red);
                 }
-
-                //else
-                //{
-                //deska.Draw(spriteBatch);
-                //}
-
             }
+
             if (gameState != Stavy.Pause)
             {
                 foreach (Ball ball in balls)
@@ -733,7 +720,8 @@ namespace Mojehra
             }
 
             #region drawing texts
-            foreach (Zprava zprava in Texty) zprava.Draw(spriteBatch);
+            foreach (Zprava zprava in Texty) 
+                zprava.Draw(spriteBatch);
 
             if (debug)
             {
@@ -793,14 +781,17 @@ namespace Mojehra
         private void MenBarvuPozadi(GameTime gameTime)
         {
             deltaSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (gameState != Stavy.Vitez) deltaSeconds /= 4;
-            if (_colorAmount >= 1.0f)
+            if (gameState != Stavy.Vitez) 
+                deltaSeconds /= 4;
+            if (colorAmount >= 1.0f)
                 preklop = true;
-            else if (_colorAmount <= 0 && preklop == true)
+            else if (colorAmount <= 0 && preklop == true)
                 preklop = false;
 
-            if (preklop == false) { _colorAmount += deltaSeconds; }
-            else { _colorAmount -= deltaSeconds; }
+            if (preklop == false) 
+                colorAmount += deltaSeconds;
+            else 
+                colorAmount -= deltaSeconds;
         }
 
         private Point Dotek(MouseState mouse)
@@ -846,7 +837,8 @@ namespace Mojehra
                     MediaPlayer.Play(levelwon);
                 }
 
-                if (letiZrovnaText) PosliTextSectiSkore();
+                if (letiZrovnaText) 
+                    PosliTextSectiSkore();
                 else
                 {
                     if (skore > 0)
@@ -861,6 +853,7 @@ namespace Mojehra
                     else if (keys.IsKeyDown(Keys.Enter))
                     {
                         uroven.ZvedniUroven();
+                        Storage.SaveGame(uroven);
                         PustUroven();
                     }
                 }
@@ -889,10 +882,10 @@ namespace Mojehra
                                     Storage.LoadGame();
                                     if (Storage.SaveGameExists)
                                     {
-                                        skoreTotalString = Storage.SkoreTotal.ToString();
-                                        uroven.NastavLevel(Storage.MaxLevel);
-                                        ZacniNovouEpizodu();
+                                        skoreTotalString = Storage.SkoreTotal.ToString();                                        
                                         uroven.NastavEpisodu(Storage.MaxEpisoda);
+                                        ZacniNovouEpizodu();
+                                        uroven.NastavLevel(Storage.MaxLevel);
                                         PustUroven();
                                     }
                                     else
@@ -946,13 +939,16 @@ namespace Mojehra
                             {
                                 foreach (Tile tile in tilesMenuOptions)
                                 {
-                                    if (tile.cilova && tile.drawRectangle.Y == posuvnikSound.Y) tile.OznacJakoCilovou(false);
+                                    if (tile.cilova && tile.drawRectangle.Y == posuvnikSound.Y) 
+                                        tile.OznacJakoCilovou(false);
+
                                     if (tile.drawRectangle.Contains(klik))
                                     {
                                         tile.OznacJakoCilovou(true);
                                         Storage.VolumeSound = (float)(tile.drawRectangle.X / tileSize - 2) / 10;
                                     }
                                 }
+
                                 SoundEffect.MasterVolume = Storage.VolumeSound;
                                 ton1.Play();
                                 pristeUzNekreslim = false;
@@ -961,7 +957,9 @@ namespace Mojehra
                             {
                                 foreach (Tile tile in tilesMenuOptions)
                                 {
-                                    if (tile.cilova && tile.drawRectangle.Y == posuvnikMusic.Y) tile.OznacJakoCilovou(false);
+                                    if (tile.cilova && tile.drawRectangle.Y == posuvnikMusic.Y) 
+                                        tile.OznacJakoCilovou(false);
+
                                     if (tile.drawRectangle.Contains(klik))
                                     {
                                         tile.OznacJakoCilovou(true);
@@ -1007,7 +1005,7 @@ namespace Mojehra
                     }
                 }
             }
-            else //hraje intro
+            else // hraje intro
             {
                 if (mouse.LeftButton == ButtonState.Pressed || keys.IsKeyDown(Keys.Enter)) 
                     trvaniAnimacky -= 1;
@@ -1030,7 +1028,8 @@ namespace Mojehra
 
             player = new Hrac(true, 4, tileSize, -tileSize * 10, rows * tileSize / 2 - tileSize / 2, windowWidth, windowHeight, hracsprite);
             player.NastavTexturu(new Rectangle(0, 0, tileSize, tileSize));
-            sloupcuAnimace = ++columns;
+            sloupcuAnimace = columns;
+            sloupcuAnimace++;
             BuildTiles(sloupcuAnimace, rows, tileSize);
             foreach (Tile tile in tiles)
             {
@@ -1057,7 +1056,6 @@ namespace Mojehra
             }
             gameState = Stavy.Animace;
             trvaniAnimacky = 21.2f;
-            //MediaPlayer.Pause();
             Barvy.prvniBarva = new Color(100, 0, 100, 0);
             Barvy.druhaBarva = new Color(0, 24, 0, 0);
             MediaPlayer.Play(intro = Content.Load<Song>(@"audio/intro"));
@@ -1093,7 +1091,7 @@ namespace Mojehra
                     }
                 }
                 if (player.hracovo.X < windowWidth - tileSize * 1.5) 
-                    player.hracovo.X += 1;
+                    player.hracovo.X++;
 
                 foreach (Ball ball in balls)
                 {
@@ -1231,7 +1229,7 @@ namespace Mojehra
                 }
                 else balLoc.Y = Y;
                 balls.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, false, false, false, false, uroven.bludiste, kolize));
+                    rigid, false, false, false, false, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
         private void SpawnBallsUtocne(int X = -1, int Y = -1)
@@ -1293,7 +1291,7 @@ namespace Mojehra
                 }
             }
             ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, leva, prava, nahoru, dolu, uroven.bludiste, kolize));
+                    rigid, leva, prava, nahoru, dolu, uroven.bludiste, respawnball, kolize, odraz));
         }
         private void SpawnBallDown()
         {
@@ -1305,7 +1303,7 @@ namespace Mojehra
             if (nalezena != uroven.numUtocnychBallsDown)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, false, false, false, true, uroven.bludiste, kolize));
+                    rigid, false, false, false, true, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
         private void SpawnBallUp()
@@ -1318,7 +1316,7 @@ namespace Mojehra
             if (nalezena != uroven.numUtocnychBallsUp)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, false, true, false, false, uroven.bludiste, kolize));
+                    rigid, false, true, false, false, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
         private void SpawnBallRight()
@@ -1331,7 +1329,7 @@ namespace Mojehra
             if (nalezena != uroven.numUtocnychBallsRight)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, false, false, true, false, uroven.bludiste, kolize));
+                    rigid, false, false, true, false, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
         private void SpawnBallLeft()
@@ -1344,7 +1342,7 @@ namespace Mojehra
             if (nalezena < uroven.numUtocnychBallsLeft)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
-                    rigid, true, false, false, false, uroven.bludiste, kolize));
+                    rigid, true, false, false, false, uroven.bludiste, respawnball, kolize, odraz));
             }
         }
 
@@ -1953,7 +1951,7 @@ namespace Mojehra
             return false;
         }
 
-        private bool ZjistiKoliziPoleKoule()
+        private static bool ZjistiKoliziPoleKoule()
         {
             foreach (Tile tile in tilesVnitrni) //!!! bude vic prazdnych prostoru
             {

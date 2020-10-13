@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Mojehra
+namespace Prototyp
 {
     public class AnimationFrame
     {

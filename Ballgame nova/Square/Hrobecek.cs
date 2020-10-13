@@ -51,7 +51,8 @@ namespace Square
 
         public void Draw(SpriteBatch sb)
         {
-            if (active) sb.Draw(sprite, rect, vyslednaBarva);
+            if (active) 
+                sb.Draw(sprite, rect, vyslednaBarva);
         }
     }
 }
