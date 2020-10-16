@@ -1,29 +1,31 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Square;
 using System;
 
 namespace Mojehra
 {
     public class Hrac
     {
-        private int xSpeed, ySpeed;
-        private Point souradnice;
-        internal bool alive;
         private bool animovan;
         private Vector2 scale, stredOtaceni, pozice;
         private float rotace; 
         private ushort kroku, celkemKroku;
         private readonly ushort maxX, maxY;
         private readonly ushort sloupcu;
+        private int xSpeed, ySpeed;
         private readonly ushort speed;
         private readonly short krok, pulkrok;
         private bool pohybVlevo, pohybVpravo, pohybNahoru, pohybDolu;
+
+        internal bool alive;
         public bool prepocistSkore;
-        public bool vpoli = false, namiste = true, svislyVyjezd;
+        public bool vpoli = false, namiste, svislyVyjezd;
         public bool zleva, zhora, zprava, zdola;
         public int vychoziX, vychoziY;
         private int predesleX, predesleY;
+        private Point souradnice;
         private static int pulsirky, pulvysky;
         private int vysledek, vysledekX, vysledekY;
         internal int indexDlazdice;
@@ -76,9 +78,9 @@ namespace Mojehra
                     {
                         souradnice.X = novasouradnice.X < maxX + krok ? novasouradnice.X : maxX; // osekat kdyz jde klikat mimo plochu
                         souradnice.Y = novasouradnice.Y < maxY + krok ? novasouradnice.Y : maxY;
-                        Hlavni.tiles[indexCiloveDlazdice].Odvyrazni();
+                        PlayBoard.tiles[indexCiloveDlazdice].Odvyrazni();
                         indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * Hlavni.columns);
-                        Hlavni.tiles[indexCiloveDlazdice].Zvyrazni();
+                        PlayBoard.tiles[indexCiloveDlazdice].Zvyrazni();
                         //souradnice.X = UrovnejSouradnici((int)souradnice.X);//bez castu nemuzu zkouset modulo                        
                     }
                     UrciKamJet(souradnice);
@@ -118,7 +120,7 @@ namespace Mojehra
                         pohybDolu = true; pohybVlevo = false; pohybVpravo = false; pohybNahoru = false;
                     }
 
-                    Hlavni.tiles[indexDlazdice].OznacitJakoProjetou(true); //projeta = true
+                    PlayBoard.tiles[indexDlazdice].OznacitJakoProjetou(true); //projeta = true
                 }
                 else
                 {
@@ -142,7 +144,7 @@ namespace Mojehra
                     namiste = true;
                     predesleX = hracovo.X; predesleY = hracovo.Y;
                     ZpracujZvlastniDlazdice();
-                    if (Hlavni.tiles[indexDlazdice].cilova) prepocistSkore = true;
+                    if (PlayBoard.tiles[indexDlazdice].cilova) prepocistSkore = true;
                     else if (novaSouradnice != Point.Zero && souradnice != novaSouradnice)
                     {
                         souradnice = novaSouradnice;
@@ -157,16 +159,16 @@ namespace Mojehra
         private void ZpracujZvlastniDlazdice()
         {
             indexDlazdice = hracovo.X / krok + (hracovo.Y / krok * Hlavni.columns); //na jake dlazdici je
-            if (Hlavni.tiles[indexDlazdice].zpomalovaci)
+            if (PlayBoard.tiles[indexDlazdice].zpomalovaci)
             {
                 Hlavni.NastavRychlostKouli(.6f);
-                Hlavni.tiles[indexDlazdice].NastavZpomalovac(false);
+                PlayBoard.tiles[indexDlazdice].NastavZpomalovac(false);
             }
-            else if (Hlavni.tiles[indexDlazdice].mina)
+            else if (PlayBoard.tiles[indexDlazdice].mina)
             {
                 Hlavni.PripravZemetreseni(indexDlazdice);
             }
-            // else if (Hlavni.tiles[indexDlazdice].ozivovaci)
+            // else if (PlayBoard.tiles[indexDlazdice].ozivovaci)
             // {
             //    Hlavni.OzivKouli(indexDlazdice);
             // }
@@ -174,13 +176,13 @@ namespace Mojehra
 
         private void ZpracujCestu()
         {
-            Hlavni.tiles[indexDlazdice].OznacitJakoProjetou(true);
-            if (!vpoli && (!Hlavni.tiles[indexDlazdice].plna && !Hlavni.tiles[indexDlazdice].okrajova)) //dostal se na volnou dlazdici
+            PlayBoard.tiles[indexDlazdice].OznacitJakoProjetou(true);
+            if (!vpoli && (!PlayBoard.tiles[indexDlazdice].plna && !PlayBoard.tiles[indexDlazdice].okrajova)) //dostal se na volnou dlazdici
             {
                 vpoli = true;
                 Vyputoval();
             }
-            else if (vpoli && (Hlavni.tiles[indexDlazdice].plna || Hlavni.tiles[indexDlazdice].okrajova)) //navrat do bezpeci
+            else if (vpoli && (PlayBoard.tiles[indexDlazdice].plna || PlayBoard.tiles[indexDlazdice].okrajova)) //navrat do bezpeci
             {
                 vpoli = false;
                 prepocistSkore = true;
@@ -199,7 +201,7 @@ namespace Mojehra
             if (pohybVlevo && hracovo.X > 0)
             {
                 indexPristiDlazdice = indexDlazdice - 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     hracovo.X -= speed; souradniceVysledneTextury = doleva;
                 }
@@ -209,7 +211,7 @@ namespace Mojehra
             else if (pohybVpravo && hracovo.X < maxX)
             {
                 indexPristiDlazdice = indexDlazdice + 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     hracovo.X += speed; souradniceVysledneTextury = doprava;
                 }
@@ -219,7 +221,7 @@ namespace Mojehra
             else if (pohybNahoru && hracovo.Y > 0 && hracovo.Y > 0)
             {
                 indexPristiDlazdice = indexDlazdice - sloupcu - 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     hracovo.Y -= speed; souradniceVysledneTextury = nahoru;
                 }
@@ -228,7 +230,7 @@ namespace Mojehra
             else if (pohybDolu && hracovo.Y < maxY)
             {
                 indexPristiDlazdice = indexDlazdice + sloupcu + 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     hracovo.Y += speed; souradniceVysledneTextury = dolu;
                 }
@@ -246,7 +248,7 @@ namespace Mojehra
             if (souradnice.Y < hracovo.Y)
             {
                 indexPristiDlazdice = indexDlazdice - sloupcu - 1;
-                if (indexPristiDlazdice > 0 && Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (indexPristiDlazdice > 0 && PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     pohybNahoru = true;
                     if (zleva) pohybVlevo = false;
@@ -257,7 +259,7 @@ namespace Mojehra
             else if (souradnice.Y > hracovo.Bottom)
             {
                 indexPristiDlazdice = indexDlazdice + sloupcu + 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     pohybDolu = true;
                     if (zleva) pohybVlevo = false;

@@ -1,12 +1,12 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Square;
 
 namespace MojehraDroid
 {
     internal class Hrac
     {
-        internal bool alive;
         private bool animovan;
         private Vector2 scale, stredOtaceni, pozice;
         private float rotace; 
@@ -16,6 +16,8 @@ namespace MojehraDroid
         private readonly ushort speed;
         private readonly short krok, pulkrok;
         private bool pohybVlevo, pohybVpravo, pohybNahoru, pohybDolu;
+
+        internal bool alive;
         internal bool prepocistSkore;
         internal bool vpoli = false, namiste, svislyVyjezd;
         internal bool zleva, zhora, zprava, zdola;
@@ -74,9 +76,9 @@ namespace MojehraDroid
                     if (novasouradnice != Point.Zero && souradnice != novasouradnice)
                     {
                         souradnice = novasouradnice;
-                        Hlavni.tiles[indexCiloveDlazdice].Odvyrazni();
+                        PlayBoard.tiles[indexCiloveDlazdice].Odvyrazni();
                         indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * Hlavni.columns);                        
-                        Hlavni.tiles[indexCiloveDlazdice].Zvyrazni();
+                        PlayBoard.tiles[indexCiloveDlazdice].Zvyrazni();
                         //souradnice.X = UrovnejSouradnici((int)souradnice.X);//bez castu nemuzu zkouset modulo                        
                     }
                     UrciKamJet(souradnice);
@@ -97,7 +99,7 @@ namespace MojehraDroid
                     namiste = true;
                     predesleX = hracovo.X; predesleY = hracovo.Y;
                     ZpracujZvlastniDlazdice();
-                    if (Hlavni.tiles[indexDlazdice].cilova) 
+                    if (PlayBoard.tiles[indexDlazdice].cilova) 
                         prepocistSkore = true;
                     else if (novaSouradnice != Point.Zero && souradnice != novaSouradnice)
                         souradnice = novaSouradnice;
@@ -111,13 +113,13 @@ namespace MojehraDroid
 
         private void ZpracujCestu()
         {
-            Hlavni.tiles[indexDlazdice].OznacitJakoProjetou(true);
-            if (!vpoli && (!Hlavni.tiles[indexDlazdice].plna && !Hlavni.tiles[indexDlazdice].okrajova)) //dostal se na volnou dlazdici
+            PlayBoard.tiles[indexDlazdice].OznacitJakoProjetou(true);
+            if (!vpoli && (!PlayBoard.tiles[indexDlazdice].plna && !PlayBoard.tiles[indexDlazdice].okrajova)) //dostal se na volnou dlazdici
             {
                 vpoli = true;
                 Vyputoval();
             }
-            else if (vpoli && (Hlavni.tiles[indexDlazdice].plna || Hlavni.tiles[indexDlazdice].okrajova)) //navrat do bezpeci
+            else if (vpoli && (PlayBoard.tiles[indexDlazdice].plna || PlayBoard.tiles[indexDlazdice].okrajova)) //navrat do bezpeci
             {
                 vpoli = false;
                 prepocistSkore = true;
@@ -127,16 +129,16 @@ namespace MojehraDroid
         private void ZpracujZvlastniDlazdice()
         {
             indexDlazdice = hracovo.X / krok + (hracovo.Y / krok * Hlavni.columns); //na jake dlazdici je
-            if (Hlavni.tiles[indexDlazdice].zpomalovaci)
+            if (PlayBoard.tiles[indexDlazdice].zpomalovaci)
             {
                 Hlavni.NastavRychlostKouli(.6f);
-                Hlavni.tiles[indexDlazdice].NastavZpomalovac(false);
+                PlayBoard.tiles[indexDlazdice].NastavZpomalovac(false);
             }
-            else if (Hlavni.tiles[indexDlazdice].mina)
+            else if (PlayBoard.tiles[indexDlazdice].mina)
             {
                 Hlavni.PripravZemetreseni(indexDlazdice);
             }
-            else if (Hlavni.tiles[indexDlazdice].ozivovaci)
+            else if (PlayBoard.tiles[indexDlazdice].ozivovaci)
             {
                 Hlavni.OzivKouli(indexDlazdice);
             }
@@ -154,7 +156,7 @@ namespace MojehraDroid
             if (pohybVlevo && hracovo.X > 0)
             {
                 indexPristiDlazdice = indexDlazdice - 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     hracovo.X -= speed; souradniceVysledneTextury = doleva;
                 }
@@ -164,7 +166,7 @@ namespace MojehraDroid
             else if (pohybVpravo && hracovo.X < maxX)
             {
                 indexPristiDlazdice = indexDlazdice + 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     hracovo.X += speed; souradniceVysledneTextury = doprava;
                 }
@@ -174,7 +176,7 @@ namespace MojehraDroid
             else if (pohybNahoru && hracovo.Y > 0 && hracovo.Y > 0)
             {
                 indexPristiDlazdice = indexDlazdice - sloupcu - 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 { 
                     hracovo.Y -= speed; souradniceVysledneTextury = nahoru;
                 }
@@ -183,7 +185,7 @@ namespace MojehraDroid
             else if (pohybDolu && hracovo.Y < maxY)
             {
                 indexPristiDlazdice = indexDlazdice + sloupcu + 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 { 
                     hracovo.Y += speed; souradniceVysledneTextury = dolu;
                 }
@@ -201,7 +203,7 @@ namespace MojehraDroid
             if (souradnice.Y < hracovo.Y)
             {
                 indexPristiDlazdice = indexDlazdice - sloupcu - 1;
-                if (indexPristiDlazdice > 0 && Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (indexPristiDlazdice > 0 && PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     pohybNahoru = true;
                     if (zleva) pohybVlevo = false;
@@ -212,7 +214,7 @@ namespace MojehraDroid
             else if (souradnice.Y > hracovo.Bottom)
             {
                 indexPristiDlazdice = indexDlazdice + sloupcu + 1;
-                if (Hlavni.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
                 {
                     pohybDolu = true;
                     if (zleva) pohybVlevo = false;

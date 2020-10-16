@@ -95,8 +95,8 @@ namespace MojehraDroid
         private static Texture2D tileSprite, explozeSprite;
         private static Texture2D tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite;
         private readonly List<Tile> druheRadyTiles = new List<Tile>(128);
-        public static List<Tile> tiles = new List<Tile>(151);
-        public static List<Tile> tilesVnitrni = new List<Tile>(105);
+        private static readonly List<Tile> tiles = new List<Tile>(151);
+        private static readonly List<Tile> tilesVnitrni = new List<Tile>(105);
 
         private static readonly List<Tile> tilesMenu = new List<Tile>(151);
         private static readonly List<Tile> tilesMenuVnitrni = new List<Tile>(105);
