@@ -458,7 +458,6 @@ namespace Mojehra
                             if (zemetres.State == SoundState.Stopped) zemetres.Play();
                         }
 
-                        // if playing, update controller state and update board
                         if (gameState == Stavy.Play)
                         {
                             if (!uroven.bludiste)
@@ -468,23 +467,23 @@ namespace Mojehra
                                     if (!player.vpoli) 
                                         SpawnBalls();
 
-                                    //player.Update(keys); //povoli ovladani hrace
+                                    // player.Update(keys); // povoli ovladani hrace
                                     player.UpdateMouse(Dotek(mouse));
                                 }
-                                else player.UpdateMouse(Point.Zero);
-                                //else player.Update(Point.Zero);
+                                else 
+                                    player.UpdateMouse(Point.Zero);
+
                                 if (uroven.performanceTest)
                                 {
-                                    skoreString = gameTime.ElapsedGameTime.Milliseconds.ToString();
+                                    skoreString = $"{gameTime.ElapsedGameTime.Milliseconds}";
                                     if (player.hracovo.X > stred.X) 
                                         Zvitezit();
                                 }
                             }
-
                             else
                             {
                                 if (player.alive && player.namiste) 
-                                    player.UpdateBludiste(Dotek(mouse)); //player.UpdateBludiste(keys);
+                                    player.UpdateBludiste(Dotek(mouse)); // player.UpdateBludiste(keys);
                                 else
                                     player.UpdateBludiste(Point.Zero);
 
@@ -503,6 +502,7 @@ namespace Mojehra
                                 if (player.prepocistSkore)
                                 {
                                     TotalSkore();
+                                    player.prepocistSkore = false;
                                 }
                                 else
                                 {
@@ -511,7 +511,7 @@ namespace Mojehra
                                         if (hrob.Obsah > 0)
                                         {
                                             skore += hrob.Obsah;
-                                            PosliLeticiSkore(hrob.Obsah.ToString(), player.hracovo.Location, 60);
+                                            PosliLeticiSkore($"{hrob.Obsah}", player.hracovo.Location, 60);
                                             ton3.Play();
                                         }
                                         else
@@ -524,17 +524,20 @@ namespace Mojehra
                                     {
                                         if (monstrum.obdelnik.Intersects(player.hracovo))
                                         {
-                                            if (sound) sezrani.Play();
+                                            if (sound) 
+                                                sezrani.Play();
                                             Umri();
                                         }
-                                        else monstrum.Update();
+                                        else 
+                                            monstrum.Update();
                                     }
                                 }
                             }
 
                             #region balls
-                            if (delkaAnimaceHrace > 0) delkaAnimaceHrace -= 1;
-                            else //žije
+                            if (delkaAnimaceHrace > 0) 
+                                delkaAnimaceHrace -= 1;
+                            else // žije
                             {
                                 foreach (Ball ball in ballsUtocne)
                                 {
@@ -544,9 +547,9 @@ namespace Mojehra
                                 {
                                     ball.Update(gameTime.ElapsedGameTime.Milliseconds);
                                 }
-                                //if (rachot.State != SoundState.Playing)
+                                // if (rachot.State != SoundState.Playing)
                                 {
-                                    //if (debug) { int i = balls.Count;int j = hitboxyKouli.Count; if (j != i) { throw new SystemException("blbe pocitam koule"); }  }
+                                    // if (debug) { int i = balls.Count;int j = hitboxyKouli.Count; if (j != i) { throw new SystemException("blbe pocitam koule"); }  }
                                     if (zivoty > 0)
                                     {
                                         ZjistiNarazDoCesty();
@@ -568,21 +571,19 @@ namespace Mojehra
                                     //}
                                 }
                             }
+                            #endregion
                         }
-                        #endregion
                         else if (gameState == Stavy.Animace)
                         {
                             HrajIntro(gameTime.ElapsedGameTime);
                         }
 
-                        #region tiles
                         foreach (Tile tile in tiles) //pro animace
                         {
                             tile.Update(gameTime);
                         }
-                        #endregion tiles
-                        // if (hrajOdraz) HrajOdraz();
 
+                        // if (hrajOdraz) HrajOdraz();
                         base.Update(gameTime);
                     }
                 }
@@ -595,8 +596,7 @@ namespace Mojehra
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            //RendererOfRealResolution.Draw(); RendererOfRealResolution.SetupFullViewport();
-            //background color
+            //RendererOfRealResolution.Draw(); RendererOfRealResolution.SetupFullViewport();            
             MenBarvuPozadi(gameTime);
             GraphicsDevice.Clear(Color.Lerp(Barvy.prvniBarva, Barvy.druhaBarva, colorAmount));
 
@@ -605,11 +605,11 @@ namespace Mojehra
             else
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, scaleMatrix);
 
-            if (pozadi != null) 
-                pozadi.DrawBezRotace(spriteBatch);
+            // if (pozadi != null) pozadi.DrawBezRotace(spriteBatch);
 
             foreach (Rectangle okraj in PlayBoard.okrajeV)
             {
+                Console.WriteLine(okraj.Location);
                 spriteBatch.Draw(PlayBoard.texOkrajeV, okraj, Color.White);
             }
             foreach (Rectangle okraj in PlayBoard.okrajeH)
@@ -1015,16 +1015,19 @@ namespace Mojehra
         private void Intro()
         {
             Texty.Clear();
-            waitFrames = 1; animovatDlazdici = false; videtDlazdici = false;
+            waitFrames = 1;
+            animovatDlazdici = false; videtDlazdici = false;
+
             barvaVanim = new Color[oknoHry.Height * tileSize * 2];
             PlayBoard.texOkrajeV = new Texture2D(graphics.GraphicsDevice, tileSize * 2, oknoHry.Height);
-            // PlayBoard.okrajeV = new Rectangle(oknoHry.Width, 0, tileSize * 2, oknoHry.Height);
-            PlayBoard.okrajeV.Add(new Rectangle(oknoHry.Width, 0, tileSize * 2, oknoHry.Height));
-            // Set the texture data with our color information.
+            PlayBoard.BorderVanim = new Rectangle(oknoHry.Width, 0, tileSize * 2, oknoHry.Height);
+            
             for (int i = 0; i < barvaVanim.Length; ++i) 
                 barvaVanim[i] = Color.Green;
-
+            
             PlayBoard.texOkrajeV.SetData(barvaVanim);
+            PlayBoard.okrajeV.Clear();
+            PlayBoard.okrajeV.Add(PlayBoard.BorderVanim);
 
             player = new Hrac(true, 4, tileSize, -tileSize * 10, rows * tileSize / 2 - tileSize / 2, windowWidth, windowHeight, hracsprite);
             player.NastavTexturu(new Rectangle(0, 0, tileSize, tileSize));
@@ -1054,6 +1057,7 @@ namespace Mojehra
                 ball.NastavPolohu(new Vector2(-tileSize * (9 + j), stred.Y - tileSize / 2));
                 j++;
             }
+
             gameState = Stavy.Animace;
             trvaniAnimacky = 21.2f;
             Barvy.prvniBarva = new Color(100, 0, 100, 0);
@@ -1071,23 +1075,23 @@ namespace Mojehra
             {
                 trvaniAnimacky -= (float)elapsedTime.Milliseconds / 1000;
 
-                if (PlayBoard.borderVanim.X != cilovyXokraje)
+                if (PlayBoard.BorderVanim.X != cilovyXokraje)
                 {
                     if (krokIntra < cyklus)
                     {
+                        krokIntra++;
                         foreach (Tile tile in tiles)
                         {
                             tile.drawRectangle.X -= 2;
                         }
-                        krokIntra++;
                     }
                     else
                     {
+                        krokIntra = 0;
                         foreach (Tile tile in tiles)
                         {
                             tile.drawRectangle.X += tileSize;
                         }
-                        krokIntra = 0;
                     }
                 }
                 if (player.hracovo.X < windowWidth - tileSize * 1.5) 
@@ -1104,15 +1108,18 @@ namespace Mojehra
                         elapsedTime.Milliseconds,
                         (short)(oknoHry.Width - tileSize * 3),
                         (short)(oknoHry.Height - tileSize),
-                        -9999, (short)tileSize);
+                        -9999,
+                        (short)tileSize);
                 }
 
                 if (trvaniAnimacky < 7)
                 {
-                    if (PlayBoard.borderVanim.X > cilovyXokraje)
-                        PlayBoard.borderVanim.X -= 2;
-                    PlayBoard.okrajeV.Clear();
-                    PlayBoard.okrajeV.Add(PlayBoard.borderVanim);
+                    if (PlayBoard.BorderVanim.X > cilovyXokraje)
+                    {
+                        PlayBoard.BorderVanim = PlayBoard.okrajeV[0];
+                        PlayBoard.BorderVanim.X -= 2;
+                        PlayBoard.okrajeV[0] = PlayBoard.BorderVanim;
+                    }                    
                 }
 
                 if (trvaniAnimacky < 19 && trvaniAnimacky > 18.9)

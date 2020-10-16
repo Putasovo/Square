@@ -90,6 +90,12 @@
     <OutputPath>bin\mujdroid\</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Mighty Square Win.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Hlavni.cs" />
@@ -155,6 +161,7 @@
     <None Include="Content\PressStart2P12.spritefont" />
     <None Include="Content\PressStart2P14.spritefont" />
     <None Include="Content\PressStart2P20.spritefont" />
+    <None Include="Mighty Square Win.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

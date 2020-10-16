@@ -10,12 +10,13 @@ namespace MojehraDroid
         , Icon = "@drawable/icon"
         , Theme = "@style/Theme.Splash"
         , AlwaysRetainTaskState = true
-        , LaunchMode = Android.Content.PM.LaunchMode.SingleInstance
-        , ScreenOrientation = ScreenOrientation.SensorLandscape
+        , LaunchMode =          LaunchMode.SingleInstance
+        , ScreenOrientation =   ScreenOrientation.SensorLandscape
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden | ConfigChanges.ScreenSize)]
     public class Activity1 : Microsoft.Xna.Framework.AndroidGameActivity
     {
-        Hlavni game;
+        private Hlavni game;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -51,11 +52,13 @@ namespace MojehraDroid
         // nezabira mi
         private class MyUiVisibilityChangeListener : Java.Lang.Object, View.IOnSystemUiVisibilityChangeListener
         {
-            View targetView;
+            private View targetView;
+            
             public MyUiVisibilityChangeListener(View v)
             {
                 targetView = v;
             }
+
             public void OnSystemUiVisibilityChange(StatusBarVisibility v)
             {
                 if (targetView.SystemUiVisibility != ((StatusBarVisibility)SystemUiFlags.HideNavigation

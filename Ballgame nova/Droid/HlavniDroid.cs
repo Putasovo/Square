@@ -495,18 +495,22 @@ namespace MojehraDroid
 
                                     player.Update(Dotek(doteky)); // povoli ovladani hrace
                                 }
-                                else player.Update(Point.Zero);
+                                else 
+                                    player.Update(Point.Zero);
 
                                 if (uroven.performanceTest)
                                 {
-                                    skoreString = gameTime.ElapsedGameTime.Milliseconds.ToString();
+                                    skoreString = $"{gameTime.ElapsedGameTime.Milliseconds}";
                                     if (player.hracovo.X > stred.X) Zvitezit();
                                 }
                             }
                             else
                             {
-                                if (player.alive && player.namiste) player.UpdateBludiste(Dotek(doteky));
-                                else player.UpdateBludiste(Point.Zero);
+                                if (player.alive && player.namiste) 
+                                    player.UpdateBludiste(Dotek(doteky));
+                                else 
+                                    player.UpdateBludiste(Point.Zero);
+
                                 foreach (Ball ball in balls)
                                 {
                                     if (ball.cinna && ball.rect.Intersects(player.hracovo))
@@ -515,15 +519,9 @@ namespace MojehraDroid
                                     }
                                 }
                             }
-                            //bool guessed = (deska.Update(gameTime, mouse));
-                            // Increment 5: check for correct guess
-                            //if (guessed)
-                            //{
-                            //    winSound.Play();
-                            //    if (Dotek(doteky) != Vector2.Zero) StartGame();
-                            //}
 
-                            if (letiZrovnaText) PosliTextSectiSkore();
+                            if (letiZrovnaText) 
+                                PosliTextSectiSkore();
 
                             if (player.alive)
                             {
@@ -539,7 +537,7 @@ namespace MojehraDroid
                                         if (hrob.Obsah > 0)
                                         {
                                             skore += hrob.Obsah;
-                                            PosliLeticiSkore(hrob.Obsah.ToString(), player.hracovo.Location, 60);
+                                            PosliLeticiSkore($"{hrob.Obsah}", player.hracovo.Location, 60);
                                             ton3.Play();
                                         }
                                         else
@@ -552,17 +550,20 @@ namespace MojehraDroid
                                     {
                                         if (monstrum.obdelnik.Intersects(player.hracovo))
                                         {
-                                            if (sound) sezrani.Play();
+                                            if (sound) 
+                                                sezrani.Play();
                                             Umri();
                                         }
-                                        else monstrum.Update();
+                                        else 
+                                            monstrum.Update();
                                     }
                                 }
                             }
 
                             #region balls
-                            if (delkaAnimaceHrace > 0) delkaAnimaceHrace -= 1;
-                            else //žije
+                            if (delkaAnimaceHrace > 0) 
+                                delkaAnimaceHrace -= 1;
+                            else // žije
                             {
                                 foreach (Ball ball in ballsUtocne)
                                 {
@@ -572,9 +573,9 @@ namespace MojehraDroid
                                 {
                                     ball.Update(gameTime.ElapsedGameTime.Milliseconds);
                                 }
-                                //if (rachot.State != SoundState.Playing)
+                                // if (rachot.State != SoundState.Playing)
                                 {
-                                    //if (debug) { int i = balls.Count;int j = hitboxyKouli.Count; if (j != i) { throw new SystemException("blbe pocitam koule"); }  }
+                                    // if (debug) { int i = balls.Count;int j = hitboxyKouli.Count; if (j != i) { throw new SystemException("blbe pocitam koule"); }  }
                                     if (zivoty > 0)
                                     {
                                         ZjistiNarazDoCesty();
@@ -596,21 +597,19 @@ namespace MojehraDroid
                                     //}
                                 }
                             }
+                            #endregion
                         }
-                        #endregion
                         else if (gameState == Stavy.Animace)
                         {
                             HrajIntro(gameTime.ElapsedGameTime);
                         }
 
-                        #region tiles
                         foreach (Tile tile in tiles) //pro animace
                         {
                             tile.Update(gameTime);
                         }
-                        #endregion tiles
-                        // if (hrajOdraz) HrajOdraz();
 
+                        // if (hrajOdraz) HrajOdraz();
                         base.Update(gameTime);
                     }
                 }
@@ -624,7 +623,6 @@ namespace MojehraDroid
         protected override void Draw(GameTime gameTime)
         {
             //RendererOfRealResolution.Draw(); RendererOfRealResolution.SetupFullViewport();
-            //background color
             MenBarvuPozadi(gameTime);
             GraphicsDevice.Clear(Color.Lerp(Barvy.prvniBarva, Barvy.druhaBarva, colorAmount));
 
@@ -1064,16 +1062,19 @@ namespace MojehraDroid
         private void Intro()
         {
             Texty.Clear();
-            waitFrames = 1; animovatDlazdici = false; videtDlazdici = false;
+            waitFrames = 1;
+            animovatDlazdici = false; videtDlazdici = false;
+
             barvaVanim = new Color[oknoHry.Height * tileSize * 2];
             PlayBoard.texOkrajeV = new Texture2D(graphics.GraphicsDevice, tileSize * 2, oknoHry.Height);
-            // PlayBoard.borderVanim = new Rectangle(oknoHry.Width, 0, tileSize * 2, oknoHry.Height);
-            PlayBoard.okrajeV.Add(new Rectangle(oknoHry.Width, 0, tileSize * 2, oknoHry.Height));
-            // Set the texture data with our color information.
+            PlayBoard.BorderVanim = new Rectangle(oknoHry.Width, 0, tileSize * 2, oknoHry.Height);
+
             for (int i = 0; i < barvaVanim.Length; ++i)
                 barvaVanim[i] = Color.Green;
 
             PlayBoard.texOkrajeV.SetData(barvaVanim);
+            PlayBoard.okrajeV.Clear();
+            PlayBoard.okrajeV.Add(PlayBoard.BorderVanim);
 
             player = new Hrac(true, 4, tileSize, -tileSize * 10, rows * tileSize / 2 - tileSize / 2, windowWidth, windowHeight, hracsprite);
             player.NastavTexturu(new Rectangle(0, 0, tileSize, tileSize));
@@ -1120,7 +1121,7 @@ namespace MojehraDroid
             {
                 trvaniAnimacky -= (float)elapsedTime.Milliseconds / 1000;
 
-                if (PlayBoard.borderVanim.X != cilovyXokraje)
+                if (PlayBoard.BorderVanim.X != cilovyXokraje)
                 {
                     if (krokIntra < cyklus)
                     {
@@ -1158,10 +1159,9 @@ namespace MojehraDroid
 
                 if (trvaniAnimacky < 7)
                 {
-                    if (PlayBoard.borderVanim.X > cilovyXokraje)
-                        PlayBoard.borderVanim.X -= 2;
-                    PlayBoard.okrajeV.Clear();
-                    PlayBoard.okrajeV.Add(PlayBoard.borderVanim);
+                    PlayBoard.BorderVanim = PlayBoard.okrajeV[0];
+                    PlayBoard.BorderVanim.X -= 2;
+                    PlayBoard.okrajeV[0] = PlayBoard.BorderVanim;
                 }
 
                 if (trvaniAnimacky < 19 && trvaniAnimacky > 18.9)
