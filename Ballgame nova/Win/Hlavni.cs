@@ -32,7 +32,7 @@ namespace Mojehra
         private bool sudyTik = true;
         private readonly GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private const ushort tileSize = 32;
+        private const short tileSize = 32;
         private const ushort windowWidth = tileSize * 15;
         private const short suggestedHeight = tileSize * 10; // WindowWidth / borderThick * 20; // 16:10
         private readonly ushort windowHeight = suggestedHeight / tileSize * tileSize;
@@ -1388,7 +1388,7 @@ namespace Mojehra
             }
         }
 
-        protected void BuildTiles(ushort columns, ushort rows, ushort Tilesize)
+        protected void BuildTiles(ushort columns, ushort rows, short Tilesize)
         {
             tiles.Clear(); tilesVnitrni.Clear();
             Vector2 velocity = new Vector2(0, 0);

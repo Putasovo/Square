@@ -35,7 +35,7 @@ namespace MojehraDroid
         private bool sudyTik = true;
         private readonly GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private const ushort tileSize = 32;
+        private const short tileSize = 32;
         private const ushort windowWidth = tileSize * 15;
         private const ushort windowWidthProOvladani = windowWidth - 1;
         private const short suggestedHeight = tileSize * 10; // WindowWidth / borderThick * 20; // 16:10
@@ -1154,7 +1154,8 @@ namespace MojehraDroid
                         elapsedTime.Milliseconds,
                         (short)(oknoHry.Width - tileSize * 3),
                         (short)(oknoHry.Height - tileSize),
-                        -9999, (short)tileSize);
+                        -9999,
+                        (short)tileSize);
                 }
 
                 if (trvaniAnimacky < 7)
@@ -1438,7 +1439,7 @@ namespace MojehraDroid
             }
         }
 
-        protected void BuildTiles(ushort columns, ushort rows, ushort Tilesize)
+        protected void BuildTiles(ushort columns, ushort rows, short Tilesize)
         {
             tiles.Clear(); tilesVnitrni.Clear();
             Vector2 velocity = Vector2.Zero;

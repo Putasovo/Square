@@ -12,9 +12,9 @@ namespace MojehraDroid
         private float rotace; 
         private ushort kroku, celkemKroku;
         private readonly ushort maxX, maxY;
-        private readonly ushort radku, sloupcu;
+        private readonly ushort sloupcu;
         private readonly ushort speed;
-        private readonly ushort krok, pulkrok;
+        private readonly short krok, pulkrok;
         private bool pohybVlevo, pohybVpravo, pohybNahoru, pohybDolu;
         internal bool prepocistSkore;
         internal bool vpoli = false, namiste, svislyVyjezd;
@@ -33,13 +33,13 @@ namespace MojehraDroid
         private static Rectangle stoji, doprava, doleva, nahoru, dolu, strach, mrtvy;
         internal Rectangle hracovo = new Rectangle(0, 0, 32, 32);
 
-        internal Hrac(bool zije, ushort rychlost, ushort dimenze, int X, int Y, int fieldWidth, int fieldHeight,
+        internal Hrac(bool zije, ushort rychlost, short dimenze, int X, int Y, int fieldWidth, int fieldHeight,
             Texture2D sprite)
         {
             alive = zije;
             speed = rychlost; 
             krok = dimenze;
-            pulkrok = (ushort)(krok/2);
+            pulkrok = (short)(krok/2);
             hracovo = new Rectangle(X, Y, krok, krok);
             stoji = new Rectangle(0, krok, krok, krok); 
             strach = new Rectangle(krok, krok, krok, krok);
@@ -51,7 +51,6 @@ namespace MojehraDroid
             souradnice = new Point(hracovo.X, hracovo.Y);
             maxX = (ushort)(fieldWidth - dimenze);
             maxY = (ushort)(fieldHeight - dimenze);
-            radku = (ushort)(maxY / krok);
             sloupcu = (ushort)(maxX / krok);
             pulsirky = fieldWidth / 2;
             pulvysky = fieldHeight / 2;

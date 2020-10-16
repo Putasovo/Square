@@ -16,7 +16,7 @@ namespace Square
         private readonly ushort maxX, maxY;
         private ushort i=5;
 
-        public Monster(ushort length, ushort speed, Rectangle position, Texture2D texture, bool direction, ushort maxX, ushort maxY)
+        public Monster(short length, ushort speed, Rectangle position, Texture2D texture, bool direction, ushort maxX, ushort maxY)
         {
             rychlost = speed;
             obdelnik = position; 

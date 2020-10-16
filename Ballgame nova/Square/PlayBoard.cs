@@ -12,7 +12,7 @@ namespace Square
         private static Color[] barvaH;
         private static Rectangle borderV; // Rectangle borderH;
         public static Rectangle BorderVanim;
-        private static ushort borderSize;   
+        private static short borderSize;   
         public static readonly List<Rectangle> okrajeH = new List<Rectangle>(2);
         public static readonly List<Rectangle> okrajeV = new List<Rectangle>(2);        
         public static Texture2D texOkrajeH, texOkrajeV;        
@@ -20,7 +20,7 @@ namespace Square
         public static List<Tile> tilesVnitrni;
         public static int sloupcu;
 
-        public static void Init(ushort tileSize, List<Tile> tiles, List<Tile> tilesVnitrni, ushort windowHeight, ushort windowWidth)
+        public static void Init(short tileSize, List<Tile> tiles, List<Tile> tilesVnitrni, ushort windowHeight, ushort windowWidth)
         {
             borderSize = tileSize;
             barvaV = new Color[windowHeight * borderSize];
