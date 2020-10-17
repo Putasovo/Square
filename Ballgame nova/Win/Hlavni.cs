@@ -2275,11 +2275,5 @@ namespace Mojehra
                 Intro();
             }
         }
-
-        private void PostavPozadi(string textura, Vector2 pohyb, bool vodorovnaHustota, bool stridat = false)
-        {
-            Texture2D texture = Content.Load<Texture2D>(@"gfx/" + textura);
-            pozadi = new Pozadi(texture, windowWidth, windowHeight, pohyb, 0f, stridat, vodorovnaHustota);
-        }
     }
 }

@@ -26,15 +26,17 @@ namespace Square
             columns = (ushort)(width / sirkaStrany);
             rows = (ushort)(height / vyskaStrany);
             Vydlazdickuj(nastridacku, stridatNepravidelne);
-            pohyb = motion;
+            pohyb = motion;            
             PripravPohyb();
+            this.hustotaVodorovne = hustotaVodorovne;
             if (rotace != 0)
             {
                 otaceni = rotace; rotujici = true; // ale nezvladam nastavovat stred otaceni
             }
-            if (rotace == 0f) rotujici = false;
-            else rotujici = true;
-            this.hustotaVodorovne = hustotaVodorovne;
+            if (rotace == 0f)
+                rotujici = false;
+            else
+                rotujici = true;            
         }
 
         private void PripravPohyb()
@@ -63,7 +65,8 @@ namespace Square
 
         public void Update()
         {
-            if (rotujici) otaceni += .02f; //v radianech
+            if (rotujici) 
+                otaceni += .02f; //v radianech
             presnaPoloha += pohyb;
             rozdil = (short)(presnaPoloha.X - stareX);
             if (rozdil != 0)
@@ -80,8 +83,10 @@ namespace Square
                 {
                     foreach (Tile tile in tilesPozadi)
                     {
-                        if (doleva) tile.drawRectangle.X += sirkaStrany;
-                        else tile.drawRectangle.X -= sirkaStrany;
+                        if (doleva) 
+                            tile.drawRectangle.X += sirkaStrany;
+                        else
+                            tile.drawRectangle.X -= sirkaStrany;
                     }
                     presnaPoloha.X = stareX = 0;
                 }
@@ -118,7 +123,7 @@ namespace Square
             }
         }
 
-        internal void DrawsRotaci(SpriteBatch sb) //blbne
+        internal void DrawsRotaci(SpriteBatch sb) // blbne
         {
             foreach (Tile tile in tilesPozadi)
             {
