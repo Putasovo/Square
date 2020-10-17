@@ -26,10 +26,10 @@ namespace Square
         
         public float FaktorRychlosti { get; set; } = 0.01f;
         public Rectangle rect = new Rectangle(0, 0, 32, 32);
-        private Rectangle rectBall = new Rectangle(0, 0, 32, 32);
-        private Rectangle rectRed = new Rectangle(32, 0, 32, 32);
-        private Rectangle rectNabijeci = new Rectangle(64, 0, 32, 32);
-        private Rectangle rectZnicena = new Rectangle(96, 0, 32, 32);
+        private static readonly Rectangle rectBall = new Rectangle(0, 0, 32, 32);
+        private static readonly Rectangle rectRed = new Rectangle(32, 0, 32, 32);
+        private static readonly Rectangle rectNabijeci = new Rectangle(64, 0, 32, 32);
+        private static readonly Rectangle rectZnicena = new Rectangle(96, 0, 32, 32);
 
         private Point novaPoloha;
         private Vector2 presnaPoloha;

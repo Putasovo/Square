@@ -82,12 +82,13 @@ namespace MojehraDroid
         private Color[] barvaVanim;
 
         private static SpriteFont font12, font14, font20;
-        private Vector2 debugTextLocation, velkyTextLocation;
+        private Vector2 debugTextLocation;
         private readonly List<Zprava> Texty = new List<Zprava>(2);
         private Color barvaZpravy;
-        private List<string> debugText = new List<string>();
+        private readonly List<string> debugText = new List<string>();
         private readonly string debugvar1, debugvar2, debugPrvniDlazdice, debugKolize;
-        private bool letiZrovnaText; private string leticiText; private ushort snimkuLeticihoTextu; private Vector2 pohybLeticihoTextu, polohaLeticihoTextu;
+        private bool letiZrovnaText; private string leticiText; private ushort snimkuLeticihoTextu; 
+        private Vector2 pohybLeticihoTextu, polohaLeticihoTextu;
         
         private ushort i = 0, plnychDlazdic, okrajovychDlazdic, potrebnychPlnych;
         private static byte zemetreseni; private const byte dobaZemetreseni = 60;
@@ -285,7 +286,6 @@ namespace MojehraDroid
             columns = windowWidth / tileSize;
             rows = (ushort)(windowHeight / tileSize);
             columnsVnitrni = (ushort)(columns - 2);
-            rowsVnitrni = (ushort)(rows - 2);
 
             //graphics.ApplyChanges(); should be called only during update
             //numberOfPixels = graphics.PreferredBackBufferWidth * graphics.PreferredBackBufferHeight;
@@ -643,10 +643,10 @@ namespace MojehraDroid
             {
                 if (!options)
                 {
-                        foreach (Tile tile in tilesMenuVnitrni)
-                        {
-                            tile.Draw(spriteBatch);
-                        }
+                    foreach (Tile tile in tilesMenuVnitrni)
+                    {
+                        tile.Draw(spriteBatch);
+                    }
                 }
                 else foreach(Tile tile in tilesMenuOptions)
                 {
@@ -660,7 +660,7 @@ namespace MojehraDroid
                     tile.DrawPlusOkrajove(spriteBatch);
                 }
             }
-            else //tady se hraje
+            else // tady se hraje
             {
                 if (hrob != null) hrob.Draw(spriteBatch);
 
@@ -752,8 +752,7 @@ namespace MojehraDroid
                 {
                     if (debugText[i] != null)
                     {
-                        string text = debugText[i];
-                        spriteBatch.DrawString(font12, text, poziceRadky, Color.Cyan);
+                        spriteBatch.DrawString(font12, debugText[i], poziceRadky, Color.Cyan);
                         poziceRadky.Y += 22f;
                     }
                 }
@@ -1123,19 +1122,19 @@ namespace MojehraDroid
                 {
                     if (krokIntra < cyklus)
                     {
+                        krokIntra++;
                         foreach (Tile tile in tiles)
                         {
                             tile.drawRectangle.X -= 2;
                         }
-                        krokIntra++;
                     }
                     else
                     {
+                        krokIntra = 0;
                         foreach (Tile tile in tiles)
                         {
                             tile.drawRectangle.X += tileSize;
                         }
-                        krokIntra = 0;
                     }
                 }
                 if (player.hracovo.X < windowWidth - tileSize * 1.5)
@@ -1158,9 +1157,12 @@ namespace MojehraDroid
 
                 if (trvaniAnimacky < 7)
                 {
-                    PlayBoard.BorderVanim = PlayBoard.okrajeV[0];
-                    PlayBoard.BorderVanim.X -= 2;
-                    PlayBoard.okrajeV[0] = PlayBoard.BorderVanim;
+                    if (PlayBoard.BorderVanim.X > cilovyXokraje)
+                    {
+                        PlayBoard.BorderVanim = PlayBoard.okrajeV[0];
+                        PlayBoard.BorderVanim.X -= 2;
+                        PlayBoard.okrajeV[0] = PlayBoard.BorderVanim;
+                    }
                 }
 
                 if (trvaniAnimacky < 19 && trvaniAnimacky > 18.9)
@@ -1478,7 +1480,9 @@ namespace MojehraDroid
         {
             menuBottomLoc = procentaLocation;
             Vector2 velocity = Vector2.Zero;
-            okrajovychDlazdic = 0; int pravyokraj = windowWidth - tileSize; int dolniokraj = windowHeight - tileSize;
+            okrajovychDlazdic = 0;
+            int pravyokraj = windowWidth - tileSize;
+            int dolniokraj = windowHeight - tileSize;
             for (byte i = 0; i < rows; i++)
             {
                 for (ushort j = 0; j < columns; j++)
@@ -1941,7 +1945,8 @@ namespace MojehraDroid
 
         private short VyznacCestuVycistiSpocti()
         {
-            short soucet = 0; i = 0;
+            short soucet = 0; 
+            short i = 0;
             foreach (Tile dlazdice in tilesVnitrni)
             {
                 if (dlazdice.projeta && !dlazdice.plna)

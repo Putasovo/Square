@@ -148,7 +148,6 @@
     <None Include="Content\audio\ton1.wav" />
     <None Include="Content\gfx\monstrum.png" />
     <None Include="Content\gfx\ball.png" />
-    <None Include="Content\gfx\board.png" />
     <None Include="Content\gfx\druha.png" />
     <None Include="Content\gfx\hrac.png" />
     <None Include="Content\gfx\hrob.png" />

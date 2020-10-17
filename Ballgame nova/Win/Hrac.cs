@@ -35,7 +35,7 @@ namespace Mojehra
         private readonly Texture2D spriteHracovo;
         private Rectangle souradniceVysledneTextury;
         private static Rectangle stoji, doprava, doleva, nahoru, dolu, strach, mrtvy;
-        public Rectangle hracovo = new Rectangle(0, 0, 32, 32);
+        public Rectangle hracovo;
 
         internal Hrac(bool zije, ushort rychlost, short dimenze, int X, int Y, int fieldWidth, int fieldHeight, Texture2D sprite)
         {

@@ -18,7 +18,7 @@ namespace Mojehra
         private GamePadState pad;
         private MouseState mouse;
 
-        private readonly bool debug = false; 
+        private readonly bool debug = false;
         private readonly bool soft = false; // software renderer
         private readonly bool easy = true; private readonly bool hard = false;
         private bool paused, pauseKeyDown, pauseKeyDownThisFrame, chciPausu, pausedByUser, pristeUzNekreslim;
@@ -44,14 +44,14 @@ namespace Mojehra
 
         private Pozadi pozadi;
         private SplashScreen splashScreen;
-        private static Hrobecek hrob; 
+        private static Hrobecek hrob;
         private static Texture2D hrobSprite;
         private static Texture2D square64; //, snow;
 
         private readonly bool sound = true;
         private readonly bool music = true;
         private readonly MediaQueue musicFronta = new MediaQueue();
-        private readonly List<string> skladby = new List<string>();        
+        private readonly List<string> skladby = new List<string>();
         private static Song levelwon, menu, stara, intro;
         private static SoundEffect sezrani, respawnball;
         private static SoundEffect quake, zpomalit;
@@ -62,17 +62,17 @@ namespace Mojehra
         private static Texture2D openingScreen;
         private static Vector2 stred;
 
-        private ushort waitFrames = 0; 
-        private uint krokIntra; 
+        private ushort waitFrames = 0;
+        private uint krokIntra;
         private float trvaniAnimacky;
 
         private short numBalls, numAttackBalls;
         private Vector2 balLoc;
         private static Vector2 ballVelocity;
-        private static Texture2D ballSprite;        
-        private static readonly List<Ball> balls = new List<Ball>();
-        private static readonly List<Ball> ballsUtocne = new List<Ball>();
-        private static readonly List<Ball> ballsAll = new List<Ball>();
+        private static Texture2D ballSprite;
+        private static readonly List<Ball> balls = new List<Ball>(8);
+        private static readonly List<Ball> ballsUtocne = new List<Ball>(4);
+        private static readonly List<Ball> ballsAll = new List<Ball>(16);
         private readonly bool rigid = true;
 
         private Color[] barvaVanim;
@@ -81,9 +81,10 @@ namespace Mojehra
         private Vector2 debugTextLocation;
         private readonly List<Zprava> Texty = new List<Zprava>();
         private Color barvaZpravy;
-        private List<string> debugText = new List<string>();
+        private readonly List<string> debugText = new List<string>();
         private string debugvar1, debugvar2, debugPrvniDlazdice, debugKolize;
-        private bool letiZrovnaText; private string leticiText; private ushort snimkuLeticihoTextu; private Vector2 pohybLeticihoTextu, polohaLeticihoTextu;
+        private bool letiZrovnaText; private string leticiText; private ushort snimkuLeticihoTextu;
+        private Vector2 pohybLeticihoTextu, polohaLeticihoTextu;
 
         private ushort i = 0, plnychDlazdic, okrajovychDlazdic, potrebnychPlnych;
         private static byte zemetreseni; private const byte dobaZemetreseni = 60;
@@ -220,7 +221,7 @@ namespace Mojehra
                 debugvar1 = $"HardwareModeSwitch: {graphics.HardwareModeSwitch}";
                 debugvar2 = $"UseDriverType: {GraphicsAdapter.UseDriverType}";
                 debugPrvniDlazdice = string.Empty; debugKolize = string.Empty;
-                debugText.Add(debugvar1); debugText.Add(debugvar2); 
+                debugText.Add(debugvar1); debugText.Add(debugvar2);
                 debugText.Add(debugPrvniDlazdice); debugText.Add(debugKolize);
             }
 
@@ -274,7 +275,7 @@ namespace Mojehra
             //UI
             zivotuLocation = new Vector2(6, 6);
             skoreLocation = new Vector2(windowWidth / 2, 12);
-            skoreTotalLocation = new Vector2(windowWidth - 28, 12);
+            skoreTotalLocation = new Vector2(windowWidth - 68, 12);
             procentaLocation = new Vector2(stred.X, windowHeight - tileSize * .9f);
             debugTextLocation = new Vector2(windowWidth / 11, windowHeight / 11);
 
@@ -331,7 +332,7 @@ namespace Mojehra
 
             if (sound)
             {
-                NahrajZvuky(); 
+                NahrajZvuky();
                 ton1.Play(.4f, 0, 0);
             }
 
@@ -425,7 +426,7 @@ namespace Mojehra
         }
 
         /// zmena okna
-        
+
         protected override void OnActivated(object sender, System.EventArgs args)
         {
             this.Window.Title = "Square it!";
@@ -446,22 +447,16 @@ namespace Mojehra
         {
             if (IsActive) // je okno videt?
             {
-                if (waitFrames > 0) 
+                if (waitFrames > 0)
                     waitFrames -= 1;
                 else
                 {
                     ModulujAlfu(gameTime.ElapsedGameTime.TotalSeconds);
                     keys = Keyboard.GetState(); mouse = Mouse.GetState();
                     pad = GamePad.GetState(PlayerIndex.One);
-                    if (pad.Buttons.Back == ButtonState.Pressed || keys.IsKeyDown(Keys.Escape))
-                    {
-                        if (gameState == Stavy.Menu) 
-                            Exit();
-                        else 
-                            gameState = Stavy.Menu;
-                    }
+                    CheckPauseKey(pad);
 
-                    if (splashScreen.kresliSplash) 
+                    if (splashScreen.kresliSplash)
                         splashScreen.Update();
 
                     if (splashScreen.provedUpdate)
@@ -488,25 +483,25 @@ namespace Mojehra
                             {
                                 if (player.namiste)
                                 {
-                                    if (!player.vpoli) 
+                                    if (!player.vpoli)
                                         SpawnBalls();
 
                                     // player.Update(keys); // povoli ovladani hrace
                                     player.UpdateMouse(Dotek(mouse));
                                 }
-                                else 
+                                else
                                     player.UpdateMouse(Point.Zero);
 
                                 if (uroven.performanceTest)
                                 {
                                     skoreString = $"{gameTime.ElapsedGameTime.Milliseconds}";
-                                    if (player.hracovo.X > stred.X) 
+                                    if (player.hracovo.X > stred.X)
                                         Zvitezit();
                                 }
                             }
                             else
                             {
-                                if (player.alive && player.namiste) 
+                                if (player.alive && player.namiste)
                                     player.UpdateBludiste(Dotek(mouse)); // player.UpdateBludiste(keys);
                                 else
                                     player.UpdateBludiste(Point.Zero);
@@ -518,7 +513,7 @@ namespace Mojehra
                                 }
                             }
 
-                            if (letiZrovnaText) 
+                            if (letiZrovnaText)
                                 PosliTextSectiSkore();
 
                             if (player.alive)
@@ -548,18 +543,18 @@ namespace Mojehra
                                     {
                                         if (monstrum.obdelnik.Intersects(player.hracovo))
                                         {
-                                            if (sound) 
+                                            if (sound)
                                                 sezrani.Play();
                                             Umri();
                                         }
-                                        else 
+                                        else
                                             monstrum.Update();
                                     }
                                 }
                             }
 
                             #region balls
-                            if (delkaAnimaceHrace > 0) 
+                            if (delkaAnimaceHrace > 0)
                                 delkaAnimaceHrace -= 1;
                             else // žije
                             {
@@ -662,7 +657,7 @@ namespace Mojehra
                     tile.DrawPlusOkrajove(spriteBatch);
                 }
             }
-            else //tady se hraje
+            else // tady se hraje
             {
                 if (hrob != null) hrob.Draw(spriteBatch);
 
@@ -689,7 +684,7 @@ namespace Mojehra
                             tile.DrawZemetreseni(spriteBatch, random);
                         }
                     }
-                    else if (!uroven.bludiste) 
+                    else if (!uroven.bludiste)
                         ZkontrolujVitezstvi();
                 }
 
@@ -716,7 +711,7 @@ namespace Mojehra
                         if (casMilisekund > 4044 && casMilisekund < 4077)
                             NapisVelkouZpravu14("Continue?", 22222, -9999, -9999, true, true, Barvy.druhaViteznaBarva);
                     }
-                    else if (casMilisekund > 7000 && casMilisekund < 7040) 
+                    else if (casMilisekund > 7000 && casMilisekund < 7040)
                         NapisVelkouZpravu14("Ready?", 12000, -9999, -9999, true, true, Barvy.druhaViteznaBarva);
 
                     if (casMilisekund > 22000 && casMilisekund < 22033)
@@ -744,7 +739,7 @@ namespace Mojehra
             }
 
             #region drawing texts
-            foreach (Zprava zprava in Texty) 
+            foreach (Zprava zprava in Texty)
                 zprava.Draw(spriteBatch);
 
             if (debug)
@@ -754,8 +749,7 @@ namespace Mojehra
                 {
                     if (debugText[i] != null)
                     {
-                        string text = debugText[i];
-                        spriteBatch.DrawString(font, text, poziceRadky, Color.Cyan);
+                        spriteBatch.DrawString(font, debugText[i], poziceRadky, Color.Cyan);
                         poziceRadky.Y += 22f;
                     }
                 }
@@ -805,16 +799,16 @@ namespace Mojehra
         private void MenBarvuPozadi(GameTime gameTime)
         {
             deltaSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (gameState != Stavy.Vitez) 
+            if (gameState != Stavy.Vitez)
                 deltaSeconds /= 4;
             if (colorAmount >= 1.0f)
                 preklop = true;
             else if (colorAmount <= 0 && preklop == true)
                 preklop = false;
 
-            if (preklop == false) 
+            if (preklop == false)
                 colorAmount += deltaSeconds;
-            else 
+            else
                 colorAmount -= deltaSeconds;
         }
 
@@ -831,9 +825,9 @@ namespace Mojehra
                 }
             }
 
-            if (zadanyKlik != predchoziKlik) 
+            if (zadanyKlik != predchoziKlik)
                 return zadanyKlik.ToPoint();
-             
+
             return Point.Zero;
         }
 
@@ -846,9 +840,9 @@ namespace Mojehra
                     player = null;
                     NapisVelkouZpravu("You lost", 10000);
                     if (kb.IsKeyDown(Keys.Enter))
-                    { 
+                    {
                         staryState = gameState;
-                        gameState = Stavy.Menu; 
+                        gameState = Stavy.Menu;
                     }
                 }
                 else delkaAnimaceHrace--;
@@ -861,7 +855,7 @@ namespace Mojehra
                     MediaPlayer.Play(levelwon);
                 }
 
-                if (letiZrovnaText) 
+                if (letiZrovnaText)
                     PosliTextSectiSkore();
                 else
                 {
@@ -932,15 +926,15 @@ namespace Mojehra
                                 else
                                     NapisVelkouZpravu(Texts.Error__no_fajl, 5555);
                                 waitFrames = 55;
-                                
+
                                 Storage.SaveGame(uroven); Storage.SaveVolumes();
 
                                 Exit();
-                                if (staryState == Stavy.Play) 
+                                if (staryState == Stavy.Play)
                                     gameState = Stavy.Play;
-                                else if (staryState == Stavy.Vitez) 
+                                else if (staryState == Stavy.Vitez)
                                     gameState = Stavy.Vitez;
-                                else 
+                                else
                                     gameState = Stavy.Animace;
                                 //System.Environment.Exit(0);
                             }
@@ -964,7 +958,7 @@ namespace Mojehra
                             {
                                 foreach (Tile tile in tilesMenuOptions)
                                 {
-                                    if (tile.cilova && tile.drawRectangle.Y == posuvnikSound.Y) 
+                                    if (tile.cilova && tile.drawRectangle.Y == posuvnikSound.Y)
                                         tile.OznacJakoCilovou(false);
 
                                     if (tile.drawRectangle.Contains(klik))
@@ -982,7 +976,7 @@ namespace Mojehra
                             {
                                 foreach (Tile tile in tilesMenuOptions)
                                 {
-                                    if (tile.cilova && tile.drawRectangle.Y == posuvnikMusic.Y) 
+                                    if (tile.cilova && tile.drawRectangle.Y == posuvnikMusic.Y)
                                         tile.OznacJakoCilovou(false);
 
                                     if (tile.drawRectangle.Contains(klik))
@@ -1032,7 +1026,7 @@ namespace Mojehra
             }
             else // hraje intro
             {
-                if (mouse.LeftButton == ButtonState.Pressed || kb.IsKeyDown(Keys.Enter)) 
+                if (mouse.LeftButton == ButtonState.Pressed || kb.IsKeyDown(Keys.Enter))
                     trvaniAnimacky -= 1;
             }
         }
@@ -1046,10 +1040,10 @@ namespace Mojehra
             barvaVanim = new Color[oknoHry.Height * tileSize * 2];
             PlayBoard.texOkrajeV = new Texture2D(graphics.GraphicsDevice, tileSize * 2, oknoHry.Height);
             PlayBoard.BorderVanim = new Rectangle(oknoHry.Width, 0, tileSize * 2, oknoHry.Height);
-            
-            for (int i = 0; i < barvaVanim.Length; ++i) 
+
+            for (int i = 0; i < barvaVanim.Length; ++i)
                 barvaVanim[i] = Color.Green;
-            
+
             PlayBoard.texOkrajeV.SetData(barvaVanim);
             PlayBoard.okrajeV.Clear();
             PlayBoard.okrajeV.Add(PlayBoard.BorderVanim);
@@ -1092,7 +1086,7 @@ namespace Mojehra
 
         private void HrajIntro(TimeSpan elapsedTime)
         {
-            short posun = 2; 
+            short posun = 2;
             int cyklus = tileSize / posun;
             short cilovyXokraje = windowWidth - tileSize * 2;
 
@@ -1119,7 +1113,7 @@ namespace Mojehra
                         }
                     }
                 }
-                if (player.hracovo.X < windowWidth - tileSize * 1.5) 
+                if (player.hracovo.X < windowWidth - tileSize * 1.5)
                     player.hracovo.X++;
 
                 foreach (Ball ball in balls)
@@ -1144,7 +1138,7 @@ namespace Mojehra
                         PlayBoard.BorderVanim = PlayBoard.okrajeV[0];
                         PlayBoard.BorderVanim.X -= 2;
                         PlayBoard.okrajeV[0] = PlayBoard.BorderVanim;
-                    }                    
+                    }
                 }
 
                 if (trvaniAnimacky < 19 && trvaniAnimacky > 18.9)
@@ -1164,7 +1158,7 @@ namespace Mojehra
                     NapisVelkouZpravu("or helps you stand", 4000, (short)((sloupcuAnimace - 8) * tileSize), (short)((rows - 3) * tileSize));
                     player.NastavTexturu(new Rectangle(0, 0, tileSize, tileSize));
                 }
-                else if (trvaniAnimacky < 0 && !splashScreen.kresliSplash) 
+                else if (trvaniAnimacky < 0 && !splashScreen.kresliSplash)
                     splashScreen.ZatemniSplash(true);
             }
             else
@@ -1588,7 +1582,7 @@ namespace Mojehra
                         else OdznacPrvniPole();
                     }
                 }
-                else if (NajdiDruhouDlazdici()) 
+                else if (NajdiDruhouDlazdici())
                     ZpracujDruhePole();
 
                 if (letiZrovnaText)
@@ -1611,7 +1605,7 @@ namespace Mojehra
             {
                 Storage.SkoreTotal = +100;
                 gameState = Stavy.Vitez;
-                ZastavKoule(); ZastavAgresivniKoule();                
+                ZastavKoule(); ZastavAgresivniKoule();
                 NapisVelkouZpravu("What did you find?", 10000);
                 procentaString = " bonus:" + Storage.SkoreTotal;
                 waitFrames += 30;
@@ -1651,7 +1645,7 @@ namespace Mojehra
             exces = (short)(plnychDlazdic - potrebnychPlnych);
             if (exces > 0)
                 excesBonus = "Excess Bonus: " + exces;
-            else 
+            else
                 excesBonus = string.Empty;
             // procentaString = "Win!   " + excesBonus;
             procentaString = excesBonus;
@@ -1912,7 +1906,8 @@ namespace Mojehra
 
         private short VyznacCestuVycistiSpocti()
         {
-            short soucet = 0; i = 0;
+            short soucet = 0;
+            short i = 0;
             foreach (Tile dlazdice in tilesVnitrni)
             {
                 if (dlazdice.projeta && !dlazdice.plna)
@@ -2092,12 +2087,12 @@ namespace Mojehra
         }
 
         private void StartGame()
-        {            
+        {
             // if (debug) debugText[0] = "lives: " + zivoty;
             mFadeIncrement = 3;
             BuildTiles(columns, rows, tileSize);
             player = new Hrac(true, 4, 32, 0, 32 * 2, oknoHry.Width, oknoHry.Height, hracsprite);
-            zivoty++; 
+            zivoty++;
             zivotuString = zivoty.ToString();
             PlayBoard.PostavOkraje(oknoHry);
         }
@@ -2106,13 +2101,13 @@ namespace Mojehra
             bool fadein = false, bool fadeout = false, Color color = new Color())
         {
             Vector2 poloha = font.MeasureString(inputString);
-            if (x == -9999) 
+            if (x == -9999)
                 poloha.X = (short)(stred.X - poloha.X / 2);
             else poloha.X = x;
 
-            if (vyska == -9999) 
+            if (vyska == -9999)
                 poloha.Y = (short)(stred.Y - poloha.Y / 2);
-            else 
+            else
                 poloha.Y = vyska;
 
             byte alfa = fadein ? byte.MinValue : byte.MaxValue;
@@ -2128,14 +2123,14 @@ namespace Mojehra
             bool fadein = false, bool fadeout = false, Color color = new Color())
         {
             Vector2 poloha = font14.MeasureString(inputString);
-            if (X == -9999) 
+            if (X == -9999)
                 poloha.X = (short)(stred.X - poloha.X / 2);
-            else 
+            else
                 poloha.X = X;
 
-            if (vyska == -9999) 
+            if (vyska == -9999)
                 poloha.Y = (short)(stred.Y - poloha.Y / 2);
-            else 
+            else
                 poloha.Y = vyska;
 
             byte alfa = fadein ? byte.MinValue : byte.MaxValue;
@@ -2146,7 +2141,7 @@ namespace Mojehra
                 else
                     barvaZpravy = new Color((byte)100, (byte)111, (byte)50, alfa);
             }
-            else 
+            else
                 barvaZpravy = color;
             var zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font14);
             ProjedZpravy(zprava);
@@ -2248,7 +2243,12 @@ namespace Mojehra
 
         private void CheckPauseKey(GamePadState gamePadState)
         {
-            pauseKeyDownThisFrame = gamePadState.Buttons.Back == ButtonState.Pressed;
+            pauseKeyDownThisFrame = (gamePadState.Buttons.Back == ButtonState.Pressed
+                            || keys.IsKeyDown(Keys.Pause) || keys.IsKeyDown(Keys.Escape));
+
+            if (pauseKeyDownThisFrame && gameState == Stavy.Menu)
+                Exit();
+
             // If key was not down before, but is down now, toggle the pause setting
             if (!pauseKeyDown && pauseKeyDownThisFrame)
             {

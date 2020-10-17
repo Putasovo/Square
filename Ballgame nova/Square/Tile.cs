@@ -9,10 +9,8 @@ namespace Square
     /// </summary>
     public class Tile
     {
-        #region Fields
-
         // drawing support
-        private Texture2D sprite, spriteExploze;
+        private readonly Texture2D sprite;
         private readonly Texture2D spriteOznaceny;
         private readonly Texture2D spriteOznaceny2;
         private readonly Texture2D spriteDruha;
@@ -29,7 +27,6 @@ namespace Square
         private static Rectangle zvyrazniMalaPozice3 = new Rectangle(192, 48, 16, 16);
         private static Rectangle zvyrazniMalaPozice4 = new Rectangle(208, 48, 16, 16);
         private static Rectangle zvyrazniMalaPozice0 = new Rectangle(224, 32, 32, 32);
-        private static Rectangle zvyrazniPozice = new Rectangle(224, 32, 32, 32);
         private static Rectangle plnaPozice = new Rectangle(160, 32, 32, 32);
         private static Rectangle plna1Pozice = new Rectangle(128, 32, 32, 32);
         private static Rectangle plna2Pozice = new Rectangle(96, 32, 32, 32);
@@ -46,24 +43,26 @@ namespace Square
         private static Rectangle exploze6Pozice = new Rectangle(192, 64, 32, 32);
         private static Rectangle exploze7Pozice = new Rectangle(224, 64, 32, 32);
         private Rectangle vyslednaTextura, vyslednaTexturaExploze;
-        private bool visible, animated, zvyrazni, exploduje;
-        private byte alfaZvyrazneni; private Color barvaZvyrazneni = Color.White;
+        private readonly bool animated;
+        private bool visible, zvyrazni, exploduje;
+        private byte alfaZvyrazneni;
+        private Color barvaZvyrazneni = Color.White;
         
-        private short krokPlneni; private bool zaplnujese, licha;
+        private short krokPlneni; 
+        private bool zaplnujese, licha;
         public Rectangle drawRectangle;
         private Vector2 pozice, origin;
-        Vector2 velocity;
+        private Vector2 velocity;
         private float rotace = 0.1f;
+
         // params
+        private bool debuguju;
         public bool pruchodna = true;
         public bool okrajova, projeta, kvyplneni, plna, plnaPredem, cilova, zpomalovaci, mina, ozivovaci;
         public byte dosahMiny, casExploze;
         public bool prvni, druha;
-        private bool debuguju;
         private Color barvaDlazdice;
-        #endregion
 
-        #region Constructors
         /// <summary>
         /// Constructor
         /// </summary>
@@ -77,7 +76,6 @@ namespace Square
             this.sprite = atlas;
             this.spriteOznaceny = spriteOznaceny; this.spriteOznaceny2 = spriteOznaceny2; this.spriteDruha = spriteDruha;
             drawRectangle = new Rectangle((int)location.X, (int)location.Y, width, height);
-            if (exploze != null) spriteExploze = exploze;
             this.velocity = velocity;
             this.animated = animated;
             this.visible = viditelna;
@@ -91,9 +89,6 @@ namespace Square
                 vyslednaTextura = plnaPozice;//bez ni neni videt
             }
         }
-        #endregion
-
-        #region Properties
 
         /// <summary>
         /// Sets the rock's velocity
@@ -106,9 +101,7 @@ namespace Square
                 velocity.Y = value.Y;
             }
         }
-        #endregion
 
-        #region Methods
         /// <summary>
         /// Updates the tile
         /// </summary>
@@ -445,6 +438,5 @@ namespace Square
         {
              sb.Draw(sprite, drawRectangle.Location.ToVector2(), minaPozice, barvaDlazdice, otaceni, origin, scale, SpriteEffects.None, 1);
         }
-#endregion
     }
 }
