@@ -18,7 +18,7 @@ namespace Mojehra
         private GamePadState pad;
         private MouseState mouse;
 
-        private bool debug = false; 
+        private readonly bool debug = false; 
         private readonly bool soft = false; // software renderer
         private readonly bool easy = true; private readonly bool hard = false;
         private bool paused, pauseKeyDown, pauseKeyDownThisFrame, chciPausu, pausedByUser, pristeUzNekreslim;
@@ -99,8 +99,6 @@ namespace Mojehra
         private static readonly List<Tile> tilesMenuOptions = new List<Tile>(151);
         private Rectangle menuNew, menuLoad, menuSettings, menuExit, menuSound, menuMusic;
         private Vector2 menuNewLoc, menuContinueLoc, menuSettingsLoc, menuExitLoc, menuSoundLoc, menuMusicLoc, menuBottomLoc;
-        private const string menuNewString = "New", menuContinueString = "Resume", menuSettingsString = "Options",
-            menuExitString = "Exit", menuSoundString = "Sound", menuMusicString = "Music";
         private string menuBottomString = string.Empty;
         private bool options;
         private Rectangle posuvnikSound, posuvnikMusic;
@@ -216,17 +214,43 @@ namespace Mojehra
                 //graphics.PreferredBackBufferWidth = WindowWidth;
                 //graphics.PreferredBackBufferHeight = WindowHeight;
             }
+
             if (debug)
             {
-                debugvar1 = "HardwareModeSwitch: " + graphics.HardwareModeSwitch.ToString();
-                debugvar2 = "UseDriverType: " + GraphicsAdapter.UseDriverType.ToString();
-                debugPrvniDlazdice = ""; debugKolize = "";
-                debugText.Add(debugvar1); debugText.Add(debugvar2); debugText.Add(debugPrvniDlazdice); debugText.Add(debugKolize);
+                debugvar1 = $"HardwareModeSwitch: {graphics.HardwareModeSwitch}";
+                debugvar2 = $"UseDriverType: {GraphicsAdapter.UseDriverType}";
+                debugPrvniDlazdice = string.Empty; debugKolize = string.Empty;
+                debugText.Add(debugvar1); debugText.Add(debugvar2); 
+                debugText.Add(debugPrvniDlazdice); debugText.Add(debugKolize);
             }
-            //default droid
-            graphics.IsFullScreen = false;
-            //graphics.PreferredBackBufferWidth = 800;
-            //graphics.PreferredBackBufferHeight = 480;
+
+            graphics.IsFullScreen = false;  // default true in android
+        }
+
+        internal static void OzivKouli(int indexDlazdice)
+        {
+            foreach (Ball ball in balls)
+            {
+                if (!ball.cinna)
+                {
+                    ball.Obzivni();
+                    break;
+                }
+            }
+
+            if (tiles[indexDlazdice].ozivovaci)
+            {
+                foreach (Ball ball in ballsUtocne)
+                {
+                    if (!ball.cinna)
+                    {
+                        ball.Obzivni();
+                        break;
+                    }
+                }
+            }
+
+            tiles[indexDlazdice].NastavOzivovaci(false);
         }
 
         /// <summary>
@@ -279,7 +303,7 @@ namespace Mojehra
             uroven = new Level(rows, columns);
 
             zivoty = pocatecniZivoty;
-            zivotuString = zivoty.ToString();
+            zivotuString = $"{zivoty}";
 
             PlayBoard.Init(tileSize, tiles, tilesVnitrni, windowHeight, windowWidth);
 
@@ -303,31 +327,31 @@ namespace Mojehra
             tileOznacenaSprite = Content.Load<Texture2D>(@"gfx/oznacena");
             tileOznacena2Sprite = Content.Load<Texture2D>(@"gfx/oznacena2");
             hracsprite = Content.Load<Texture2D>(@"gfx/hrac");
-            // hracMrtvySprite = Content.Load<Texture2D>(@"gfx/hracMrtvy");
             explozeSprite = Content.Load<Texture2D>(@"gfx/explode");
 
             if (sound)
             {
-                NahrajZvuky(); ton1.Play(.4f, 0, 0);
+                NahrajZvuky(); 
+                ton1.Play(.4f, 0, 0);
             }
+
             if (music)
             {
                 NahrajHudbu();
                 byte pocetSkladeb = 5;
-                skladby.Add("levelwon"); skladby.Add("menu");
+                skladby.Add(levelwon.Name); skladby.Add(menu.Name);
                 for (byte i = 0; i <= pocetSkladeb; i++)
                 {
-                    string skladba = "level" + i.ToString();
-                    skladby.Add(skladba);
+                    skladby.Add($"level{i}");
                 }
             }
+
             font = Content.Load<SpriteFont>("PressStart2P12");
             font14 = Content.Load<SpriteFont>("PressStart2P14");
             font20 = Content.Load<SpriteFont>("PressStart2P20");
 
             // splashScreen = new SplashScreen(graphics, new Rectangle(windowWidth, 0, (int)(oknoHry.Width * scaleMatrix.M11), oknoHry.Height), font20);
             splashScreen = new SplashScreen(graphics, new Rectangle(windowWidth, 0, (int)(oknoHry.Width * 1.34), oknoHry.Height), font20);
-
             PlayBoard.VybarviOkraje(graphics, oknoHry, Barvy.vyblitaZelena, Color.Green);
 
             Storage.GetScore();
@@ -350,7 +374,7 @@ namespace Mojehra
             {
                 if (!uroven.bludiste)
                 {
-                    string skladba = $"level{uroven.cisloUrovne.ToString()}";
+                    string skladba = $"level{uroven.cisloUrovne}";
                     if (skladby.Contains(skladba))
                     {
                         Song level = Content.Load<Song>(@"audio/" + skladba);
@@ -748,15 +772,15 @@ namespace Mojehra
             {
                 if (!options)
                 {
-                    spriteBatch.DrawString(font14, menuNewString, menuNewLoc, Color.Azure);
-                    spriteBatch.DrawString(font14, menuContinueString, menuContinueLoc, Color.Azure);
-                    spriteBatch.DrawString(font14, menuExitString, menuExitLoc, Color.Azure);
-                    spriteBatch.DrawString(font14, menuSettingsString, menuSettingsLoc, Color.Azure);
+                    spriteBatch.DrawString(font14, Texts.New, menuNewLoc, Color.Azure);
+                    spriteBatch.DrawString(font14, Texts.Resume, menuContinueLoc, Color.Azure);
+                    spriteBatch.DrawString(font14, Texts.Exit, menuExitLoc, Color.Azure);
+                    spriteBatch.DrawString(font14, Texts.Options, menuSettingsLoc, Color.Azure);
                 }
                 else
                 {
-                    spriteBatch.DrawString(font14, menuSoundString, menuSoundLoc, Color.Beige);
-                    spriteBatch.DrawString(font14, menuMusicString, menuMusicLoc, Color.Coral);
+                    spriteBatch.DrawString(font14, Texts.Sound, menuSoundLoc, Color.Beige);
+                    spriteBatch.DrawString(font14, Texts.Music, menuMusicLoc, Color.Coral);
                 }
                 spriteBatch.DrawString(font, menuBottomString, menuBottomLoc, Color.White);
             }
@@ -794,16 +818,16 @@ namespace Mojehra
                 colorAmount -= deltaSeconds;
         }
 
-        private Point Dotek(MouseState mouse)
+        private Point Dotek(MouseState mouseState)
         {
             predchoziKlik = zadanyKlik;
-            if (mouse.Position.ToVector2() != predchoziKlik)
+            if (mouseState.Position.ToVector2() != predchoziKlik)
             {
-                if (mouse.LeftButton == ButtonState.Pressed)
+                if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     //zadanyPohyb = touch.Position/ new Vector2( (float)Math.Truncate(scaleMatrix.M11), (float)Math.Truncate(scaleMatrix.M22) );
-                    zadanyKlik.X = (float)Math.Truncate(mouse.Position.X / scaleMatrix.M11);
-                    zadanyKlik.Y = (float)Math.Truncate(mouse.Position.Y / scaleMatrix.M22);
+                    zadanyKlik.X = (float)Math.Truncate(mouseState.Position.X / scaleMatrix.M11);
+                    zadanyKlik.Y = (float)Math.Truncate(mouseState.Position.Y / scaleMatrix.M22);
                 }
             }
 
@@ -813,7 +837,7 @@ namespace Mojehra
             return Point.Zero;
         }
 
-        private void UrciStav(KeyboardState keys)
+        private void UrciStav(KeyboardState kb)
         {
             if (gameState == Stavy.Prohra)
             {
@@ -821,7 +845,7 @@ namespace Mojehra
                 {
                     player = null;
                     NapisVelkouZpravu("You lost", 10000);
-                    if (keys.IsKeyDown(Keys.Enter))
+                    if (kb.IsKeyDown(Keys.Enter))
                     { 
                         staryState = gameState;
                         gameState = Stavy.Menu; 
@@ -845,12 +869,13 @@ namespace Mojehra
                     {
                         if (waitFrames % 4 == 0)
                         {
-                            skore--; skoreString = skore.ToString();
+                            skore--;
+                            skoreString = $"{skore}";
                             Storage.SkoreTotal++;
-                            skoreTotalString = Storage.SkoreTotal.ToString();
+                            skoreTotalString = $"{Storage.SkoreTotal}";
                         }
                     }
-                    else if (keys.IsKeyDown(Keys.Enter))
+                    else if (kb.IsKeyDown(Keys.Enter))
                     {
                         uroven.ZvedniUroven();
                         Storage.SaveGame(uroven);
@@ -882,7 +907,7 @@ namespace Mojehra
                                     Storage.LoadGame();
                                     if (Storage.SaveGameExists)
                                     {
-                                        skoreTotalString = Storage.SkoreTotal.ToString();                                        
+                                        skoreTotalString = $"{Storage.SkoreTotal}";
                                         uroven.NastavEpisodu(Storage.MaxEpisoda);
                                         ZacniNovouEpizodu();
                                         uroven.NastavLevel(Storage.MaxLevel);
@@ -890,22 +915,22 @@ namespace Mojehra
                                     }
                                     else
                                     {
-                                        menuBottomString = "No Valid Save";
+                                        menuBottomString = Texts.No_Valid_Save;
                                         PustUroven();
                                     }
                                 }
                                 else
                                 {
-                                    NapisVelkouZpravu("Too soon", 1000);
+                                    NapisVelkouZpravu(Texts.Too_soon, 1000);
                                     pristeUzNekreslim = false;
                                 }
                             }
                             else if (menuExit.Contains(klik.X, klik.Y))
                             {
                                 if (Storage.SaveScore())
-                                    NapisVelkouZpravu("skore saved", 5555);
+                                    NapisVelkouZpravu(Texts.skore_saved, 5555);
                                 else
-                                    NapisVelkouZpravu("Error: no fajl", 5555);
+                                    NapisVelkouZpravu(Texts.Error__no_fajl, 5555);
                                 waitFrames = 55;
                                 
                                 Storage.SaveGame(uroven); Storage.SaveVolumes();
@@ -976,8 +1001,8 @@ namespace Mojehra
             }
             else if (gameState == Stavy.Menu)
             {
-                if (debug) debugText[0] = "jsi v menu!";
-                if (keys.IsKeyDown(Keys.Enter) || mouse.LeftButton == ButtonState.Pressed)
+                // if (debug) debugText[0] = "jsi v menu!";
+                if (kb.IsKeyDown(Keys.Enter) || mouse.LeftButton == ButtonState.Pressed)
                 {
                     if (staryState == Stavy.Play)
                     {
@@ -1007,7 +1032,7 @@ namespace Mojehra
             }
             else // hraje intro
             {
-                if (mouse.LeftButton == ButtonState.Pressed || keys.IsKeyDown(Keys.Enter)) 
+                if (mouse.LeftButton == ButtonState.Pressed || kb.IsKeyDown(Keys.Enter)) 
                     trvaniAnimacky -= 1;
             }
         }
@@ -1388,11 +1413,11 @@ namespace Mojehra
             }
         }
 
-        protected void BuildTiles(ushort columns, ushort rows, short Tilesize)
+        protected void BuildTiles(ushort columns, ushort rows, short tilesize)
         {
             tiles.Clear(); tilesVnitrni.Clear();
-            Vector2 velocity = new Vector2(0, 0);
-            okrajovychDlazdic = 0; int pravyokraj = windowWidth - Tilesize; int dolniokraj = windowHeight - Tilesize;
+            var velocity = new Vector2(0, 0);
+            okrajovychDlazdic = 0; int pravyokraj = windowWidth - tilesize; int dolniokraj = windowHeight - tilesize;
             for (ushort i = 0; i < rows; i++)
             {
                 for (byte j = 0; j < columns; j++)
@@ -1458,19 +1483,19 @@ namespace Mojehra
             }
 
             menuNew = new Rectangle(64, 64, 160, 64);
-            Vector2 measured = font14.MeasureString(menuNewString);
+            Vector2 measured = font14.MeasureString(Texts.New);
             menuNewLoc = new Vector2((menuNew.X + (menuNew.Width - measured.X) / 2), menuNew.Y + ((menuNew.Height - measured.Y) / 2));
 
             menuLoad = new Rectangle(256, 64, 160, 64);
-            measured = font14.MeasureString(menuContinueString);
+            measured = font14.MeasureString(Texts.Resume);
             menuContinueLoc = new Vector2((menuLoad.X + (menuLoad.Width - measured.X) / 2), menuLoad.Y + ((menuLoad.Height - measured.Y) / 2));
 
             menuSettings = new Rectangle(64, 192, 160, 64);
-            measured = font14.MeasureString(menuSettingsString);
+            measured = font14.MeasureString(Texts.Options);
             menuSettingsLoc = new Vector2((menuSettings.X + (menuSettings.Width - measured.X) / 2), menuSettings.Y + ((menuSettings.Height - measured.Y) / 2));
 
             menuExit = new Rectangle(256, 192, 160, 64);
-            measured = font14.MeasureString(menuExitString);
+            measured = font14.MeasureString(Texts.Exit);
             menuExitLoc = new Vector2((menuExit.X + (menuExit.Width - measured.X) / 2), menuExit.Y + ((menuExit.Height - measured.Y) / 2));
         }
 
@@ -1514,11 +1539,11 @@ namespace Mojehra
             }
 
             menuSound = new Rectangle(64, 32, 352, 32);
-            Vector2 measured = font14.MeasureString(menuSoundString);
+            Vector2 measured = font14.MeasureString(Texts.Sound);
             menuSoundLoc = new Vector2((menuSound.X + (menuSound.Width - measured.X) / 2), menuSound.Y + ((menuSound.Height - measured.Y) / 2));
 
             menuMusic = new Rectangle(64, 160, 352, 32);
-            measured = font14.MeasureString(menuMusicString);
+            measured = font14.MeasureString(Texts.Music);
             menuMusicLoc = new Vector2((menuMusic.X + (menuMusic.Width - measured.X) / 2), menuMusic.Y + ((menuMusic.Height - measured.Y) / 2));
 
             posuvnikSound = new Rectangle(menuSound.X, menuSound.Y + 64, tileSize * 11, tileSize);
@@ -1563,10 +1588,11 @@ namespace Mojehra
                         else OdznacPrvniPole();
                     }
                 }
-                else if (NajdiDruhouDlazdici()) ZpracujDruhePole();
+                else if (NajdiDruhouDlazdici()) 
+                    ZpracujDruhePole();
 
-                if (letiZrovnaText) // zrusim stary let a sectu jeho hodnotu hned, abych nekazil novou
-                { 
+                if (letiZrovnaText)
+                { // zrusim stary let a sectu jeho hodnotu hned, abych nekazil novou
                     snimkuLeticihoTextu = 0;
                     PosliTextSectiSkore();
                 }
@@ -1576,10 +1602,10 @@ namespace Mojehra
                 if (BlahoprejSkore(pricistSkore))
                     PosliLeticiSkore($"{pricistSkore} + {bonus}", player.hracovo.Location, 60);
                 else
-                    PosliLeticiSkore(pricistSkore.ToString(), player.hracovo.Location, 60);
+                    PosliLeticiSkore($"{pricistSkore}", player.hracovo.Location, 60);
 
                 ZkontrolujVitezstvi();
-                //if (debug) chciPausu = true;
+                // if (debug) chciPausu = true;
             }
             else
             {
@@ -1987,11 +2013,6 @@ namespace Mojehra
             return plnychDlazdic;
         }
 
-        internal void OdectiPlnouDlazdici()
-        {
-            player.NastavPrepocet(true);
-        }
-
         private void PustUroven()
         {
             waitFrames = 60;
@@ -2081,21 +2102,26 @@ namespace Mojehra
             PlayBoard.PostavOkraje(oknoHry);
         }
 
-        public void NapisVelkouZpravu(string inputString, short miliseconds, short X = -9999, short vyska = -9999,
+        private void NapisVelkouZpravu(string inputString, short miliseconds, short x = -9999, short vyska = -9999,
             bool fadein = false, bool fadeout = false, Color color = new Color())
         {
             Vector2 poloha = font.MeasureString(inputString);
-            if (X == -9999) poloha.X = (short)(stred.X - poloha.X / 2);
-            else poloha.X = X;
-            if (vyska == -9999) poloha.Y = (short)(stred.Y - poloha.Y / 2);
-            else poloha.Y = vyska;
-            byte alfa = byte.MaxValue;
-            if (fadein) alfa = 0;
+            if (x == -9999) 
+                poloha.X = (short)(stred.X - poloha.X / 2);
+            else poloha.X = x;
+
+            if (vyska == -9999) 
+                poloha.Y = (short)(stred.Y - poloha.Y / 2);
+            else 
+                poloha.Y = vyska;
+
+            byte alfa = fadein ? byte.MinValue : byte.MaxValue;
             if (gameState == Stavy.Prohra || gameState == Stavy.Menu)
                 barvaZpravy = new Color(byte.MinValue, byte.MinValue, byte.MinValue, alfa); //0 0 0 - cerna
             else
                 barvaZpravy = new Color((byte)100, (byte)111, (byte)50, alfa);
-            Zprava zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font);
+
+            var zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font);
             ProjedZpravy(zprava);
         }
         private void NapisVelkouZpravu14(string inputString, short miliseconds, short X = -9999, short vyska = -9999,
@@ -2120,10 +2146,12 @@ namespace Mojehra
                 else
                     barvaZpravy = new Color((byte)100, (byte)111, (byte)50, alfa);
             }
-            else { barvaZpravy = color; }
-            Zprava zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font14);
+            else 
+                barvaZpravy = color;
+            var zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font14);
             ProjedZpravy(zprava);
         }
+
         private void ProjedZpravy(Zprava zprava)
         {
             for (int i = 0; i < Texty.Count; i++)
@@ -2200,6 +2228,7 @@ namespace Mojehra
             MediaPlayer.Pause();
             //TODO: Pause controller vibration
         }
+
         private void EndPause()
         {
             //TODO: Resume controller vibration
@@ -2216,14 +2245,17 @@ namespace Mojehra
             else if (staryState == Stavy.Pause) gameState = Stavy.Play;
             else { gameState = Stavy.Vitez; }
         }
+
         private void CheckPauseKey(GamePadState gamePadState)
         {
-            pauseKeyDownThisFrame = (gamePadState.Buttons.Back == ButtonState.Pressed);
+            pauseKeyDownThisFrame = gamePadState.Buttons.Back == ButtonState.Pressed;
             // If key was not down before, but is down now, toggle the pause setting
             if (!pauseKeyDown && pauseKeyDownThisFrame)
             {
-                if (!paused) BeginPause(true);
-                else EndPause();
+                if (!paused) 
+                    BeginPause(true);
+                else 
+                    EndPause();
             }
             pauseKeyDown = pauseKeyDownThisFrame;
         }

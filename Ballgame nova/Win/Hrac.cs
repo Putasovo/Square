@@ -168,10 +168,10 @@ namespace Mojehra
             {
                 Hlavni.PripravZemetreseni(indexDlazdice);
             }
-            // else if (PlayBoard.tiles[indexDlazdice].ozivovaci)
-            // {
-            //    Hlavni.OzivKouli(indexDlazdice);
-            // }
+            else if (PlayBoard.tiles[indexDlazdice].ozivovaci)
+            {
+                Hlavni.OzivKouli(indexDlazdice);
+            }
         }
 
         private void ZpracujCestu()
@@ -324,42 +324,6 @@ namespace Mojehra
                 svislyVyjezd = true;
                 vychoziX = hracovo.X;
             }
-        }
-
-        private int Doputoval() //jen obsah obdelniku, nepouziju
-        {
-            prepocistSkore = true;
-            if (vychoziX == hracovo.X)
-            {
-                vysledekY = System.Math.Abs((hracovo.Y - vychoziY) / krok);
-                if (vychoziX < pulsirky)
-                {
-                    vysledekX = vychoziX / krok;
-                }
-                else { vysledekX = (maxX - vychoziX) / krok; }
-            }
-            else
-            {
-                vysledekX = System.Math.Abs((hracovo.X - vychoziX) / krok);
-
-                if (vychoziY == hracovo.Y)
-                {
-                    if (vychoziY < pulvysky)
-                    {
-                        vysledekY = vychoziY / krok;
-                    }
-                    else
-                    {
-                        vysledekY = (maxY - vychoziY) / krok;
-                    }
-                }
-                else
-                {
-                    vysledekY = System.Math.Abs((hracovo.Y - vychoziY) / krok);
-                }
-            }
-            vysledek = vysledekX * vysledekY;
-            return vysledek;
         }
 
         internal void Kresli(SpriteBatch spritebatch)

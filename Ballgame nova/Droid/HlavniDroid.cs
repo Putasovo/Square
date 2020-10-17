@@ -103,8 +103,6 @@ namespace MojehraDroid
         private static readonly List<Tile> tilesMenuOptions = new List<Tile>(151);
         private Rectangle menuNew, menuLoad, menuSettings, menuExit, menuSound, menuMusic;
         private Vector2 menuNewLoc, menuContinueLoc, menuSettingsLoc, menuExitLoc, menuSoundLoc, menuMusicLoc, menuBottomLoc;
-        private const string menuNewString = "New", menuContinueString = "Resume", menuSettingsString = "Options",
-            menuExitString = "Exit", menuSoundString = "Sound", menuMusicString = "Music";
         private string menuBottomString = string.Empty;
         private bool options;
         private Rectangle posuvnikSound, posuvnikMusic;
@@ -166,16 +164,15 @@ namespace MojehraDroid
             //}
 
             if (debug)
-            { 
-                debugvar1 = "HardwareModeSwitch: " + graphics.HardwareModeSwitch.ToString();
-                debugvar2 = "UseDriverType: " + GraphicsAdapter.UseDriverType.ToString();
-                debugPrvniDlazdice = ""; debugKolize = "";
-                debugText.Add(debugvar1); debugText.Add(debugvar2); debugText.Add(debugPrvniDlazdice); debugText.Add(debugKolize);
+            {
+                debugvar1 = $"HardwareModeSwitch: {graphics.HardwareModeSwitch}";
+                debugvar2 = $"UseDriverType: {GraphicsAdapter.UseDriverType}";
+                debugPrvniDlazdice = string.Empty; debugKolize = string.Empty;
+                debugText.Add(debugvar1); debugText.Add(debugvar2);
+                debugText.Add(debugPrvniDlazdice); debugText.Add(debugKolize);
             }
-            //default droid
-            graphics.IsFullScreen = true;
-            //graphics.PreferredBackBufferWidth = 800;
-            //graphics.PreferredBackBufferHeight = 480;
+            
+            graphics.IsFullScreen = true; // default true in android
             graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
         }
 
@@ -312,7 +309,7 @@ namespace MojehraDroid
             uroven = new Level(rows, columns);
 
             zivoty = pocatecniZivoty;
-            zivotuString = zivoty.ToString();
+            zivotuString = $"{zivoty}";
 
             balLoc = new Vector2(222, 222);
 
@@ -340,21 +337,21 @@ namespace MojehraDroid
 
             if (sound)
             {
-                NahrajZvuky(); ton1.Play(.4f, 0, 0);
+                NahrajZvuky(); 
+                ton1.Play(.4f, 0, 0);
             }
+
             if (music)
             {
                 NahrajHudbu();
                 byte pocetSkladeb = 5;
-                skladby.Add("levelwon"); skladby.Add("menu");
+                skladby.Add(levelwon.Name); skladby.Add(menu.Name);
                 for (byte i = 0; i <= pocetSkladeb; i++)
                 {
-                    string skladba = "level" + i.ToString();
-                    skladby.Add(skladba);
+                    skladby.Add($"level{i}");
                 }
             }
 
-            //font = Content.Load<SpriteFont>("AARDC");
             font12 = Content.Load<SpriteFont>("PressStart2P12");
             font14 = Content.Load<SpriteFont>("PressStart2P14");
             font20 = Content.Load<SpriteFont>("PressStart2P20");
@@ -383,7 +380,7 @@ namespace MojehraDroid
             {
                 if (!uroven.bludiste)
                 {
-                    string skladba = "level" + uroven.cisloUrovne.ToString();
+                    string skladba = $"level{uroven.cisloUrovne}";
                     if (skladby.Contains(skladba))
                     {
                         Song level = Content.Load<Song>(@"audio/" + skladba);
@@ -773,15 +770,15 @@ namespace MojehraDroid
             {
                 if (!options)
                 { 
-                    spriteBatch.DrawString(font14, menuNewString, menuNewLoc, Color.Azure);
-                    spriteBatch.DrawString(font14, menuContinueString, menuContinueLoc, Color.Azure);
-                    spriteBatch.DrawString(font14, menuExitString, menuExitLoc, Color.Azure);
-                    spriteBatch.DrawString(font14, menuSettingsString, menuSettingsLoc, Color.Azure);
+                    spriteBatch.DrawString(font14, Texts.New, menuNewLoc, Color.Azure);
+                    spriteBatch.DrawString(font14, Texts.Resume, menuContinueLoc, Color.Azure);
+                    spriteBatch.DrawString(font14, Texts.Exit, menuExitLoc, Color.Azure);
+                    spriteBatch.DrawString(font14, Texts.Options, menuSettingsLoc, Color.Azure);
                 }
                 else
                 {
-                    spriteBatch.DrawString(font14, menuSoundString, menuSoundLoc, Color.Beige);
-                    spriteBatch.DrawString(font14, menuMusicString, menuMusicLoc, Color.Coral);
+                    spriteBatch.DrawString(font14, Texts.Sound, menuSoundLoc, Color.Beige);
+                    spriteBatch.DrawString(font14, Texts.Music, menuMusicLoc, Color.Coral);
                 }
                 spriteBatch.DrawString(font12, menuBottomString, menuBottomLoc, Color.White);
             }
@@ -892,9 +889,10 @@ namespace MojehraDroid
                     {
                         if (waitFrames % 4 == 0)
                         {
-                            skore--; skoreString = skore.ToString();
+                            skore--;
+                            skoreString = $"{skore}";
                             Storage.SkoreTotal++;
-                            skoreTotalString = Storage.SkoreTotal.ToString();
+                            skoreTotalString = $"{Storage.SkoreTotal}";
                         }                        
                     }                 
                     else if (Dotek(doteky) != Point.Zero)
@@ -929,7 +927,7 @@ namespace MojehraDroid
                                     Storage.LoadGame();
                                     if (Storage.SaveGameExists)
                                     {
-                                        skoreTotalString = Storage.SkoreTotal.ToString();
+                                        skoreTotalString = $"{Storage.SkoreTotal}";
                                         uroven.NastavEpisodu(Storage.MaxEpisoda);
                                         ZacniNovouEpizodu();
                                         uroven.NastavLevel(Storage.MaxLevel);                                        
@@ -937,22 +935,22 @@ namespace MojehraDroid
                                     }
                                     else
                                     {
-                                        menuBottomString = "No Valid Save";
+                                        menuBottomString = Texts.No_Valid_Save;
                                         PustUroven();
                                     }
                                 }
                                 else
                                 {
-                                    NapisVelkouZpravu("Too soon", 1000);
+                                    NapisVelkouZpravu(Texts.Too_soon, 1000);
                                     pristeUzNekreslim = false;
                                 }
                             }
                             else if (menuExit.Contains(klik.X, klik.Y))
                             {
                                 if (Storage.SaveScore())
-                                    NapisVelkouZpravu("skore saved", 5555);
+                                    NapisVelkouZpravu(Texts.skore_saved, 5555);
                                 else
-                                    NapisVelkouZpravu("Error: no fajl", 5555);
+                                    NapisVelkouZpravu(Texts.Error__no_fajl, 5555);
                                 waitFrames = 55;
 
                                 Storage.SaveGame(uroven); Storage.SaveVolumes();
@@ -1439,13 +1437,13 @@ namespace MojehraDroid
             }
         }
 
-        protected void BuildTiles(ushort columns, ushort rows, short Tilesize)
+        protected void BuildTiles(ushort columns, ushort rows, short tilesize)
         {
             tiles.Clear(); tilesVnitrni.Clear();
-            Vector2 velocity = Vector2.Zero;
+            var velocity = Vector2.Zero;
             okrajovychDlazdic = 0;
-            int pravyokraj = windowWidth - Tilesize;
-            int dolniokraj = windowHeight - Tilesize;
+            int pravyokraj = windowWidth - tilesize;
+            int dolniokraj = windowHeight - tilesize;
             for (ushort i = 0; i < rows; i++)
             {
                 for (byte j = 0; j < columns; j++)
@@ -1514,19 +1512,19 @@ namespace MojehraDroid
             }
             
             menuNew = new Rectangle(64, 64, 160, 64);
-            Vector2 measured = font14.MeasureString(menuNewString);
+            Vector2 measured = font14.MeasureString(Texts.New);
             menuNewLoc = new Vector2( (menuNew.X + (menuNew.Width - measured.X) /2), menuNew.Y + ((menuNew.Height - measured.Y) /2));
 
             menuLoad = new Rectangle(256, 64, 160, 64);
-            measured = font14.MeasureString(menuContinueString);
+            measured = font14.MeasureString(Texts.Resume);
             menuContinueLoc = new Vector2((menuLoad.X + (menuLoad.Width - measured.X) / 2), menuLoad.Y + ((menuLoad.Height - measured.Y) / 2));
 
             menuSettings = new Rectangle(64, 192, 160, 64);
-            measured = font14.MeasureString(menuSettingsString);
+            measured = font14.MeasureString(Texts.Options);
             menuSettingsLoc = new Vector2((menuSettings.X + (menuSettings.Width - measured.X) / 2), menuSettings.Y + ((menuSettings.Height - measured.Y) / 2));
 
             menuExit = new Rectangle(256, 192, 160, 64);
-            measured = font14.MeasureString(menuExitString);
+            measured = font14.MeasureString(Texts.Exit);
             menuExitLoc = new Vector2((menuExit.X + (menuExit.Width - measured.X) / 2), menuExit.Y + ((menuExit.Height - measured.Y) / 2));
         }
 
@@ -1571,11 +1569,11 @@ namespace MojehraDroid
             }
 
             menuSound = new Rectangle(64, 32, 352, 32);
-            Vector2 measured = font14.MeasureString(menuSoundString);
+            Vector2 measured = font14.MeasureString(Texts.Sound);
             menuSoundLoc = new Vector2((menuSound.X + (menuSound.Width - measured.X) / 2), menuSound.Y + ((menuSound.Height - measured.Y) / 2));
 
             menuMusic = new Rectangle(64, 160, 352, 32);
-            measured = font14.MeasureString(menuMusicString);
+            measured = font14.MeasureString(Texts.Music);
             menuMusicLoc = new Vector2((menuMusic.X + (menuMusic.Width - measured.X) / 2), menuMusic.Y + ((menuMusic.Height - measured.Y) / 2));
 
             posuvnikSound = new Rectangle(menuSound.X, menuSound.Y + 64, tileSize * 11, tileSize);
@@ -1620,22 +1618,24 @@ namespace MojehraDroid
                         else OdznacPrvniPole();
                     }
                 }
-                else if (NajdiDruhouDlazdici()) ZpracujDruhePole();
+                else if (NajdiDruhouDlazdici()) 
+                    ZpracujDruhePole();
 
                 if (letiZrovnaText)
-                { //zrusim stary let a sectu jeho hodnotu hned, abych nekazil novou
+                { // zrusim stary let a sectu jeho hodnotu hned, abych nekazil novou
                     snimkuLeticihoTextu = 0;
                     PosliTextSectiSkore();
                 }
+
                 pricistSkore = VyznacCestuVycistiSpocti();
                 OdznacProjete();
                 if (BlahoprejSkore(pricistSkore))
-                    PosliLeticiSkore(string.Format("{0}+{1}", pricistSkore, bonus), player.hracovo.Location, 60);
+                    PosliLeticiSkore($"{pricistSkore} + {bonus}", player.hracovo.Location, 60);
                 else
-                    PosliLeticiSkore(pricistSkore.ToString(), player.hracovo.Location, 60);
+                    PosliLeticiSkore($"{pricistSkore}", player.hracovo.Location, 60);
 
                 ZkontrolujVitezstvi();
-                //if (debug) chciPausu = true;
+                // if (debug) chciPausu = true;
             }
             else
             {
@@ -2051,11 +2051,6 @@ namespace MojehraDroid
             return plnychDlazdic;
         }
 
-        internal void OdectiPlnouDlazdici()
-        {
-            player.NastavPrepocet(true);
-        }
-
         private void PustUroven()
         {
             waitFrames = 60;
@@ -2162,14 +2157,14 @@ namespace MojehraDroid
             PlayBoard.PostavOkraje(oknoHry);            
         }
 
-        private void NapisVelkouZpravu(string inputString, short miliseconds, short X = -9999, short vyska = -9999,
+        private void NapisVelkouZpravu(string inputString, short miliseconds, short x = -9999, short vyska = -9999,
             bool fadein = false, bool fadeout = false, Color color = new Color())
         {
             Vector2 poloha = font12.MeasureString(inputString);
-            if (X == -9999)
+            if (x == -9999)
                 poloha.X = (short)(stred.X - poloha.X / 2);
             else 
-                poloha.X = X;
+                poloha.X = x;
 
             if (vyska == -9999)
                 poloha.Y = (short)(stred.Y - poloha.Y / 2);
@@ -2182,19 +2177,23 @@ namespace MojehraDroid
             else
                 barvaZpravy = new Color((byte)100, (byte)111, (byte)50, alfa);
 
-            Zprava zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font12);
+            var zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font12);
             ProjedZpravy(zprava);
         }
         private void NapisVelkouZpravu14(string inputString, short miliseconds, short X = -9999, short vyska = -9999,
             bool fadein = false, bool fadeout = false, Color color = new Color())
         {
             Vector2 poloha = font14.MeasureString(inputString);
-            if (X == -9999) poloha.X = (short)(stred.X - poloha.X / 2);
-            else poloha.X = X;
-            if (vyska == -9999) poloha.Y = (short)(stred.Y - poloha.Y / 2);
-            else poloha.Y = vyska;
-            byte alfa = byte.MaxValue;
-            if (fadein) alfa = 0;
+            if (X == -9999) 
+                poloha.X = (short)(stred.X - poloha.X / 2);
+            else 
+                poloha.X = X;
+            if (vyska == -9999) 
+                poloha.Y = (short)(stred.Y - poloha.Y / 2);
+            else 
+                poloha.Y = vyska;
+
+            byte alfa = fadein ? byte.MinValue : byte.MaxValue;
             if (color == new Color())
             {
                 if (gameState == Stavy.Prohra)
@@ -2202,10 +2201,12 @@ namespace MojehraDroid
                 else
                     barvaZpravy = new Color((byte)100, (byte)111, (byte)50, alfa);
             }
-            else { barvaZpravy = color; }
-            Zprava zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font14);
+            else 
+                barvaZpravy = color;
+            var zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font14);
             ProjedZpravy(zprava);
         }
+
         private void ProjedZpravy(Zprava zprava)
         {
             for (int i = 0; i<Texty.Count; i++)
@@ -2302,7 +2303,7 @@ namespace MojehraDroid
 
         private void CheckPauseKey(GamePadState gamePadState)
         {
-            pauseKeyDownThisFrame= (gamePadState.Buttons.Back == ButtonState.Pressed);
+            pauseKeyDownThisFrame = gamePadState.Buttons.Back == ButtonState.Pressed;
             // If key was not down before, but is down now, toggle the pause setting
             if (!pauseKeyDown && pauseKeyDownThisFrame)
             {
