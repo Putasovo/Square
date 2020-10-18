@@ -94,7 +94,6 @@ namespace MojehraDroid
         private static byte zemetreseni; private const byte dobaZemetreseni = 60;
         private static int vybuchujuciMina; private static bool probihaVybuch;
         private static Texture2D tileSprite;
-        private static Texture2D tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite;
         private readonly List<Tile> druheRadyTiles = new List<Tile>(128);
         private static readonly List<Tile> tiles = new List<Tile>(151);
         private static readonly List<Tile> tilesVnitrni = new List<Tile>(105);
@@ -119,16 +118,16 @@ namespace MojehraDroid
         private float colorAmount;
         private bool preklop;
         
-        private static Hrac player;
+        private Hrac player;
         private ushort delkaAnimaceHrace, sloupcuAnimace;
-        private const byte pocatecniZivoty = 3; byte zivoty;
+        private const byte pocatecniZivoty = 3; private byte zivoty;
         private static Texture2D hracsprite;
         private Vector2 zadanyPohyb, predchoziPohyb;
 
         private string zivotuString;
         private string skoreString = "0", skoreTotalString = "0", excesBonus, procentaString;
         private static short skore, bonus, exces, pricistSkore;
-        private ushort minBonus;//uroven pro gratulaci
+        private ushort minBonus; // uroven pro gratulaci
         private Vector2 zivotuLocation, skoreLocation, skoreTotalLocation, procentaLocation;
 
         private static Texture2D spriteMonstra;
@@ -223,15 +222,15 @@ namespace MojehraDroid
         //}
         internal static void VybuchPostupne()
         {
-            if (zemetreseni == 51 && tiles[vybuchujuciMina].dosahMiny > 1)
+            if (zemetreseni == 51 && tiles[vybuchujuciMina].DosahMiny > 1)
             {
                 VybuchKolem(vybuchujuciMina, 2);
                 if (vibrator.HasVibrator)
                     vibrator.Vibrate(600);
             }
-            else if (zemetreseni == 44 && tiles[vybuchujuciMina].dosahMiny > 2) VybuchKolem(vybuchujuciMina, 3);
-            else if (zemetreseni == 37 && tiles[vybuchujuciMina].dosahMiny > 3) VybuchKolem(vybuchujuciMina, 4);
-            else if (zemetreseni == 30 && tiles[vybuchujuciMina].dosahMiny > 4) VybuchKolem(vybuchujuciMina, 5);
+            else if (zemetreseni == 44 && tiles[vybuchujuciMina].DosahMiny > 2) VybuchKolem(vybuchujuciMina, 3);
+            else if (zemetreseni == 37 && tiles[vybuchujuciMina].DosahMiny > 3) VybuchKolem(vybuchujuciMina, 4);
+            else if (zemetreseni == 30 && tiles[vybuchujuciMina].DosahMiny > 4) VybuchKolem(vybuchujuciMina, 5);
         }
 
         /// <summary>
@@ -329,8 +328,6 @@ namespace MojehraDroid
             openingScreen = Content.Load<Texture2D>(@"gfx/openingscreen");
             ballSprite = Content.Load<Texture2D>(@"gfx/ball");
             tileSprite = Content.Load<Texture2D>(@"gfx/tile");
-            tileOznacenaSprite = Content.Load<Texture2D>(@"gfx/oznacena");
-            tileOznacena2Sprite = Content.Load<Texture2D>(@"gfx/oznacena2");
             hracsprite = Content.Load<Texture2D>(@"gfx/hrac");
 
             if (sound)
@@ -602,7 +599,7 @@ namespace MojehraDroid
 
                         foreach (Tile tile in tiles) //pro animace
                         {
-                            tile.Update(gameTime);
+                            tile.Update();
                         }
 
                         // if (hrajOdraz) HrajOdraz();
@@ -1449,16 +1446,15 @@ namespace MojehraDroid
             {
                 for (byte j = 0; j < columns; j++)
                 {
-                    Vector2 location = new Vector2(j * tileSize, i * tileSize);
+                    var location = new Vector2(j * tileSize, i * tileSize);
                     bool naokraji = false;
-                    if (location.X == 0||location.X == pravyokraj || location.Y == 0||location.Y == dolniokraj)
+                    if (location.X == 0 || location.X == pravyokraj || location.Y == 0 || location.Y == dolniokraj)
                     {
                         naokraji = true;
                         okrajovychDlazdic++;
                     }
                     
-                    Tile tile = new Tile(tileSprite, tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite,
-                        location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
+                    var tile = new Tile(tileSprite, location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
 
                     tiles.Add(tile);
                     if (!naokraji)
@@ -1494,8 +1490,7 @@ namespace MojehraDroid
                         okrajovychDlazdic++;
                     }
 
-                    var tile = new Tile(tileSprite, tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite,
-                        location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
+                    var tile = new Tile(tileSprite, location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
 
                     if (!naokraji)
                     {
@@ -1548,8 +1543,7 @@ namespace MojehraDroid
                     {
                         naokraji = true;
                     }
-                    var tile = new Tile(tileSprite, tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite,
-                        location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
+                    var tile = new Tile(tileSprite, location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
                     if (!naokraji)
                     {
                         tilesMenuOptions.Add(tile);
@@ -1604,7 +1598,7 @@ namespace MojehraDroid
             {
                 foreach (Tile tile in tilesVnitrni)
                 {
-                    if (tile.prvni || tile.druha)
+                    if (tile.Prvni || tile.Druha)
                         tile.DebugDlazdice(0);      // odeberu zvlastni textury predchoziho vyplneni
                 }
             }
@@ -1773,7 +1767,7 @@ namespace MojehraDroid
                 if (!tile.plna && !tile.kvyplneni)
                 {
                     tile.kvyplneni = true;
-                    tiles[i].prvni = true;
+                    tiles[i].Prvni = true;
                     nalezena = true;
                 }
             }
@@ -1938,7 +1932,7 @@ namespace MojehraDroid
         {
             foreach (Tile dlazdice in tilesVnitrni)
             {
-                if (dlazdice.kvyplneni && !dlazdice.druha)
+                if (dlazdice.kvyplneni && !dlazdice.Druha)
                 {
                     dlazdice.KVyplneni(false);
                 }
@@ -1963,10 +1957,10 @@ namespace MojehraDroid
                 }
                 if (!debug)
                 {
-                    if (dlazdice.prvni)
-                        dlazdice.prvni = false;
-                    else if (dlazdice.druha)
-                        dlazdice.druha = false;
+                    if (dlazdice.Prvni)
+                        dlazdice.Prvni = false;
+                    else if (dlazdice.Druha)
+                        dlazdice.Druha = false;
                 }
                 if (dlazdice.kvyplneni)
                 {
@@ -1997,7 +1991,7 @@ namespace MojehraDroid
                         debugText[2] = debugPrvniDlazdice;
                     }
                     else
-                        tiles[i].prvni=true;
+                        tiles[i].Prvni=true;
 
                     return prvniNalezena;
                 }
@@ -2018,7 +2012,7 @@ namespace MojehraDroid
                     {
                         tiles[i].DebugDlazdice(2);
                     }
-                    else tiles[i].druha = true;
+                    else tiles[i].Druha = true;
 
                     return true;
                 }

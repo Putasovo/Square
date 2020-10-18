@@ -9,11 +9,11 @@ namespace Square
     /// </summary>
     public class Tile
     {
-        // drawing support
+        // drawing support        
+        // private readonly Texture2D spriteOznaceny;
+        // private readonly Texture2D spriteOznaceny2;
+        // private readonly Texture2D spriteDruha;
         private readonly Texture2D sprite;
-        private readonly Texture2D spriteOznaceny;
-        private readonly Texture2D spriteOznaceny2;
-        private readonly Texture2D spriteDruha;
         private static Rectangle minaPozice = new Rectangle(0,0,32,32);
         private static Rectangle minaSkrytaPozice = new Rectangle(14, 14, 3, 3);
         private static Rectangle cestaPozice = new Rectangle(32, 0, 32, 32);
@@ -47,21 +47,23 @@ namespace Square
         private bool visible, zvyrazni, exploduje;
         private byte alfaZvyrazneni;
         private Color barvaZvyrazneni = Color.White;
-        
+
+        private readonly bool debuguju;
         private short krokPlneni; 
-        private bool zaplnujese, licha;
-        public Rectangle drawRectangle;
+        private bool zaplnujese, licha;        
         private Vector2 pozice, origin;
         private Vector2 velocity;
         private float rotace = 0.1f;
-
-        // params
-        private bool debuguju;
-        public bool pruchodna = true;
-        public bool okrajova, projeta, kvyplneni, plna, plnaPredem, cilova, zpomalovaci, mina, ozivovaci;
-        public byte dosahMiny, casExploze;
-        public bool prvni, druha;
         private Color barvaDlazdice;
+        
+        public Rectangle drawRectangle;                
+        public bool okrajova, projeta, kvyplneni, plna, plnaPredem, cilova, zpomalovaci, mina, ozivovaci;
+
+        public bool Pruchodna { get; set; } = true;
+        public byte DosahMiny { get; set; }
+        public byte CasExploze { get; set; }
+        public bool Prvni { get; set; }
+        public bool Druha { get; set; }
 
         /// <summary>
         /// Constructor
@@ -69,12 +71,11 @@ namespace Square
         /// <param name="sprite">sprites for the tile</param>
         /// <param name="location">location of first pixel</param>
         /// <param name="velocity">velocity</param>
-        public Tile(Texture2D atlas, Texture2D spriteOznaceny, Texture2D spriteOznaceny2, Texture2D spriteDruha,
-            Vector2 location, Vector2 velocity,
+        public Tile(Texture2D atlas, Vector2 location, Vector2 velocity,
             int width, int height, bool animated, bool viditelna, bool naokraji, bool debug)
         {
-            this.sprite = atlas;
-            this.spriteOznaceny = spriteOznaceny; this.spriteOznaceny2 = spriteOznaceny2; this.spriteDruha = spriteDruha;
+            // this.spriteOznaceny = spriteOznaceny; this.spriteOznaceny2 = spriteOznaceny2; this.spriteDruha = spriteDruha;
+            sprite = atlas;
             drawRectangle = new Rectangle((int)location.X, (int)location.Y, width, height);
             this.velocity = velocity;
             this.animated = animated;
@@ -91,22 +92,9 @@ namespace Square
         }
 
         /// <summary>
-        /// Sets the rock's velocity
-        /// </summary>
-        public Vector2 Velocity
-        {
-            set
-            {
-                velocity.X = value.X;
-                velocity.Y = value.Y;
-            }
-        }
-
-        /// <summary>
         /// Updates the tile
         /// </summary>
-        /// <param name="gameTime">game time</param>
-        public void Update(GameTime gameTime)
+        public void Update()
         {
             //if (debuguju && prvni) //prvni nalezena
             //{ vyslednaTextura = spriteOznaceny; }
@@ -116,8 +104,8 @@ namespace Square
             //{ }
             if (exploduje)       //nemel bych zadrzet hrace, dokud neskonci vybuch?
             {
-                casExploze--;
-                if (casExploze == 0)
+                CasExploze--;
+                if (CasExploze == 0)
                 {
                     exploduje = false;
                     if (!mina)
@@ -125,15 +113,15 @@ namespace Square
                         plna = false;
                         if (!ozivovaci) visible = false;
                     }
-                    if (!pruchodna) ZpruchodnitHracovi(visible);
+                    if (!Pruchodna) ZpruchodnitHracovi(visible);
                 }
-                else if (casExploze < 8) vyslednaTexturaExploze = exploze7Pozice;
-                else if (casExploze < 16) vyslednaTexturaExploze = exploze6Pozice;
-                else if (casExploze < 24) vyslednaTexturaExploze = exploze5Pozice;
-                else if (casExploze < 32) vyslednaTexturaExploze = exploze4Pozice;
-                else if (casExploze < 40) vyslednaTexturaExploze = exploze3Pozice;
-                else if (casExploze < 47) vyslednaTexturaExploze = exploze2Pozice;
-                else if (casExploze < 54) vyslednaTexturaExploze = exploze1Pozice;
+                else if (CasExploze < 8) vyslednaTexturaExploze = exploze7Pozice;
+                else if (CasExploze < 16) vyslednaTexturaExploze = exploze6Pozice;
+                else if (CasExploze < 24) vyslednaTexturaExploze = exploze5Pozice;
+                else if (CasExploze < 32) vyslednaTexturaExploze = exploze4Pozice;
+                else if (CasExploze < 40) vyslednaTexturaExploze = exploze3Pozice;
+                else if (CasExploze < 47) vyslednaTexturaExploze = exploze2Pozice;
+                else if (CasExploze < 54) vyslednaTexturaExploze = exploze1Pozice;
             }
             else if (zaplnujese)
             {
@@ -161,11 +149,11 @@ namespace Square
         {
             if (param == 0)
             {
-                prvni = false; druha = false;
+                Prvni = false; Druha = false;
                 if (!plna) visible = false;
             }
-            else if (param == 1)    { prvni = true; visible = true; }
-            else if (param == 2)    { druha = true; visible = true; }
+            else if (param == 1)    { Prvni = true; visible = true; }
+            else if (param == 2)    { Druha = true; visible = true; }
         }
 
         public void NastavOzivovaci(bool anone)
@@ -235,7 +223,8 @@ namespace Square
 
         public void OznacJakoDruhePole(bool anone)
         {
-            //if (anone) vyslednaTextura = spriteDruha;
+            if (anone) 
+                vyslednaTextura = minaPozice; // spriteDruha
         }
 
         public void OznacJakoCilovou(bool anone)
@@ -275,27 +264,27 @@ namespace Square
 
         public void Znepruchodnit()
         {
-            visible = plna = true; pruchodna = false;
+            visible = plna = true; Pruchodna = false;
             vyslednaTextura = nepruchodnaPozice;
         }
 
         private void ZpruchodnitHracovi(bool ozivovaci)
         {
-            pruchodna = true;
+            Pruchodna = true;
             //vyslednaTextura = plnaPozice;
             barvaDlazdice.A = byte.MaxValue;
             if (ozivovaci) vyslednaTextura = ozivovaciPozice;
         }
         public void ZnepruchodnitHraci()
         {
-            visible = true; pruchodna = false;
+            visible = true; Pruchodna = false;
             vyslednaTextura = nepruchodnaPozice;
             barvaDlazdice.A = 22;
         }
 
         public void Zaminovat(byte range = 3)
         {
-            dosahMiny = range;
+            DosahMiny = range;
             visible = mina = true;
             vyslednaTextura = minaSkrytaPozice;
         }
@@ -319,7 +308,7 @@ namespace Square
             {
                 vyslednaTexturaExploze = exploze0Pozice;
                 exploduje = true;
-                casExploze = 60;
+                CasExploze = 60;
             }
         }
 

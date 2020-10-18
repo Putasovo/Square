@@ -201,7 +201,7 @@ namespace Mojehra
             if (pohybVlevo && hracovo.X > 0)
             {
                 indexPristiDlazdice = indexDlazdice - 1;
-                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].Pruchodna)
                 {
                     hracovo.X -= speed; souradniceVysledneTextury = doleva;
                 }
@@ -211,7 +211,7 @@ namespace Mojehra
             else if (pohybVpravo && hracovo.X < maxX)
             {
                 indexPristiDlazdice = indexDlazdice + 1;
-                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].Pruchodna)
                 {
                     hracovo.X += speed; souradniceVysledneTextury = doprava;
                 }
@@ -221,7 +221,7 @@ namespace Mojehra
             else if (pohybNahoru && hracovo.Y > 0 && hracovo.Y > 0)
             {
                 indexPristiDlazdice = indexDlazdice - sloupcu - 1;
-                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].Pruchodna)
                 {
                     hracovo.Y -= speed; souradniceVysledneTextury = nahoru;
                 }
@@ -230,7 +230,7 @@ namespace Mojehra
             else if (pohybDolu && hracovo.Y < maxY)
             {
                 indexPristiDlazdice = indexDlazdice + sloupcu + 1;
-                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].Pruchodna)
                 {
                     hracovo.Y += speed; souradniceVysledneTextury = dolu;
                 }
@@ -248,7 +248,7 @@ namespace Mojehra
             if (souradnice.Y < hracovo.Y)
             {
                 indexPristiDlazdice = indexDlazdice - sloupcu - 1;
-                if (indexPristiDlazdice > 0 && PlayBoard.tiles[indexPristiDlazdice].pruchodna)
+                if (indexPristiDlazdice > 0 && PlayBoard.tiles[indexPristiDlazdice].Pruchodna)
                 {
                     pohybNahoru = true;
                     if (zleva) pohybVlevo = false;
@@ -259,7 +259,7 @@ namespace Mojehra
             else if (souradnice.Y > hracovo.Bottom)
             {
                 indexPristiDlazdice = indexDlazdice + sloupcu + 1;
-                if (PlayBoard.tiles[indexPristiDlazdice].pruchodna)
+                if (PlayBoard.tiles[indexPristiDlazdice].Pruchodna)
                 {
                     pohybDolu = true;
                     if (zleva) pohybVlevo = false;

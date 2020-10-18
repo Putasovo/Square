@@ -7,12 +7,12 @@ using System.Text;
 
 namespace Square
 {
-    public class Storage
+    public static class Storage
     {
         private static readonly IsolatedStorageFile store;
-        private static readonly string scoreFilename = "score.txt";
-        private static readonly string levelFilename = "uroven";
-        private static readonly string volumeFilename = "volumes";
+        private const string scoreFilename = "score.txt";
+        private const string levelFilename = "uroven";
+        private const string volumeFilename = "volumes";
 
         public static bool SaveGameExists { get; set; }
         public static float VolumeSound { get; set; } = .9f;

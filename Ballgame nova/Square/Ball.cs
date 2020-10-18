@@ -223,7 +223,7 @@ namespace Square
             }
             else if (PlayBoard.tiles[indexDlazdice].plna)
             {
-                if (utocnaLeva && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].pruchodna)
+                if (utocnaLeva && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].Pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice].Zborit(false);
                     HrajOdraz();
@@ -245,7 +245,7 @@ namespace Square
                 //indexDlazdice != Hlavni.tiles.Count && //ochrana když neni okraj - jinak musim vyplnit posledni roh
                 PlayBoard.tiles[indexDlazdice + 1].plna)
             {
-                if (utocnaPrava && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + 1].plnaPredem && PlayBoard.tiles[indexDlazdice + 1].pruchodna)
+                if (utocnaPrava && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + 1].plnaPredem && PlayBoard.tiles[indexDlazdice + 1].Pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice + 1].Zborit(false);
                     HrajOdraz();
@@ -265,7 +265,7 @@ namespace Square
             }
             else if (PlayBoard.tiles[indexDlazdice].plna)
             {
-                if (utocnaHorni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].pruchodna)
+                if (utocnaHorni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].Pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice].Zborit(false);
                     HrajOdraz();
@@ -285,7 +285,7 @@ namespace Square
             }
             else if (PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].plna)
             {
-                if (utocnaDolni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].plnaPredem && PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].pruchodna)
+                if (utocnaDolni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].plnaPredem && PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].Pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].Zborit(false);
                     HrajOdraz();

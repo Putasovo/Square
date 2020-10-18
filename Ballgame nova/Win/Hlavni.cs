@@ -77,7 +77,7 @@ namespace Mojehra
 
         private Color[] barvaVanim;
 
-        private static SpriteFont font, font14, font20;
+        private static SpriteFont font12, font14, font20;
         private Vector2 debugTextLocation;
         private readonly List<Zprava> Texty = new List<Zprava>();
         private Color barvaZpravy;
@@ -90,7 +90,6 @@ namespace Mojehra
         private static byte zemetreseni; private const byte dobaZemetreseni = 60;
         private static int vybuchujuciMina; private static bool probihaVybuch;
         private static Texture2D tileSprite;
-        private static Texture2D tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite;
         private readonly List<Tile> druheRadyTiles = new List<Tile>(128);
         private static readonly List<Tile> tiles = new List<Tile>(151);
         private static readonly List<Tile> tilesVnitrni = new List<Tile>(105);
@@ -117,14 +116,14 @@ namespace Mojehra
 
         private Hrac player;
         private ushort delkaAnimaceHrace, sloupcuAnimace;
-        private const byte pocatecniZivoty = 3; byte zivoty;
+        private const byte pocatecniZivoty = 3; private byte zivoty;
         private static Texture2D hracsprite;
         private Vector2 zadanyKlik, predchoziKlik;
 
         private string zivotuString;
         private string skoreString = "0", skoreTotalString = "0", excesBonus, procentaString;
         private static short skore, bonus, exces, pricistSkore;
-        private ushort minBonus;//uroven pro gratulaci
+        private ushort minBonus; // uroven pro gratulaci
         private Vector2 zivotuLocation, skoreLocation, skoreTotalLocation, procentaLocation;
 
         private static Texture2D spriteMonstra;
@@ -152,14 +151,14 @@ namespace Mojehra
         //}
         internal static void VybuchPostupne()
         {
-            if (zemetreseni == 51 && tiles[vybuchujuciMina].dosahMiny > 1)
+            if (zemetreseni == 51 && tiles[vybuchujuciMina].DosahMiny > 1)
             {
                 VybuchKolem(vybuchujuciMina, 2);
                 //if (vibrator.HasVibrator) vibrator.Vibrate(600);
             }
-            else if (zemetreseni == 44 && tiles[vybuchujuciMina].dosahMiny > 2) VybuchKolem(vybuchujuciMina, 3);
-            else if (zemetreseni == 37 && tiles[vybuchujuciMina].dosahMiny > 3) VybuchKolem(vybuchujuciMina, 4);
-            else if (zemetreseni == 30 && tiles[vybuchujuciMina].dosahMiny > 4) VybuchKolem(vybuchujuciMina, 5);
+            else if (zemetreseni == 44 && tiles[vybuchujuciMina].DosahMiny > 2) VybuchKolem(vybuchujuciMina, 3);
+            else if (zemetreseni == 37 && tiles[vybuchujuciMina].DosahMiny > 3) VybuchKolem(vybuchujuciMina, 4);
+            else if (zemetreseni == 30 && tiles[vybuchujuciMina].DosahMiny > 4) VybuchKolem(vybuchujuciMina, 5);
         }
         /// <summary>
         /// zatim nekontroluju, jestli jde vybuch za okrajove dlazdice
@@ -324,8 +323,6 @@ namespace Mojehra
             openingScreen = Content.Load<Texture2D>(@"gfx/openingscreen");
             ballSprite = Content.Load<Texture2D>(@"gfx/ball");
             tileSprite = Content.Load<Texture2D>(@"gfx/tile");
-            tileOznacenaSprite = Content.Load<Texture2D>(@"gfx/oznacena");
-            tileOznacena2Sprite = Content.Load<Texture2D>(@"gfx/oznacena2");
             hracsprite = Content.Load<Texture2D>(@"gfx/hrac");
 
             if (sound)
@@ -345,7 +342,7 @@ namespace Mojehra
                 }
             }
 
-            font = Content.Load<SpriteFont>("PressStart2P12");
+            font12 = Content.Load<SpriteFont>("PressStart2P12");
             font14 = Content.Load<SpriteFont>("PressStart2P14");
             font20 = Content.Load<SpriteFont>("PressStart2P20");
 
@@ -597,7 +594,7 @@ namespace Mojehra
 
                         foreach (Tile tile in tiles) //pro animace
                         {
-                            tile.Update(gameTime);
+                            tile.Update();
                         }
 
                         // if (hrajOdraz) HrajOdraz();
@@ -747,7 +744,7 @@ namespace Mojehra
                 {
                     if (debugText[i] != null)
                     {
-                        spriteBatch.DrawString(font, debugText[i], poziceRadky, Color.Cyan);
+                        spriteBatch.DrawString(font12, debugText[i], poziceRadky, Color.Cyan);
                         poziceRadky.Y += 22f;
                     }
                 }
@@ -755,10 +752,10 @@ namespace Mojehra
 
             if (gameState == Stavy.Play || gameState == Stavy.Vitez || gameState == Stavy.Prohra)
             {
-                spriteBatch.DrawString(font, zivotuString, zivotuLocation, Color.Aqua);
-                spriteBatch.DrawString(font, skoreString, skoreLocation, Color.Aqua);
-                spriteBatch.DrawString(font, skoreTotalString, skoreTotalLocation, Color.Aqua);
-                spriteBatch.DrawString(font, procentaString, procentaLocation, Color.White);
+                spriteBatch.DrawString(font12, zivotuString, zivotuLocation, Color.Aqua);
+                spriteBatch.DrawString(font12, skoreString, skoreLocation, Color.Aqua);
+                spriteBatch.DrawString(font12, skoreTotalString, skoreTotalLocation, Color.Aqua);
+                spriteBatch.DrawString(font12, procentaString, procentaLocation, Color.White);
             }
             else if (gameState == Stavy.Pause)
             {
@@ -774,12 +771,12 @@ namespace Mojehra
                     spriteBatch.DrawString(font14, Texts.Sound, menuSoundLoc, Color.Beige);
                     spriteBatch.DrawString(font14, Texts.Music, menuMusicLoc, Color.Coral);
                 }
-                spriteBatch.DrawString(font, menuBottomString, menuBottomLoc, Color.White);
+                spriteBatch.DrawString(font12, menuBottomString, menuBottomLoc, Color.White);
             }
 
             if (letiZrovnaText)
             {
-                spriteBatch.DrawString(font, leticiText, polohaLeticihoTextu, Color.Aqua);
+                spriteBatch.DrawString(font12, leticiText, polohaLeticihoTextu, Color.Aqua);
             }
             #endregion
 
@@ -1414,15 +1411,14 @@ namespace Mojehra
             {
                 for (byte j = 0; j < columns; j++)
                 {
-                    Vector2 location = new Vector2(j * tileSize, i * tileSize);
+                    var location = new Vector2(j * tileSize, i * tileSize);
                     bool naokraji = false;
                     if ((location.X == 0 || location.X == pravyokraj) || (location.Y == 0 || location.Y == dolniokraj))
                     {
                         naokraji = true;
                         okrajovychDlazdic++;
                     }
-                    Tile tile = new Tile(tileSprite, tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite,
-                        location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
+                    var tile = new Tile(tileSprite, location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
                     tiles.Add(tile);
                     if (!naokraji)
                     {
@@ -1457,8 +1453,7 @@ namespace Mojehra
                         okrajovychDlazdic++;
                     }
 
-                    var tile = new Tile(tileSprite, tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite,
-                        location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
+                    var tile = new Tile(tileSprite, location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
 
                     if (!naokraji)
                     {
@@ -1511,8 +1506,7 @@ namespace Mojehra
                     {
                         naokraji = true;
                     }
-                    var tile = new Tile(tileSprite, tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite,
-                        location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
+                    var tile = new Tile(tileSprite, location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
                     if (!naokraji)
                     {
                         tilesMenuOptions.Add(tile);
@@ -1567,7 +1561,7 @@ namespace Mojehra
             {   // odeberu zvlastni textury predchoziho vyplneni
                 foreach (Tile tile in tilesVnitrni)
                 {
-                    if (tile.prvni || tile.druha)
+                    if (tile.Prvni || tile.Druha)
                         tile.DebugDlazdice(0);
                 }
             }
@@ -1738,7 +1732,7 @@ namespace Mojehra
                 if (!tile.plna && !tile.kvyplneni)
                 {
                     tile.kvyplneni = true;
-                    tiles[i].prvni = true;
+                    tiles[i].Prvni = true;
                     nalezena = true;
                 }
             }
@@ -1902,7 +1896,7 @@ namespace Mojehra
         {
             foreach (Tile dlazdice in tilesVnitrni)
             {
-                if (dlazdice.kvyplneni && !dlazdice.druha)
+                if (dlazdice.kvyplneni && !dlazdice.Druha)
                 {
                     dlazdice.KVyplneni(false);
                 }
@@ -1926,8 +1920,8 @@ namespace Mojehra
                 }
                 if (!debug)
                 {
-                    if (dlazdice.prvni) dlazdice.prvni = false;
-                    else if (dlazdice.druha) dlazdice.druha = false;
+                    if (dlazdice.Prvni) dlazdice.Prvni = false;
+                    else if (dlazdice.Druha) dlazdice.Druha = false;
                 }
                 if (dlazdice.kvyplneni)
                 {
@@ -1957,7 +1951,7 @@ namespace Mojehra
                         debugPrvniDlazdice = $"Vybrana dlazdice: {i} radek: {radek} / {rows} sloupec: {sloupec} / {columns}";
                         debugText[2] = debugPrvniDlazdice;
                     }
-                    else tiles[i].prvni = true;
+                    else tiles[i].Prvni = true;
                     return prvniNalezena;
                 }
             }
@@ -1977,7 +1971,7 @@ namespace Mojehra
                     {
                         tiles[i].DebugDlazdice(2);
                     }
-                    else tiles[i].druha = true;
+                    else tiles[i].Druha = true;
                     return true;
                 }
             }
@@ -2105,7 +2099,7 @@ namespace Mojehra
         private void NapisVelkouZpravu(string inputString, short miliseconds, short x = -9999, short vyska = -9999,
             bool fadein = false, bool fadeout = false, Color color = new Color())
         {
-            Vector2 poloha = font.MeasureString(inputString);
+            Vector2 poloha = font12.MeasureString(inputString);
             if (x == -9999)
                 poloha.X = (short)(stred.X - poloha.X / 2);
             else poloha.X = x;
@@ -2121,7 +2115,7 @@ namespace Mojehra
             else
                 barvaZpravy = new Color((byte)100, (byte)111, (byte)50, alfa);
 
-            var zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font);
+            var zprava = new Zprava(poloha, inputString, barvaZpravy, miliseconds, fadein, fadeout, font12);
             ProjedZpravy(zprava);
         }
         private void NapisVelkouZpravu14(string inputString, short miliseconds, short X = -9999, short vyska = -9999,
