@@ -115,15 +115,12 @@
     <Content Include="Content\audio\lost.wav" />
     <None Include="Content\audio\ozivKouli.wav" />
     <Content Include="Content\audio\zpomalit.wav" />
-    <Content Include="Content\gfx\druha.png" />
     <Content Include="Content\gfx\fadetoB.png" />
     <None Include="Content\audio\level2.ogg" />
     <None Include="Content\audio\win.ogg" />
     <None Include="Content\gfx\hrac.png" />
     <Content Include="Content\gfx\hrob.png" />
     <Content Include="Content\gfx\monstrum.png" />
-    <Content Include="Content\gfx\oznacena.png" />
-    <Content Include="Content\gfx\oznacena2.png" />
     <None Include="Content\gfx\ball.png" />
     <Content Include="Content\gfx\mine.png" />
     <Content Include="Content\gfx\openingscreen.png" />
