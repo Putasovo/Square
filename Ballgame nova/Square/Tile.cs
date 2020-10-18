@@ -69,7 +69,7 @@ namespace Square
         /// <param name="sprite">sprites for the tile</param>
         /// <param name="location">location of first pixel</param>
         /// <param name="velocity">velocity</param>
-        public Tile(Texture2D atlas, Texture2D exploze, Texture2D spriteOznaceny, Texture2D spriteOznaceny2, Texture2D spriteDruha,
+        public Tile(Texture2D atlas, Texture2D spriteOznaceny, Texture2D spriteOznaceny2, Texture2D spriteDruha,
             Vector2 location, Vector2 velocity,
             int width, int height, bool animated, bool viditelna, bool naokraji, bool debug)
         {
@@ -78,11 +78,11 @@ namespace Square
             drawRectangle = new Rectangle((int)location.X, (int)location.Y, width, height);
             this.velocity = velocity;
             this.animated = animated;
-            this.visible = viditelna;
-            this.debuguju = debug;
-            this.okrajova = naokraji;
+            visible = viditelna;
+            debuguju = debug;
+            okrajova = naokraji;
             barvaDlazdice = Color.White;
-            this.origin = location + new Vector2(width/2); //stred
+            origin = location + new Vector2(width/2); //stred
             //kolem stredu if (animated) this.origin = new Vector2(Hlavni.columns * plnaPozice.Width / 2, Hlavni.rows * plnaPozice.Width / 2);
             if (animated)
             {

@@ -79,9 +79,9 @@ namespace Mojehra
                         souradnice.X = novasouradnice.X < maxX + krok ? novasouradnice.X : maxX; // osekat kdyz jde klikat mimo plochu
                         souradnice.Y = novasouradnice.Y < maxY + krok ? novasouradnice.Y : maxY;
                         PlayBoard.tiles[indexCiloveDlazdice].Odvyrazni();
-                        indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * Hlavni.columns);
+                        indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * PlayBoard.sloupcu);
                         PlayBoard.tiles[indexCiloveDlazdice].Zvyrazni();
-                        //souradnice.X = UrovnejSouradnici((int)souradnice.X);//bez castu nemuzu zkouset modulo                        
+                        // souradnice.X = UrovnejSouradnici((int)souradnice.X); // bez castu nemuzu zkouset modulo                        
                     }
                     UrciKamJet(souradnice);
                 }
@@ -158,7 +158,7 @@ namespace Mojehra
 
         private void ZpracujZvlastniDlazdice()
         {
-            indexDlazdice = hracovo.X / krok + (hracovo.Y / krok * Hlavni.columns); //na jake dlazdici je
+            indexDlazdice = hracovo.X / krok + (hracovo.Y / krok * PlayBoard.sloupcu); // na jake dlazdici je
             if (PlayBoard.tiles[indexDlazdice].zpomalovaci)
             {
                 Hlavni.NastavRychlostKouli(.6f);

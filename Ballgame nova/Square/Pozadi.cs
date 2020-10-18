@@ -152,7 +152,7 @@ namespace Square
                     // naokraji = true;
                     // okrajovychDlazdic++;
                     //}
-                    var tile = new Tile(sprite, null, null, null, null,
+                    var tile = new Tile(sprite, null, null, null,
                         location, pohyb, sirkaStrany, vyskaStrany, false, true, naokraji, false);
                     tile.NastavBarvu(barvaSnehu);
                     tilesPozadi.Add(tile);
