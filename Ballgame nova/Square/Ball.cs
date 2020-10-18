@@ -13,17 +13,20 @@ namespace Square
         private const float dolu = MathHelper.Pi;
         private const float doleva = MathHelper.Pi / 2; // MathHelper.ToRadians(90)
         private static Vector2 originRotace;
-        private readonly float vyslednaRotace = 0f;
+        private readonly float vyslednaRotace;
 
         private float prolnuti;
-        private Color color1, color2;
-        private short dobijeni = -1;
-        public bool srazena, cinna, utocna;
-        public bool utocnaLeva, utocnaHorni, utocnaPrava, utocnaDolni;
-        private Vector2 velocity, vychoziVelocity, minVelocity, maxVelocity;
+        private readonly Color color1, color2;
+        private bool srazena;
+        private short dobijeni = -100;
+        private readonly bool utocna;
+        public bool cinna, utocnaLeva, utocnaHorni, utocnaPrava, utocnaDolni;
+
         private readonly byte[] nahodnyBajt = new byte[1];
         private readonly System.Security.Cryptography.RNGCryptoServiceProvider safeRand = new System.Security.Cryptography.RNGCryptoServiceProvider();
-        
+
+        // private readonly Vector2 vychoziVelocity;
+        private Vector2 velocity, minVelocity, maxVelocity;
         public float FaktorRychlosti { get; set; } = 0.01f;
         public Rectangle rect = new Rectangle(0, 0, 32, 32);
         private static readonly Rectangle rectBall = new Rectangle(0, 0, 32, 32);
@@ -111,20 +114,19 @@ namespace Square
                 dolniOkrajDesky = windowY -1; // bez -1 by byl prekrocen indexdlazdice
             }
 
-            odchylka = ( (float)(rand.NextDouble() - 0.5f ) * .11f); // pro jedinecnost
+            odchylka = (float)(rand.NextDouble() - 0.5f ) * .11f; // pro jedinecnost
+
+            // vychoziVelocity = velocity;
             velocity.X += +odchylka;
-            velocity.Y += +odchylka;
-            vychoziVelocity = velocity;
+            velocity.Y += +odchylka;            
             minVelocity = velocity * .81f; maxVelocity = velocity * 1.2f;
-            //faktorCasu = 1;
+
             if (utocna)
             {
                 dobijeni = 10;
                 color1 = new Color(255, 255, 255, 255); // jinak bude střet černý
                 color2 = new Color(0, 0, 0, 0);
             }
-            else 
-                dobijeni = -100;
 
             povolVariace = true; // zatim jsem nikdy nepouzil false
 
@@ -183,10 +185,19 @@ namespace Square
                 else 
                     flipped += 1;
 
-                if (povolVariace) VariacePoOdrazech(2);
+                if (povolVariace) 
+                    VariacePoOdrazech(2);
             }
         }
 
+        /// <summary>
+        /// pro intro
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="maxX"></param>
+        /// <param name="maxY"></param>
+        /// <param name="minX"></param>
+        /// <param name="minY"></param>
         public void UpdateAnimace(int time, short maxX = 9999, short maxY = 9999, short minX = -9999, short minY = -9999)
         {
             prolnuti = (float)dobijeni / 10;
@@ -215,7 +226,7 @@ namespace Square
                 if (utocnaLeva && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice].Zborit(false);
-                    // Hlavni.HrajOdraz();
+                    HrajOdraz();
                     dobijeni = 10;
                 }
                 OdrazVodorovne();
@@ -257,7 +268,7 @@ namespace Square
                 if (utocnaHorni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice].Zborit(false);
-                    // Hlavni.HrajOdraz();
+                    HrajOdraz();
                     dobijeni = 10;
                 }
                 OdrazSvisle();
@@ -277,7 +288,7 @@ namespace Square
                 if (utocnaDolni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].plnaPredem && PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].Zborit(false);
-                    // Hlavni.HrajOdraz();
+                    HrajOdraz();
                     dobijeni = 10;
                 }
                 OdrazSvisle();
@@ -291,19 +302,21 @@ namespace Square
         private void OdrazSvisle()
         {
             // Hlavni.hrajOdraz = true;
-            velocity.Y *= -1;
-            svislyObrat = true; predchoziObrat = false;
             if (predchoziObrat && dobijeni > 0)
                 dobijeni--;
+
+            velocity.Y *= -1;
+            svislyObrat = true; predchoziObrat = false;
         }
 
         private void OdrazVodorovne()
         {
             // Hlavni.hrajOdraz = true;
+            if (!predchoziObrat && dobijeni > 0)
+                dobijeni--;
+
             velocity.X *= -1;
             vodorovnyObrat = predchoziObrat = true;
-            if (!predchoziObrat && dobijeni > 0) 
-                dobijeni--;
         }
 
         public void SrazkasProjetou()
@@ -389,14 +402,15 @@ namespace Square
                 instanceOdrazu.Pitch = 0;
                 instanceOdrazu.Play();
             }
-            else if (instanceOdrazu.Pitch < .99f) instanceOdrazu.Pitch += .03f;
+            else if (instanceOdrazu.Pitch < .99f) 
+                instanceOdrazu.Pitch += .03f;
         }
 
         public void Draw(SpriteBatch spritebatch, Texture2D sprite)
         {
             if (cinna)
             { 
-                if (dobijeni == -1)
+                if (dobijeni == -100)
                 {
                     if (srazena) 
                         spritebatch.Draw(sprite, rect, rectBall, Color.Crimson);

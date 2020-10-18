@@ -36,7 +36,7 @@ namespace Square
             {
                 switch (cisloUrovne)
                 {
-                    case 0: Level24(); break;
+                    case 0: Level10(); break;
                     case 1: Level11(); break;
                     case 2: Level12(); break;
                     case 3: Level13(); break;
