@@ -112,7 +112,6 @@
   <ItemGroup>
     <Content Include="Content\audio\explosion.wav" />
     <Content Include="Content\audio\level5.wav" />
-    <Content Include="Content\audio\loser.wav" />
     <Content Include="Content\audio\lost.wav" />
     <None Include="Content\audio\ozivKouli.wav" />
     <Content Include="Content\audio\zpomalit.wav" />

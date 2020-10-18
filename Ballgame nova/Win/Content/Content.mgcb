@@ -61,12 +61,6 @@
 /processorParam:Quality=Best
 /build:audio/level5.wav
 
-#begin audio/loser.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:audio/loser.wav
-
 #begin audio/lost.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

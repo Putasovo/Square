@@ -99,7 +99,6 @@ namespace MojehraDroid
         private static readonly List<Tile> tiles = new List<Tile>(151);
         private static readonly List<Tile> tilesVnitrni = new List<Tile>(105);
 
-        private static readonly List<Tile> tilesMenu = new List<Tile>(151);
         private static readonly List<Tile> tilesMenuVnitrni = new List<Tile>(105);
         private static readonly List<Tile> tilesMenuOptions = new List<Tile>(151);
         private Rectangle menuNew, menuLoad, menuSettings, menuExit, menuSound, menuMusic;
@@ -1497,7 +1496,7 @@ namespace MojehraDroid
 
                     var tile = new Tile(tileSprite, tileOznacenaSprite, tileOznacena2Sprite, tileDruhaSprite,
                         location, velocity, tileSize, tileSize, animovatDlazdici, videtDlazdici, naokraji, debug);
-                    tilesMenu.Add(tile);
+
                     if (!naokraji)
                     {
                         tilesMenuVnitrni.Add(tile);
@@ -1516,22 +1515,22 @@ namespace MojehraDroid
                         tilesMenuVnitrni[i * columnsVnitrni + j].VyplnitPredemZvyditelnit();
                 }                
             }
-            
+
             menuNew = new Rectangle(64, 64, 160, 64);
             Vector2 measured = font14.MeasureString(Texts.New);
-            menuNewLoc = new Vector2((menuNew.X + (menuNew.Width - measured.X) / 2), menuNew.Y + ((menuNew.Height - measured.Y) /2));
+            menuNewLoc = new Vector2(menuNew.X + (menuNew.Width - measured.X) / 2, menuNew.Y + ((menuNew.Height - measured.Y) / 2));
 
             menuLoad = new Rectangle(256, 64, 160, 64);
             measured = font14.MeasureString(Texts.Resume);
-            menuContinueLoc = new Vector2((menuLoad.X + (menuLoad.Width - measured.X) / 2), menuLoad.Y + ((menuLoad.Height - measured.Y) / 2));
+            menuContinueLoc = new Vector2(menuLoad.X + (menuLoad.Width - measured.X) / 2, menuLoad.Y + ((menuLoad.Height - measured.Y) / 2));
 
             menuSettings = new Rectangle(64, 192, 160, 64);
             measured = font14.MeasureString(Texts.Options);
-            menuSettingsLoc = new Vector2((menuSettings.X + (menuSettings.Width - measured.X) / 2), menuSettings.Y + ((menuSettings.Height - measured.Y) / 2));
+            menuSettingsLoc = new Vector2(menuSettings.X + (menuSettings.Width - measured.X) / 2, menuSettings.Y + ((menuSettings.Height - measured.Y) / 2));
 
             menuExit = new Rectangle(256, 192, 160, 64);
             measured = font14.MeasureString(Texts.Exit);
-            menuExitLoc = new Vector2((menuExit.X + (menuExit.Width - measured.X) / 2), menuExit.Y + ((menuExit.Height - measured.Y) / 2));
+            menuExitLoc = new Vector2(menuExit.X + (menuExit.Width - measured.X) / 2, menuExit.Y + ((menuExit.Height - measured.Y) / 2));
         }
 
         protected void BuildMenuOptions()
