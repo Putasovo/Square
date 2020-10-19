@@ -102,6 +102,7 @@ namespace Square
                     }
                 }
                 isoStream.Dispose();
+                SaveGameExists = true;
             }
             else
             {
@@ -114,10 +115,10 @@ namespace Square
         /// </summary>
         public static void SaveGame(Level uroven)
         {
-            if (uroven.epizoda > 0 && uroven.epizoda >= MaxEpisoda)
+            if (uroven.Epizoda > 0 && uroven.Epizoda >= MaxEpisoda)
             {
-                MaxEpisoda = uroven.epizoda;
-                MaxLevel = uroven.cisloUrovne;
+                MaxEpisoda = uroven.Epizoda;
+                MaxLevel = uroven.CisloUrovne;
                 IsolatedStorageFileStream isoStream;
 
                 if (!store.FileExists(levelFilename))
@@ -131,7 +132,7 @@ namespace Square
                 {
                     sw.Flush();
                     sw.WriteLine(MaxLevel.ToString());
-                    sw.WriteLine(uroven.epizoda.ToString());
+                    sw.WriteLine(uroven.Epizoda.ToString());
                     sw.WriteLine(SkoreTotal.ToString());
                 }
 

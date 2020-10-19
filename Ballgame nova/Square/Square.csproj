@@ -5,6 +5,11 @@
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>Mighty Square Core.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+    <Authors>ZG</Authors>
+    <Company>Putasovo</Company>
+    <Product>Mighty Square</Product>
+    <Copyright>Putasovo 2020</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>

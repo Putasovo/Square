@@ -5,24 +5,26 @@ namespace Square
 {
     public class SplashScreen
     {
-        /// <summary>
-        /// by these main Update will decide whether to proceed
-        /// </summary>
-        public bool kresliSplash, provedUpdate;
-
+        private const ushort pozadovanaVydrz = 60;
+        private static ushort vydrz;
+        private static ushort okrajX;
+        private static ushort stredXoriznuty;
         private static Rectangle splashRect;
         private static Texture2D splashScreen;
-        private Color splashColor; private Color[] splash;
+        private Color splashColor; 
+        private readonly Color[] splash;
         private bool zvysStep, budeUpdate;
         private byte splashStep;
-        
-        private static ushort okrajX; private static ushort stredXoriznuty;
-        private ushort vydrz;
-        const ushort pozadovanaVydrz = 60;
         private string napis;
         private static SpriteFont pismo;
         private bool kreslitPismo;
         private Vector2 polohaNapisu;
+        
+        /// <summary>
+        /// by these main Update will decide whether to proceed
+        /// </summary>
+        public bool ProvedUpdate { get; internal set; }
+        public bool KreslitSplash { get; internal set; }
 
         public SplashScreen(GraphicsDeviceManager graphics, Rectangle rect, SpriteFont font)
         {
@@ -40,7 +42,7 @@ namespace Square
 
             pismo = font;
             polohaNapisu = rect.Center.ToVector2()*.8f;
-            provedUpdate = true;
+            ProvedUpdate = true;
         }
 
         private void StahniStep()
@@ -57,7 +59,7 @@ namespace Square
 
         public void Update()
         {
-            if (kresliSplash)
+            if (KreslitSplash)
             {
                 if (splashStep == byte.MaxValue)
                 {
@@ -66,30 +68,30 @@ namespace Square
                         vydrz--;
                     else if (budeUpdate)
                     {
-                        if (!provedUpdate) 
-                            provedUpdate = true;
+                        if (!ProvedUpdate) 
+                            ProvedUpdate = true;
                         else 
-                            budeUpdate = provedUpdate = false;
+                            budeUpdate = ProvedUpdate = false;
                     }
                 }
                 else if (splashStep == byte.MinValue) // dokonceni
                 {
-                    kresliSplash = kreslitPismo = budeUpdate = false;
-                    provedUpdate = true;
+                    KreslitSplash = kreslitPismo = budeUpdate = false;
+                    ProvedUpdate = true;
                     splashRect.X = okrajX;
                     splashColor.A = byte.MaxValue;
                 }
 
                 if (zvysStep) 
                     ZvedejStep();
-                else if (!budeUpdate && !provedUpdate && vydrz == 0)
+                else if (!budeUpdate && !ProvedUpdate && vydrz == 0)
                     StahniStep();
             }
         }
 
         public void KresliSplash(bool okamzite, string text, bool zavedPriUpdejtu)
         {
-            kresliSplash = true;
+            KreslitSplash = true;
             vydrz = pozadovanaVydrz;
             splashRect.X = 0;
             polohaNapisu.X = (stredXoriznuty - (pismo.MeasureString(text).X / 2));
@@ -107,16 +109,16 @@ namespace Square
                 splashStep = byte.MaxValue;
                 budeUpdate = true;
             }
-            provedUpdate = zavedPriUpdejtu;
+            ProvedUpdate = zavedPriUpdejtu;
         }
 
         public void ZatemniSplash(bool zavedPriUpdejtu)
         {
-            kresliSplash = zvysStep = true;
+            KreslitSplash = zvysStep = true;
             vydrz = pozadovanaVydrz;
             splashRect.X = 0;
             ZvedejStep();
-            provedUpdate = zavedPriUpdejtu;
+            ProvedUpdate = zavedPriUpdejtu;
         }
 
         public void Draw(SpriteBatch sb)

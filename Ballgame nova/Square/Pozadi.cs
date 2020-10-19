@@ -13,12 +13,12 @@ namespace Square
         private readonly List<Tile> tilesPozadi = new List<Tile>();
         private short cilovyX, cilovyY, stareX, stareY, rozdil;
         private bool doleva, nahoru, rotujici;
-        private float otaceni, hustotaVodorovne;
+        private float otaceni;
         private readonly Color barvaSnehu = new Color(255, 255, 255, 11);
         private readonly ushort rows, columns, sirkaStrany, vyskaStrany;
 
         public Pozadi(Texture2D textura, ushort width, ushort height, Vector2 motion, float rotace = 0f,
-            bool nastridacku = false, bool stridatNepravidelne = false, float hustotaVodorovne = 1)
+            bool nastridacku = false, bool stridatNepravidelne = false)
         {
             sprite = textura;
             vyskaStrany = (ushort)sprite.Height;
@@ -28,7 +28,6 @@ namespace Square
             Vydlazdickuj(nastridacku, stridatNepravidelne);
             pohyb = motion;            
             PripravPohyb();
-            this.hustotaVodorovne = hustotaVodorovne;
             if (rotace != 0)
             {
                 otaceni = rotace; rotujici = true; // ale nezvladam nastavovat stred otaceni
@@ -152,7 +151,7 @@ namespace Square
                     // naokraji = true;
                     // okrajovychDlazdic++;
                     //}
-                    var tile = new Tile(sprite, location, pohyb, sirkaStrany, vyskaStrany, false, true, naokraji, false);
+                    var tile = new Tile(sprite, location, pohyb, (int)(sirkaStrany * scale), (int)(vyskaStrany * scale), false, true, naokraji, false);
                     tile.NastavBarvu(barvaSnehu);
                     tilesPozadi.Add(tile);
                     //if (!naokraji)

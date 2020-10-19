@@ -6,35 +6,40 @@ namespace Square
 {
     public class Level
     {
-        private static ushort sloupcu, radku;
+        private static ushort radku;
         private static byte radkuUvnitr, sloupcuUvnitr;
         private static short numBalls, numAttackBalls;
-        public sbyte numUtocnychBallsLeft, numUtocnychBallsRight, numUtocnychBallsUp, numUtocnychBallsDown; //stejne poradi spawnu
         private int koordinat;
         private static int dlazdic;
-        public bool zrodMonstrum, poSmeru, bludiste, performanceTest, bezOdchylky;
-        public List<Point> poziceKouli = new List<Point>(4);
-        public List<Point> poziceUtocnychKouli = new List<Point>(4);
-        public string levelText;
-        public byte viteznychProcent;
-        public byte epizoda = 1, cisloUrovne;
-        public static string epizodaSplash;
-        public static bool zpomalovatUtocne;
-
-        public Level(ushort rows, ushort columns)
+        public readonly List<Point> poziceKouli = new List<Point>(4);
+        public readonly List<Point> poziceUtocnychKouli = new List<Point>(4);
+        public sbyte numUtocnychBallsLeft, numUtocnychBallsRight, numUtocnychBallsUp, numUtocnychBallsDown; //stejne poradi spawnu
+        
+        public byte Epizoda { get; internal set; } = 1;
+        public byte CisloUrovne { get; internal set; }
+        public static string EpizodaSplash { get; internal set; }
+        public static bool ZpomalovatUtocne{ get; internal set; }
+        public string LevelText { get; internal set; }
+        public byte ViteznychProcent { get; internal set; }
+        public bool ZrodMonstrum { get; internal set; }
+        public bool PoSmeru { get; internal set; }
+        public bool Bludiste { get; internal set; }
+        public bool PerformanceTest { get; internal set; }
+        public bool BezOdchylky { get; internal set; }
+        
+        public Level(ushort rows)
         {
             radku = rows;
             radkuUvnitr = (byte)(rows - 2);
-            sloupcu = columns;
-            sloupcuUvnitr = (byte)(columns - 2);
-            dlazdic = radku * sloupcu;
+            sloupcuUvnitr = (byte)(PlayBoard.Sloupcu - 2);
+            dlazdic = radku * PlayBoard.Sloupcu;
         }
 
         public void NastavUroven()
         {
-            if (epizoda == 1)
+            if (Epizoda == 1)
             {
-                switch (cisloUrovne)
+                switch (CisloUrovne)
                 {
                     case 0: Level10(); break;
                     case 1: Level11(); break;
@@ -43,12 +48,12 @@ namespace Square
                     case 4: Level14(); break;
                     case 5: Level15(); break;
                     case 6: Bludiste10(); break;
-                    case 7: Level20(); epizoda++; cisloUrovne = 0; break;
+                    case 7: Level20(); Epizoda++; CisloUrovne = 0; break;
                 }
             }
-            else if (epizoda == 2)
+            else if (Epizoda == 2)
             {
-                switch (cisloUrovne)
+                switch (CisloUrovne)
                 {
                     case 0: Level20(); break;
                     case 1: Level21(); break;
@@ -57,12 +62,12 @@ namespace Square
                     case 4: Level24(); break;
                     case 5: Level25(); break;
                     case 6: Bludiste20(); break;
-                    case 7: Level30(); epizoda++; cisloUrovne = 0; break;
+                    case 7: Level30(); Epizoda++; CisloUrovne = 0; break;
                 }
             }
-            else if (epizoda == 3)
+            else if (Epizoda == 3)
             {
-                switch (cisloUrovne)
+                switch (CisloUrovne)
                 {
                     case 0: Bludiste30(); break;
                     case 1: Level31(); break;
@@ -73,47 +78,53 @@ namespace Square
                     //case 6: Bludiste30(); break;
                     case 6: Victory(); break;
                     //case 7: PerformanceTest256();
-                    case 7: epizoda++; cisloUrovne = 0; break;
+                    case 7: Epizoda++; CisloUrovne = 0; break;
                 }
             }
-            else if (epizoda == 4)
+            else if (Epizoda == 4)
             {
-                switch (cisloUrovne)
+                switch (CisloUrovne)
                 {
                     case 0: PerformanceTest256(); break;
                     case 1: PerformanceTest512(); break;
-                    case 2: Level10(); epizoda = 1; cisloUrovne = 0; levelText = "From the beginning"; break;//"otocena" hra
+                    case 2: Level10(); Epizoda = 1; CisloUrovne = 0; LevelText = "From the beginning"; break;//"otocena" hra
                 }
             }
         }
 
         private void Victory()
         {
-            bludiste = true;
+            Bludiste = true;
             for (int i = 0; i < PlayBoard.tiles.Count; i++)
             {
-                if (i < 15) PlayBoard.tiles[i].Znepruchodnit();
-                else if (i > 134) PlayBoard.tiles[i].Znepruchodnit();
-                else if (i % 14 == 0) PlayBoard.tiles[i].Znepruchodnit();
-                else if (i > sloupcu * 2 && i < sloupcu * radkuUvnitr) PlayBoard.tiles[i].Zaminovat(1);
+                if (i < 15) 
+                    PlayBoard.tiles[i].Znepruchodnit();
+                else if (i > 134) 
+                    PlayBoard.tiles[i].Znepruchodnit();
+                else if (i % 14 == 0) 
+                    PlayBoard.tiles[i].Znepruchodnit();
+                else if (i > PlayBoard.Sloupcu * 2 && i < PlayBoard.Sloupcu * radkuUvnitr) 
+                    PlayBoard.tiles[i].Zaminovat(1);
             }
 
             PlayBoard.tiles[PlayBoard.tiles.Count - 16].OznacJakoCilovou(true);
             numAttackBalls = 499;
             numUtocnychBallsLeft = numUtocnychBallsRight = numUtocnychBallsDown = numUtocnychBallsUp = 1;
-            koordinat = (ushort)(sloupcu / 2 + sloupcu - 2);
+            koordinat = (ushort)(PlayBoard.Sloupcu / 2 + PlayBoard.Sloupcu - 2);
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + sloupcu].okrajova)
+            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].okrajova)
             {
-                koordinat += sloupcu;
-                if (koordinat % 2 == 0) PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-                else PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
+                koordinat += PlayBoard.Sloupcu;
+                if (koordinat % 2 == 0) 
+                    PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
+                else 
+                    PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
             }
             poziceUtocnychKouli.Add(new Point(8, 5));
             poziceUtocnychKouli.Add(new Point(2, 5));
             poziceKouli.Add(new Point(6, 3));
             poziceKouli.Add(new Point(6, 6));
-            levelText = "Victoria";
+            LevelText = "Victoria";
         }
 
         /// <summary>
@@ -121,7 +132,7 @@ namespace Square
         /// </summary>
         private void Level30()
         {
-            zpomalovatUtocne = true;
+            ZpomalovatUtocne = true;
             for (int j = 0; j < sloupcuUvnitr; j++)
             {
                 for (int k = 0; k < radkuUvnitr; k++)
@@ -142,9 +153,9 @@ namespace Square
                 i++;
             }
             numUtocnychBallsLeft = 20;
-            zrodMonstrum = true;
-            viteznychProcent = 85;
-            levelText = "Priorities";
+            ZrodMonstrum = true;
+            ViteznychProcent = 85;
+            LevelText = "Priorities";
         }
 
         private void Level31()
@@ -160,13 +171,13 @@ namespace Square
 
                 if (k > radku - 3)
                 {
-                    PlayBoard.tiles[k * sloupcu + sloupcuUvnitr - 2].ZnepruchodnitHraci();
-                    PlayBoard.tiles[k * sloupcu + sloupcuUvnitr - 2].ZnepruchodnitHraci();
+                    PlayBoard.tiles[k * PlayBoard.Sloupcu + sloupcuUvnitr - 2].ZnepruchodnitHraci();
+                    PlayBoard.tiles[k * PlayBoard.Sloupcu + sloupcuUvnitr - 2].ZnepruchodnitHraci();
                 }
                 else if (k == radkuUvnitr - 1)
                 {
-                    PlayBoard.tiles[k * sloupcu - 1].ZnepruchodnitHraci();
-                    PlayBoard.tiles[k * sloupcu - 2].ZnepruchodnitHraci();
+                    PlayBoard.tiles[k * PlayBoard.Sloupcu - 1].ZnepruchodnitHraci();
+                    PlayBoard.tiles[k * PlayBoard.Sloupcu - 2].ZnepruchodnitHraci();
                 }
                 j--;
             }
@@ -192,8 +203,8 @@ namespace Square
             //poziceKouli.Add(new Point(12, 8)); poziceKouli.Add(new Point(13, 7));
 
             //zrodMonstrum = true;
-            viteznychProcent = 72;
-            levelText = "Diagonal";
+            ViteznychProcent = 72;
+            LevelText = "Diagonal";
         }
 
         private void Level32()
@@ -229,9 +240,9 @@ namespace Square
             poziceUtocnychKouli.Add(new Point(sloupcuUvnitr / 4, radkuUvnitr / 2 + 2));
             poziceUtocnychKouli.Add(new Point(sloupcuUvnitr / 4, radkuUvnitr / 2 + 3));
 
-            zrodMonstrum = true;
+            ZrodMonstrum = true;
             //viteznychProcent = 79;
-            levelText = "Containment";
+            LevelText = "Containment";
         }
 
         private void Level33()
@@ -268,8 +279,8 @@ namespace Square
                 i++;
             }
 
-            zrodMonstrum = true;
-            levelText = "Traps";
+            ZrodMonstrum = true;
+            LevelText = "Traps";
         }
 
         private void Level34()
@@ -292,14 +303,14 @@ namespace Square
                 i++;
             }
 
-            zrodMonstrum = true;
-            levelText = "slowdown";
+            ZrodMonstrum = true;
+            LevelText = "slowdown";
         }
 
         private void Level35()
         {
             PlayBoard.tiles[3].ZnepruchodnitHraci();
-            PlayBoard.tiles[sloupcu - 4].ZnepruchodnitHraci();
+            PlayBoard.tiles[PlayBoard.Sloupcu - 4].ZnepruchodnitHraci();
             for (int j = 0; j < sloupcuUvnitr; j++)
             {
                 for (int k = 0; k < radkuUvnitr; k++)
@@ -378,13 +389,13 @@ namespace Square
                 i++;
             }
 
-            zrodMonstrum = true;
-            levelText = "Priorities";
+            ZrodMonstrum = true;
+            LevelText = "Priorities";
         }
 
         private void Bludiste30()
         {
-            bludiste = true; numBalls = 3;
+            Bludiste = true; numBalls = 3;
             for (int i = 1; i <= dlazdic; i++)
             {
                 if (i == 4 || i == 8
@@ -400,7 +411,6 @@ namespace Square
                     ) PlayBoard.tiles[i - 1].Znepruchodnit();
 
                 PlayBoard.tiles[62].Zaminovat(2); PlayBoard.tiles[66].Zaminovat(2);
-
                 PlayBoard.tiles[46].ZnepruchodnitHraci(); PlayBoard.tiles[47].ZnepruchodnitHraci(); PlayBoard.tiles[48].ZnepruchodnitHraci();
                 //PlayBoard.tiles[49].Znepruchodnit(); PlayBoard.tiles[50].Znepruchodnit();
                 //PlayBoard.tiles[51].Znepruchodnit(); PlayBoard.tiles[52].Znepruchodnit();
@@ -413,16 +423,19 @@ namespace Square
                 PlayBoard.tiles[100].ZnepruchodnitHraci(); PlayBoard.tiles[100].VyplnitPredemZvyditelnit();
                 PlayBoard.tiles[135].OznacJakoCilovou(true);
             }
-            poziceKouli.Add(new Point(2, 8)); poziceKouli.Add(new Point(14, 8)); poziceKouli.Add(new Point(7, 8));
+            poziceKouli.Add(new Point(2, 8)); 
+            poziceKouli.Add(new Point(14, 8)); 
+            poziceKouli.Add(new Point(7, 8));
             numAttackBalls = 2; numUtocnychBallsDown = 2;
-            poziceUtocnychKouli.Add(new Point(2, 1)); poziceUtocnychKouli.Add(new Point(5, 1));
+            poziceUtocnychKouli.Add(new Point(2, 1)); 
+            poziceUtocnychKouli.Add(new Point(5, 1));
 
-            levelText = "Not Straight Outta";
+            LevelText = "Not Straight Outta";
         }
 
         private void Bludiste20()
         {
-            bludiste = true; numBalls = 3;
+            Bludiste = true; numBalls = 3;
             for (int i = 1; i <= dlazdic; i++)
             {
                 if (i == 4 || i == 7 || i == 9 || i == 10 || i == 14
@@ -434,13 +447,16 @@ namespace Square
                     || i == 92 || i == 94 || i == 95 || i == 97 || i == 98 || i == 100 || i == 102
                     || i == 107 || i == 111 || i == 112 || i == 117 || i == 119
                     || i == 122 || i == 123 || i == 124 || i == 126 || i == 127 || i == 129 || i == 130 || i == 132 || i == 134
-                    || i == 141 || i == 146 || i == 150
-                    ) PlayBoard.tiles[i - 1].Znepruchodnit();
-                PlayBoard.tiles[51].Zaminovat(1); PlayBoard.tiles[52].ZnepruchodnitHraci(); PlayBoard.tiles[66].Zaminovat(1); PlayBoard.tiles[67].ZnepruchodnitHraci();
-                PlayBoard.tiles[14].OznacJakoCilovou(true);
+                    || i == 141 || i == 146 || i == 150)
+                    PlayBoard.tiles[i - 1].Znepruchodnit();
+                    PlayBoard.tiles[51].Zaminovat(1);
+                    PlayBoard.tiles[52].ZnepruchodnitHraci(); 
+                    PlayBoard.tiles[66].Zaminovat(1); 
+                    PlayBoard.tiles[67].ZnepruchodnitHraci();
+                    PlayBoard.tiles[14].OznacJakoCilovou(true);
             }
             poziceKouli.Add(new Point(14, 8)); poziceKouli.Add(new Point(14, 2)); poziceKouli.Add(new Point(7, 4));
-            levelText = "Breakaway"; //v bludisti by svitil porad?
+            LevelText = "Breakaway"; //v bludisti by svitil porad?
         }
 
         /// <summary>
@@ -452,12 +468,14 @@ namespace Square
             {
                 for (int k = 0; k < radkuUvnitr; k++)
                 {
-                    if (j < radku / 2) PlayBoard.tilesVnitrni[k * sloupcuUvnitr + j].VyplnitZvyditelnitOkamzite();
-                    else if (j == sloupcuUvnitr - 1) PlayBoard.tilesVnitrni[k * sloupcuUvnitr + j].VyplnitZvyditelnitOkamzite();
+                    if (j < radku / 2) 
+                        PlayBoard.tilesVnitrni[k * sloupcuUvnitr + j].VyplnitZvyditelnitOkamzite();
+                    else if (j == sloupcuUvnitr - 1) 
+                        PlayBoard.tilesVnitrni[k * sloupcuUvnitr + j].VyplnitZvyditelnitOkamzite();
                 }
             }
 
-            koordinat = (sloupcu / 2 + 1);
+            koordinat = PlayBoard.Sloupcu / 2 + 1;
             byte i = byte.MinValue;
             while (i < radkuUvnitr)
             {
@@ -467,7 +485,9 @@ namespace Square
                     PlayBoard.tilesVnitrni[koordinat + 1].ZnepruchodnitHraci();
                     PlayBoard.tilesVnitrni[koordinat + 2].ZnepruchodnitHraci();
                 }
-                else if (i == 3 || i == 4) PlayBoard.tilesVnitrni[koordinat - 1].Zaminovat(3);
+                else if (i == 3 || i == 4) 
+                    PlayBoard.tilesVnitrni[koordinat - 1].Zaminovat(3);
+
                 PlayBoard.tilesVnitrni[koordinat + 3].ZnepruchodnitHraci();
                 i++;
                 koordinat += sloupcuUvnitr;
@@ -478,9 +498,9 @@ namespace Square
             poziceUtocnychKouli.Add(new Point(sloupcuUvnitr / 5, radkuUvnitr / 2));
             numBalls = 4; numAttackBalls = 3;
             numUtocnychBallsLeft = 2; numUtocnychBallsRight = 1;
-            zrodMonstrum = true;
-            viteznychProcent = 76;
-            levelText = "Out of ideas";
+            ZrodMonstrum = true;
+            ViteznychProcent = 76;
+            LevelText = "Out of ideas";
         }
 
         /// <summary>
@@ -492,12 +512,14 @@ namespace Square
             {
                 for (int k = 0; k < radkuUvnitr; k++)
                 {
-                    if (j < radku / 2) PlayBoard.tilesVnitrni[k * sloupcuUvnitr + j].VyplnitZvyditelnitOkamzite();
-                    else if (j == sloupcuUvnitr - 1) PlayBoard.tilesVnitrni[k * sloupcuUvnitr + j].VyplnitZvyditelnitOkamzite();
+                    if (j < radku / 2) 
+                        PlayBoard.tilesVnitrni[k * sloupcuUvnitr + j].VyplnitZvyditelnitOkamzite();
+                    else if (j == sloupcuUvnitr - 1) 
+                        PlayBoard.tilesVnitrni[k * sloupcuUvnitr + j].VyplnitZvyditelnitOkamzite();
                 }
             }
 
-            koordinat = (sloupcu / 2 + 1);
+            koordinat = PlayBoard.Sloupcu / 2 + 1;
             byte i = byte.MinValue;
             while (i < radkuUvnitr)
             {
@@ -507,7 +529,9 @@ namespace Square
                     PlayBoard.tilesVnitrni[koordinat + 1].ZnepruchodnitHraci();
                     PlayBoard.tilesVnitrni[koordinat + 2].ZnepruchodnitHraci();
                 }
-                else if (i == 3 || i == 4) PlayBoard.tilesVnitrni[koordinat - 1].Zaminovat(3);
+                else if (i == 3 || i == 4) 
+                    PlayBoard.tilesVnitrni[koordinat - 1].Zaminovat(3);
+
                 PlayBoard.tilesVnitrni[koordinat + 3].ZnepruchodnitHraci();
                 i++;
                 koordinat += sloupcuUvnitr;
@@ -518,8 +542,8 @@ namespace Square
             poziceUtocnychKouli.Add(new Point(12, radku / 2 + 1)); poziceUtocnychKouli.Add(new Point(12, radku / 2 + -3));
             numBalls = 4; numAttackBalls = 4;
             numUtocnychBallsLeft = 2; numUtocnychBallsRight = 2;
-            viteznychProcent = 74;
-            levelText = "Contra";
+            ViteznychProcent = 74;
+            LevelText = "Contra";
         }
         /// <summary>
         /// Více koulí na stejném místě.
@@ -533,11 +557,12 @@ namespace Square
                 poziceKouli.Add(new Point(8, 5));
             }
             poziceUtocnychKouli.Add(new Point(sloupcuUvnitr / 2, radkuUvnitr / 2));
-            int indexVedlejsi = radku / 2 * sloupcu + sloupcu / 2;
-            if (FlipCoin()) indexVedlejsi -= sloupcu;
+            int indexVedlejsi = radku / 2 * PlayBoard.Sloupcu + PlayBoard.Sloupcu / 2;
+            if (FlipCoin()) 
+                indexVedlejsi -= PlayBoard.Sloupcu;
             PlayBoard.tiles[indexVedlejsi].VyplnitPredemZvyditelnit();
-            levelText = "More than you think";
-            bezOdchylky = true;
+            LevelText = "More than you think";
+            BezOdchylky = true;
         }
 
         /// <summary>
@@ -545,19 +570,19 @@ namespace Square
         /// </summary>
         private void Level22()
         {
-            koordinat = ((radku - 5) * sloupcu);
+            koordinat = (radku - 5) * PlayBoard.Sloupcu;
             PlayBoard.tiles[koordinat + 1].Znepruchodnit(); PlayBoard.tiles[koordinat + 2].Znepruchodnit();
-            koordinat += sloupcu;
+            koordinat += PlayBoard.Sloupcu;
             PlayBoard.tiles[koordinat].Znepruchodnit(); PlayBoard.tiles[koordinat + 2].Znepruchodnit(); PlayBoard.tiles[koordinat + 3].Zaminovat(3);
-            koordinat += sloupcu;
+            koordinat += PlayBoard.Sloupcu;
             PlayBoard.tiles[koordinat + 2].Znepruchodnit(); PlayBoard.tiles[koordinat + 3].Znepruchodnit(); PlayBoard.tiles[koordinat + 4].Znepruchodnit();
-            koordinat += sloupcu; poziceKouli.Add(new Point(0, koordinat / (radku - 1)));
+            koordinat += PlayBoard.Sloupcu; poziceKouli.Add(new Point(0, koordinat / (radku - 1)));
             PlayBoard.tiles[koordinat + 1].NastavZpomalovac(true); PlayBoard.tiles[koordinat + 4].Znepruchodnit();
-            koordinat += sloupcu;
+            koordinat += PlayBoard.Sloupcu;
             PlayBoard.tiles[koordinat + 3].Znepruchodnit();
             numBalls = 7;
-            viteznychProcent = 75;
-            levelText = "Drawbacks";
+            ViteznychProcent = 75;
+            LevelText = "Drawbacks";
         }
 
         /// <summary>
@@ -566,7 +591,7 @@ namespace Square
         private void Level21()
         {
             PlayBoard.tilesVnitrni[(radkuUvnitr / 2 - 3) * sloupcuUvnitr + sloupcuUvnitr / 2].Zaminovat(3);
-            PlayBoard.tilesVnitrni[(radku / 2) * sloupcuUvnitr + sloupcu / 2].Zaminovat(3);
+            PlayBoard.tilesVnitrni[(radku / 2) * sloupcuUvnitr + PlayBoard.Sloupcu / 2].Zaminovat(3);
             PlayBoard.tilesVnitrni[0].VyplnitPredemZvyditelnit(); PlayBoard.tilesVnitrni[sloupcuUvnitr + 1].VyplnitPredemZvyditelnit();
             PlayBoard.tilesVnitrni[sloupcuUvnitr * 2 + 2].VyplnitPredemZvyditelnit();
 
@@ -574,8 +599,8 @@ namespace Square
             PlayBoard.tilesVnitrni[PlayBoard.tilesVnitrni.Count - 2 - sloupcuUvnitr].VyplnitPredemZvyditelnit();
             PlayBoard.tilesVnitrni[PlayBoard.tilesVnitrni.Count - 3 - sloupcuUvnitr * 2].VyplnitPredemZvyditelnit();
             numBalls = 3; numAttackBalls = 3;
-            viteznychProcent = 75;
-            levelText = "Sweeper?";
+            ViteznychProcent = 75;
+            LevelText = "Sweeper?";
         }
 
         /// <summary>
@@ -583,8 +608,9 @@ namespace Square
         /// </summary>
         private void Level20()
         {
-            koordinat = (sloupcuUvnitr * 2 + (sloupcuUvnitr - 7) / 2);
-            if (FlipCoin()) koordinat -= sloupcuUvnitr;
+            koordinat = sloupcuUvnitr * 2 + (sloupcuUvnitr - 7) / 2;
+            if (FlipCoin()) 
+                koordinat -= sloupcuUvnitr;
             byte i = byte.MinValue;
             while (i < 5)
             {
@@ -596,8 +622,10 @@ namespace Square
                     PlayBoard.tilesVnitrni[koordinat + 3].ZnepruchodnitHraci();
                     PlayBoard.tilesVnitrni[koordinat + 4].ZnepruchodnitHraci();
                     PlayBoard.tilesVnitrni[koordinat + 5].ZnepruchodnitHraci();
-                    if (i % 2 == 0) poziceKouli.Add(new Point(PrevedNaIndexVsech(koordinat), i + 1));
-                    else poziceUtocnychKouli.Add(new Point(PrevedNaIndexVsech(koordinat), i + 1));
+                    if (i % 2 == 0) 
+                        poziceKouli.Add(new Point(PrevedNaIndexVsech(koordinat), i + 1));
+                    else 
+                        poziceUtocnychKouli.Add(new Point(PrevedNaIndexVsech(koordinat), i + 1));
                 }
                 PlayBoard.tilesVnitrni[koordinat + 6].ZnepruchodnitHraci();
                 i++;
@@ -605,8 +633,8 @@ namespace Square
             }
             numBalls = 2; numAttackBalls = 2;
             numUtocnychBallsRight = 2;
-            viteznychProcent = 60;
-            levelText = "Where you can't go";
+            ViteznychProcent = 60;
+            LevelText = "Where you can't go";
         }
 
         //level vzhuru nohama
@@ -617,44 +645,49 @@ namespace Square
             poziceKouli.Add(new Point(8, 4));
         }
 
-        private void Level11() //uvádí předem vyplněné koule
+        private void Level11() // uvádí předem vyplněné pole
         {
             numBalls = 2;
-            koordinat = (ushort)(sloupcu * 2 + 3);
-            if (FlipCoin()) koordinat++;
-            if (FlipCoin()) koordinat += sloupcu;
+            koordinat = (ushort)(PlayBoard.Sloupcu * 2 + 3);
+            if (FlipCoin()) 
+                koordinat++;
+            if (FlipCoin()) 
+                koordinat += PlayBoard.Sloupcu;
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
             PlayBoard.tiles[koordinat + 1].VyplnitPredemZvyditelnit();
-            PlayBoard.tiles[koordinat + sloupcu].VyplnitPredemZvyditelnit();
-            PlayBoard.tiles[koordinat + sloupcu + 1].VyplnitPredemZvyditelnit();
+            PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].VyplnitPredemZvyditelnit();
+            PlayBoard.tiles[koordinat + PlayBoard.Sloupcu + 1].VyplnitPredemZvyditelnit();
             poziceKouli.Add(new Point(7, 5));
             poziceKouli.Add(new Point(6, 6));
         }
 
-        private void Level12() //uvádí monstrum
+        private void Level12() // uvádí monstrum
         {
-            levelText = "Nowhere is safe?";
-            numBalls = 2; zrodMonstrum = true;
-            koordinat = (ushort)(sloupcu * 3 + 4);
-            if (FlipCoin()) koordinat--;
+            LevelText = "Nowhere is safe?";
+            numBalls = 2; ZrodMonstrum = true;
+            koordinat = (ushort)(PlayBoard.Sloupcu * 3 + 4);
+            if (FlipCoin()) 
+                koordinat--;
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
             PlayBoard.tiles[koordinat + 1].VyplnitPredemZvyditelnit();
-            PlayBoard.tiles[dlazdic - sloupcu * 2 - 5].VyplnitPredemZvyditelnit();
-            PlayBoard.tiles[dlazdic - sloupcu * 2 - 4].VyplnitPredemZvyditelnit();
+            PlayBoard.tiles[dlazdic - PlayBoard.Sloupcu * 2 - 5].VyplnitPredemZvyditelnit();
+            PlayBoard.tiles[dlazdic - PlayBoard.Sloupcu * 2 - 4].VyplnitPredemZvyditelnit();
         }
 
-        private void Level13() //sloupec napříč a první útočná
+        private void Level13() // sloupec napříč a první útočná
         {
-            levelText = "What lasts forever?";
+            LevelText = "What lasts forever?";
             numBalls = 2; numAttackBalls = 2;
             numUtocnychBallsLeft = 1; numUtocnychBallsRight = 1; numUtocnychBallsDown = numUtocnychBallsUp = 1;
-            koordinat = (ushort)(sloupcu / 2 + sloupcu - 2);
+            koordinat = (ushort)(PlayBoard.Sloupcu / 2 + PlayBoard.Sloupcu - 2);
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + sloupcu].okrajova)
+            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].okrajova)
             {
-                koordinat += sloupcu;
-                if (koordinat % 2 == 0) PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-                else PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
+                koordinat += PlayBoard.Sloupcu;
+                if (koordinat % 2 == 0) 
+                    PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
+                else 
+                    PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
             }
             poziceUtocnychKouli.Add(new Point(8, 5));
             poziceUtocnychKouli.Add(new Point(2, 5));
@@ -662,19 +695,20 @@ namespace Square
             poziceKouli.Add(new Point(6, 6));
         }
 
-        private void Level14() //uvádí neprůchodné dlaždice
+        private void Level14() // uvádí neprůchodné dlaždice
         {
             numBalls = 3; numAttackBalls = 1;
-            levelText = "There you don't go";
-            koordinat = (ushort)(sloupcu * 3 + 4);
-            if (FlipCoin()) koordinat -= sloupcu;
+            LevelText = "There you don't go";
+            koordinat = (ushort)(PlayBoard.Sloupcu * 3 + 4);
+            if (FlipCoin()) 
+                koordinat -= PlayBoard.Sloupcu;
             PlayBoard.tiles[koordinat].Znepruchodnit(); 
             PlayBoard.tiles[koordinat + 2].Znepruchodnit();
-            PlayBoard.tiles[koordinat + sloupcu + 1].Znepruchodnit();
-            koordinat += (ushort)(sloupcu * 2);
+            PlayBoard.tiles[koordinat + PlayBoard.Sloupcu + 1].Znepruchodnit();
+            koordinat += (ushort)(PlayBoard.Sloupcu * 2);
             PlayBoard.tiles[koordinat].Znepruchodnit();
             PlayBoard.tiles[koordinat + 2].Znepruchodnit();
-            zrodMonstrum = true;
+            ZrodMonstrum = true;
         }
 
         /// <summary>
@@ -682,27 +716,27 @@ namespace Square
         /// </summary>
         private void Level15()
         {
-            viteznychProcent = 75;
-            levelText = "Objective opinion of time";
+            ViteznychProcent = 75;
+            LevelText = "Objective opinion of time";
             numBalls = 2; numAttackBalls = 2;
-            koordinat = (sloupcu * 3 + 3);
+            koordinat = PlayBoard.Sloupcu * 3 + 3;
             PlayBoard.tiles[koordinat + 1].Znepruchodnit();
             PlayBoard.tiles[koordinat + 2].Znepruchodnit();
             PlayBoard.tiles[koordinat + 3].Znepruchodnit();
             PlayBoard.tiles[koordinat + 4].Znepruchodnit();
             //PlayBoard.tiles[koordinat + 5].Znepruchodnit();
             if (FlipCoin())
-                PlayBoard.tiles[koordinat + sloupcu + 4].NastavZpomalovac(true);
+                PlayBoard.tiles[koordinat + PlayBoard.Sloupcu + 4].NastavZpomalovac(true);
             else 
-                PlayBoard.tiles[koordinat + sloupcu * 2 + 4].NastavZpomalovac(true);
-            PlayBoard.tiles[koordinat + sloupcu + 5].Znepruchodnit();
-            PlayBoard.tiles[koordinat + sloupcu + 6].Znepruchodnit();
-            PlayBoard.tiles[koordinat + sloupcu + 7].Znepruchodnit();
-            koordinat += sloupcu * 2;
+                PlayBoard.tiles[koordinat + PlayBoard.Sloupcu * 2 + 4].NastavZpomalovac(true);
+            PlayBoard.tiles[koordinat + PlayBoard.Sloupcu + 5].Znepruchodnit();
+            PlayBoard.tiles[koordinat + PlayBoard.Sloupcu + 6].Znepruchodnit();
+            PlayBoard.tiles[koordinat + PlayBoard.Sloupcu + 7].Znepruchodnit();
+            koordinat += PlayBoard.Sloupcu * 2;
             PlayBoard.tiles[koordinat + 1].Znepruchodnit();
             PlayBoard.tiles[koordinat + 2].Znepruchodnit();
             PlayBoard.tiles[koordinat + 3].Znepruchodnit();
-            koordinat += sloupcu;
+            koordinat += PlayBoard.Sloupcu;
             PlayBoard.tiles[koordinat + 4].Znepruchodnit();
             PlayBoard.tiles[koordinat + 5].Znepruchodnit();
             PlayBoard.tiles[koordinat + 6].Znepruchodnit();
@@ -713,8 +747,8 @@ namespace Square
 
         private void Bludiste10()
         {
-            levelText = string.Empty;
-            bludiste = true; numBalls = 2;
+            LevelText = string.Empty;
+            Bludiste = true; numBalls = 2;
             for (int i = 1; i <= dlazdic; i++)
             {
                 if (i == 4 || i == 7 || i == 12 || i == 13 || i == 14
@@ -732,55 +766,24 @@ namespace Square
             }
             poziceKouli.Add(new Point(11, 14));
             poziceKouli.Add(new Point(8, 3));
-            //poziceUtocnychKouli.Add(new Point(10, 13));
-        }
-
-
-        private void Level16() //level se zemetresenim
-        {
-            koordinat = sloupcu * 3;
-            if (FlipCoin()) koordinat += sloupcu;
-            if (FlipCoin()) koordinat--;
-            PlayBoard.tilesVnitrni[koordinat].Zaminovat(3);
-            PlayBoard.tilesVnitrni[koordinat + sloupcu - 2].Zaminovat(5);
-            numBalls = 1; numUtocnychBallsRight = 1;
-            poziceKouli.Add(new Point(8, 4));
-            viteznychProcent = 90;
-        }
-
-        private void PerformanceTest128() //sloupec napříč a první útočná
-        {
-            performanceTest = true;
-            levelText = "Performance Test 128 + 128";
-            numBalls = numAttackBalls = 128;
-            numUtocnychBallsLeft = 1; numUtocnychBallsRight = 1; numUtocnychBallsDown = numUtocnychBallsUp = 1;
-            koordinat = (ushort)(sloupcu / 2 + sloupcu - 2);
-            PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + sloupcu].okrajova)
-            {
-                koordinat += sloupcu;
-                if (koordinat % 2 == 0) PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-                else PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
-            }
-            poziceUtocnychKouli.Add(new Point(8, 5));
-            poziceUtocnychKouli.Add(new Point(2, 5));
-            poziceKouli.Add(new Point(6, 3));
-            poziceKouli.Add(new Point(6, 6));
+            // poziceUtocnychKouli.Add(new Point(10, 13));
         }
 
         private void PerformanceTest256() //sloupec napříč a první útočná
         {
-            performanceTest = true;
-            levelText = "Performance Test 256 + 256";
+            PerformanceTest = true;
+            LevelText = "Performance Test 256 + 256";
             numBalls = 255; numAttackBalls = 255;
             numUtocnychBallsLeft = 1; numUtocnychBallsRight = 1; numUtocnychBallsDown = numUtocnychBallsUp = 1;
-            koordinat = (ushort)(sloupcu / 2 + sloupcu - 2);
+            koordinat = (ushort)(PlayBoard.Sloupcu / 2 + PlayBoard.Sloupcu - 2);
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + sloupcu].okrajova)
+            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].okrajova)
             {
-                koordinat += sloupcu;
-                if (koordinat % 2 == 0) PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-                else PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
+                koordinat += PlayBoard.Sloupcu;
+                if (koordinat % 2 == 0) 
+                    PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
+                else 
+                    PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
             }
             poziceUtocnychKouli.Add(new Point(8, 5));
             poziceUtocnychKouli.Add(new Point(2, 5));
@@ -790,17 +793,19 @@ namespace Square
 
         private void PerformanceTest512() //sloupec napříč a první útočná
         {
-            performanceTest = true;
-            levelText = "Performance Test 512+512";
+            PerformanceTest = true;
+            LevelText = "Performance Test 512 + 512";
             numBalls = 512; numAttackBalls = 512;
             numUtocnychBallsLeft = 1; numUtocnychBallsRight = 1; numUtocnychBallsDown = numUtocnychBallsUp = 1;
-            koordinat = (ushort)(sloupcu / 2 + sloupcu - 2);
+            koordinat = (ushort)(PlayBoard.Sloupcu / 2 + PlayBoard.Sloupcu - 2);
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + sloupcu].okrajova)
+            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].okrajova)
             {
-                koordinat += sloupcu;
-                if (koordinat % 2 == 0) PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-                else PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
+                koordinat += PlayBoard.Sloupcu;
+                if (koordinat % 2 == 0) 
+                    PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
+                else 
+                    PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
             }
             poziceUtocnychKouli.Add(new Point(8, 5));
             poziceUtocnychKouli.Add(new Point(2, 5));
@@ -808,53 +813,7 @@ namespace Square
             poziceKouli.Add(new Point(6, 6));
         }
 
-        private void TestujUtocne() // prulez se zpomalovacem
-        {
-            levelText = "Objective opinion of time";
-            numBalls = 2; numAttackBalls = 8;
-            koordinat = (sloupcu * 3 + 3);
-            PlayBoard.tiles[koordinat + 1].Znepruchodnit();
-            PlayBoard.tiles[koordinat + 2].Znepruchodnit();
-            PlayBoard.tiles[koordinat + 3].Znepruchodnit();
-            PlayBoard.tiles[koordinat + 4].Znepruchodnit();
-            //PlayBoard.tiles[koordinat + 5].Znepruchodnit();
-            if (FlipCoin()) PlayBoard.tiles[koordinat + sloupcu + 4].NastavZpomalovac(true);
-            else PlayBoard.tiles[koordinat + sloupcu * 2 + 4].NastavZpomalovac(true);
-            PlayBoard.tiles[koordinat + sloupcu + 5].Znepruchodnit();
-            PlayBoard.tiles[koordinat + sloupcu + 6].Znepruchodnit();
-            PlayBoard.tiles[koordinat + sloupcu + 7].Znepruchodnit();
-            koordinat += sloupcu * 2;
-            PlayBoard.tiles[koordinat + 1].Znepruchodnit();
-            PlayBoard.tiles[koordinat + 2].Znepruchodnit();
-            PlayBoard.tiles[koordinat + 3].Znepruchodnit();
-            koordinat += sloupcu;
-            PlayBoard.tiles[koordinat + 4].Znepruchodnit();
-            PlayBoard.tiles[koordinat + 5].Znepruchodnit();
-            PlayBoard.tiles[koordinat + 6].Znepruchodnit();
-            PlayBoard.tiles[koordinat + 7].Znepruchodnit();
-            poziceKouli.Add(new Point(12, 3));
-            poziceKouli.Add(new Point(12, 8));
-        }
-
-        private void TestBomb()
-        {
-            koordinat = (sloupcu / 3);
-            if (FlipCoin()) koordinat--;
-            while (koordinat < PlayBoard.tiles.Count - sloupcu)
-            {
-                koordinat += sloupcu;
-                PlayBoard.tiles[koordinat].Zaminovat(3);
-                PlayBoard.tiles[koordinat + 2].ZnepruchodnitHraci();
-                poziceKouli.Add(new Point(koordinat + 5));
-                poziceUtocnychKouli.Add(new Point(koordinat + 5));
-            }
-            numBalls = 3; numAttackBalls = 6;
-            numUtocnychBallsRight = 3;
-            viteznychProcent = 75;
-            levelText = "More than you think";
-        }
-
-        private int PrevedNaIndexVsech(int koordinat)
+        private static int PrevedNaIndexVsech(int koordinat)
         {
             int cols = koordinat / sloupcuUvnitr;
             int rows = koordinat % sloupcuUvnitr;
@@ -864,58 +823,62 @@ namespace Square
 
         public void NastavLevel(byte level)
         {
-            cisloUrovne = level;
+            CisloUrovne = level;
             PripravUroven();
         }
 
         public void NastavEpisodu(byte maxEpisoda)
         {
-            epizoda = maxEpisoda;
+            Epizoda = maxEpisoda;
         }
 
         public void ZvedniUroven()
         {
-            cisloUrovne += 1;
+            CisloUrovne += 1;
             PripravUroven();
         }
 
         private void PripravUroven()
         {
-            zpomalovatUtocne = false;
+            ZpomalovatUtocne = false;
             numBalls = numAttackBalls = 0;
             numUtocnychBallsLeft = numUtocnychBallsDown = numUtocnychBallsRight = numUtocnychBallsUp = 0;
-            bludiste = zrodMonstrum = poSmeru = performanceTest = bezOdchylky = false;
-            levelText = null;
+            Bludiste = ZrodMonstrum = PoSmeru = PerformanceTest = BezOdchylky = false;
+            LevelText = null;
             poziceKouli.Clear(); poziceUtocnychKouli.Clear();
-            viteznychProcent = 70;
+            ViteznychProcent = 70;
         }
 
         public void PripravEpizodu()
         {
-            if (epizoda == 1)
+            if (Epizoda == 1)
             {
-                if (cisloUrovne == 0) epizodaSplash = "Basics";
-                else epizodaSplash = "Episode 1";
+                if (CisloUrovne == 0) 
+                    EpizodaSplash = "Basics";
+                else 
+                    EpizodaSplash = "Episode 1";
             }
-            else if (epizoda == 2)
+            else if (Epizoda == 2)
             {
-                if (cisloUrovne == 0)
+                if (CisloUrovne == 0)
                 {
-                    epizodaSplash = "Crowd control";
+                    EpizodaSplash = "Crowd control";
                     Barvy.NastavBarvy(Barvy.E2prvni, Barvy.E2druha);
                 }
-                else epizodaSplash = "Episode 2";
+                else 
+                    EpizodaSplash = "Episode 2";
             }
-            else if (epizoda == 3)
+            else if (Epizoda == 3)
             {
-                if (cisloUrovne == 0)
+                if (CisloUrovne == 0)
                 {
-                    epizodaSplash = "Episode 3";
+                    EpizodaSplash = "Episode 3";
                     Barvy.NastavBarvy(Barvy.E2prvni, Barvy.E2druha);
                 }
-                else epizodaSplash = "Episode 3";
+                else 
+                    EpizodaSplash = "Episode 3";
             }
-            else epizodaSplash = "Square got Almighty";
+            else EpizodaSplash = "Square got Almighty";
         }
 
         public static short GetNumBalls()
@@ -928,11 +891,80 @@ namespace Square
             return numAttackBalls;
         }
 
-        internal static bool FlipCoin()
+        private static bool FlipCoin()
         {
-            Random rand = new Random();
-            if (rand.Next(2) == 0) return false;
-            else return true;
+            if (new Random().Next(2) == 0)
+                return false;
+
+            return true;
         }
+
+        //private void TestujUtocne() // prulez se zpomalovacem
+        //{
+        //    LevelText = "Objective opinion of time";
+        //    numBalls = 2; numAttackBalls = 8;
+        //    koordinat = PlayBoard.sloupcu * 3 + 3;
+        //    PlayBoard.tiles[koordinat + 1].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + 2].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + 3].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + 4].Znepruchodnit();
+        //    //PlayBoard.tiles[koordinat + 5].Znepruchodnit();
+        //    if (FlipCoin())
+        //        PlayBoard.tiles[koordinat + PlayBoard.sloupcu + 4].NastavZpomalovac(true);
+        //    else
+        //        PlayBoard.tiles[koordinat + PlayBoard.sloupcu * 2 + 4].NastavZpomalovac(true);
+        //    PlayBoard.tiles[koordinat + PlayBoard.sloupcu + 5].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + PlayBoard.sloupcu + 6].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + PlayBoard.sloupcu + 7].Znepruchodnit();
+        //    koordinat += PlayBoard.sloupcu * 2;
+        //    PlayBoard.tiles[koordinat + 1].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + 2].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + 3].Znepruchodnit();
+        //    koordinat += PlayBoard.sloupcu;
+        //    PlayBoard.tiles[koordinat + 4].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + 5].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + 6].Znepruchodnit();
+        //    PlayBoard.tiles[koordinat + 7].Znepruchodnit();
+        //    poziceKouli.Add(new Point(12, 3));
+        //    poziceKouli.Add(new Point(12, 8));
+        //}
+        //private void TestBomb()
+        //{
+        //    koordinat = PlayBoard.sloupcu / 3;
+        //    if (FlipCoin()) koordinat--;
+        //    while (koordinat < PlayBoard.tiles.Count - PlayBoard.sloupcu)
+        //    {
+        //        koordinat += PlayBoard.sloupcu;
+        //        PlayBoard.tiles[koordinat].Zaminovat(3);
+        //        PlayBoard.tiles[koordinat + 2].ZnepruchodnitHraci();
+        //        poziceKouli.Add(new Point(koordinat + 5));
+        //        poziceUtocnychKouli.Add(new Point(koordinat + 5));
+        //    }
+        //    numBalls = 3; numAttackBalls = 6;
+        //    numUtocnychBallsRight = 3;
+        //    viteznychProcent = 75;
+        //    LevelText = "More than you think";
+        //}
+        //private void PerformanceTest128() // sloupec napříč
+        //{
+        //    performanceTest = true;
+        //    LevelText = "Performance Test 128 + 128";
+        //    numBalls = numAttackBalls = 128;
+        //    numUtocnychBallsLeft = 1; numUtocnychBallsRight = 1; numUtocnychBallsDown = numUtocnychBallsUp = 1;
+        //    koordinat = (ushort)(PlayBoard.sloupcu / 2 + PlayBoard.sloupcu - 2);
+        //    PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
+        //    while (!PlayBoard.tiles[koordinat + PlayBoard.sloupcu].okrajova)
+        //    {
+        //        koordinat += PlayBoard.sloupcu;
+        //        if (koordinat % 2 == 0) 
+        //            PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
+        //        else 
+        //            PlayBoard.tiles[koordinat].VyplnitZvyditelnit();
+        //    }
+        //    poziceUtocnychKouli.Add(new Point(8, 5));
+        //    poziceUtocnychKouli.Add(new Point(2, 5));
+        //    poziceKouli.Add(new Point(6, 3));
+        //    poziceKouli.Add(new Point(6, 6));
+        //}
     }
 }

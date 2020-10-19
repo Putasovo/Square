@@ -158,7 +158,7 @@ namespace Square
                 presnaPoloha += velocity * faktorCasu;
                 novaPoloha.X = (int)presnaPoloha.X;
                 novaPoloha.Y = (int)presnaPoloha.Y + polomer;
-                indexDlazdice = novaPoloha.X / rozmer + novaPoloha.Y / rozmer * PlayBoard.sloupcu;
+                indexDlazdice = novaPoloha.X / rozmer + novaPoloha.Y / rozmer * PlayBoard.Sloupcu;
 
                 if (velocity.X < 0) 
                     LevyNaraz();
@@ -173,7 +173,7 @@ namespace Square
                 // novaPoloha.Y = (int)(presnaPoloha.Y + velocity.Y * faktorCasu);
                 novaPoloha.Y = (int)(presnaPoloha.Y);
                 novaPoloha.X += polomer;
-                indexDlazdice = (novaPoloha.X / rozmer + novaPoloha.Y / rozmer * PlayBoard.sloupcu);
+                indexDlazdice = (novaPoloha.X / rozmer + novaPoloha.Y / rozmer * PlayBoard.Sloupcu);
 
                 if (velocity.Y < 0)
                     HorniNaraz();
@@ -283,11 +283,11 @@ namespace Square
             {
                 OdrazSvisle();
             }
-            else if (PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].plna)
+            else if (PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].plna)
             {
-                if (utocnaDolni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].plnaPredem && PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].Pruchodna)
+                if (utocnaDolni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].plnaPredem && PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].Pruchodna)
                 {
-                    PlayBoard.tiles[indexDlazdice + PlayBoard.sloupcu].Zborit(false);
+                    PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].Zborit(false);
                     HrajOdraz();
                     dobijeni = 10;
                 }

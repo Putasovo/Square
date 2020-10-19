@@ -77,7 +77,7 @@ namespace MojehraDroid
                     {
                         souradnice = novasouradnice;
                         PlayBoard.tiles[indexCiloveDlazdice].Odvyrazni();
-                        indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * PlayBoard.sloupcu);                        
+                        indexCiloveDlazdice = (ushort)(souradnice.X / krok + souradnice.Y / krok * PlayBoard.Sloupcu);                        
                         PlayBoard.tiles[indexCiloveDlazdice].Zvyrazni();
                         // souradnice.X = UrovnejSouradnici((int)souradnice.X);//bez castu nemuzu zkouset modulo                        
                     }
@@ -128,7 +128,7 @@ namespace MojehraDroid
 
         private void ZpracujZvlastniDlazdice()
         {
-            indexDlazdice = hracovo.X / krok + (hracovo.Y / krok * PlayBoard.sloupcu); // na jake dlazdici je
+            indexDlazdice = hracovo.X / krok + (hracovo.Y / krok * PlayBoard.Sloupcu); // na jake dlazdici je
             if (PlayBoard.tiles[indexDlazdice].zpomalovaci)
             {
                 Hlavni.NastavRychlostKouli(.6f);

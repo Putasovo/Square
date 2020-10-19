@@ -18,16 +18,16 @@ namespace Square
         public static Texture2D texOkrajeH, texOkrajeV;        
         public static List<Tile> tiles;
         public static List<Tile> tilesVnitrni;
-        public static int sloupcu;
+        public static int Sloupcu { get; internal set; }
 
         public static void Init(short tileSize, List<Tile> tiles, List<Tile> tilesVnitrni, ushort windowHeight, ushort windowWidth)
         {
             borderSize = tileSize;
             barvaV = new Color[windowHeight * borderSize];
             barvaH = new Color[borderSize * (windowWidth - borderSize * 2)];
+            Sloupcu = windowWidth / tileSize;
             PlayBoard.tiles = tiles;
-            PlayBoard.tilesVnitrni = tilesVnitrni;
-            sloupcu = windowWidth / tileSize;
+            PlayBoard.tilesVnitrni = tilesVnitrni;            
         }
 
         public static void VybarviOkraje(GraphicsDeviceManager graphics, Rectangle oknoHry, Color barvaVOkraje, Color barvaHOkraje)
