@@ -2148,13 +2148,12 @@ namespace MojehraDroid
 
         private void StartGame()
         {
-            //if (debug) debugText[0] = "lives: " + zivoty;
+            // if (debug) debugText[0] = "lives: " + zivoty;
             mFadeIncrement = 3;
             BuildTiles(columns, rows, tileSize);
-            player = new Hrac(true, 4, 32, 0, 32 * 2,
-                oknoHry.Width, oknoHry.Height, hracsprite);
+            player = new Hrac(true, 4, tileSize, 0, tileSize * 2, oknoHry.Width, oknoHry.Height, hracsprite);
             zivoty++;
-            zivotuString = zivoty.ToString();
+            zivotuString = $"{zivoty}";
             PlayBoard.PostavOkraje(oknoHry);            
         }
 
@@ -2220,46 +2219,50 @@ namespace MojehraDroid
             }
             Texty.Add(zprava);
         }
-        private void KresliVelkouZpravu()
-        {
-#region Dictionary
-            //foreach (KeyValuePair<Vector2, string> entry in Texty)
-            //{
-            //    if (trvaniVelkeZpravy > 0)
-            //    {
-            //        trvaniVelkeZpravy -= gameTime.ElapsedGameTime.Milliseconds;
-            //        string text = entry.Value;
-            //        if (gameState == Stavy.Prohra || gameState == Stavy.Menu)
-            //            spriteBatch.DrawString(font, text, entry.Key,
-            //                new Color(nulovyBajt, nulovyBajt, nulovyBajt, (byte)MathHelper.Clamp(mAlphaValue, 0, 255))); //0 0 0 - cerna
-            //        else
-            //            spriteBatch.DrawString(font, text, entry.Key,
-            //            new Color((byte)100, (byte)111, (byte)50, (byte)MathHelper.Clamp(mAlphaValue, 0, 255)));
-            //    }
-            //    else Texty.Clear();
-            //    return;
-            //} 
-#endregion
-            foreach (Zprava zprava in Texty)
-            {
-                zprava.Draw(spriteBatch);
-            }
-        }
+
+        //private void KresliVelkouZpravu()
+        //{
+        //    //foreach (KeyValuePair<Vector2, string> entry in Texty)
+        //    //{
+        //    //    if (trvaniVelkeZpravy > 0)
+        //    //    {
+        //    //        trvaniVelkeZpravy -= gameTime.ElapsedGameTime.Milliseconds;
+        //    //        string text = entry.Value;
+        //    //        if (gameState == Stavy.Prohra || gameState == Stavy.Menu)
+        //    //            spriteBatch.DrawString(font, text, entry.Key,
+        //    //                new Color(nulovyBajt, nulovyBajt, nulovyBajt, (byte)MathHelper.Clamp(mAlphaValue, 0, 255))); //0 0 0 - cerna
+        //    //        else
+        //    //            spriteBatch.DrawString(font, text, entry.Key,
+        //    //            new Color((byte)100, (byte)111, (byte)50, (byte)MathHelper.Clamp(mAlphaValue, 0, 255)));
+        //    //    }
+        //    //    else Texty.Clear();
+        //    //    return;
+        //    //}
+        //    foreach (Zprava zprava in Texty)
+        //    {
+        //        zprava.Draw(spriteBatch);
+        //    }
+        //}
+
         private bool BlahoprejSkore(short pricistSkore)
         {
-            bonus = 0;
             if (pricistSkore > minBonus)
             {
                 NapisVelkouZpravu($"Awesome! {pricistSkore} squares", 3000, -9999, 100, false, true);
                 bonus = (short)((pricistSkore - minBonus) * 2);
-                ton2.Play();
+                if (sound)
+                    ton2.Play();
+
                 return true;
             }
             else
-            { 
-                if (sound) ton1.Play();
-                return false;
+            {
+                bonus = 0;
+                if (sound)
+                    ton1.Play();
             }
+
+            return false;
         }
 
         private void ZrodMonstrum(bool poSmeru)

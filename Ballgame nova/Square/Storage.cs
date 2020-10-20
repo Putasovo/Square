@@ -9,7 +9,10 @@ namespace Square
 {
     public static class Storage
     {
-        private static readonly IsolatedStorageFile store;
+        private static readonly IsolatedStorageFile store = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+            IsolatedStorageFile.GetUserStoreForDomain() :
+            IsolatedStorageFile.GetUserStoreForApplication();
+
         private const string scoreFilename = "score.txt";
         private const string levelFilename = "uroven";
         private const string volumeFilename = "volumes";
@@ -21,14 +24,6 @@ namespace Square
         public static byte MaxEpisoda { get; set; }
         public static byte MaxLevel { get; set; }
         public static int RekordSkore { get; private set; }
-
-        static Storage() 
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                store = IsolatedStorageFile.GetUserStoreForDomain();
-            else
-                store = IsolatedStorageFile.GetUserStoreForApplication();
-        }
 
         public static int GetScore()
         {
