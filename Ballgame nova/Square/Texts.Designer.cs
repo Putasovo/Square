@@ -61,6 +61,15 @@ namespace Square {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Square it!.
+        /// </summary>
+        public static string ActiveLabel {
+            get {
+                return ResourceManager.GetString("ActiveLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Continue?.
         /// </summary>
         public static string Continue_ {
@@ -84,6 +93,15 @@ namespace Square {
         public static string Exit {
             get {
                 return ResourceManager.GetString("Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Square Inactive.
+        /// </summary>
+        public static string InactiveLabel {
+            get {
+                return ResourceManager.GetString("InactiveLabel", resourceCulture);
             }
         }
         
