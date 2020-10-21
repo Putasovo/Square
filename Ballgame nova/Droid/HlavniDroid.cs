@@ -86,7 +86,7 @@ namespace MojehraDroid
         private readonly List<Zprava> Texty = new List<Zprava>(2);
         private Color barvaZpravy;
         private readonly List<string> debugText = new List<string>();
-        private readonly string debugvar1, debugvar2, debugPrvniDlazdice, debugKolize;
+        private readonly string debugvar1, debugvar2, debugPrvniDlazdice;
         private bool letiZrovnaText; private string leticiText; private ushort snimkuLeticihoTextu; 
         private Vector2 pohybLeticihoTextu, polohaLeticihoTextu;
         
@@ -137,38 +137,32 @@ namespace MojehraDroid
 
         public Hlavni()
         {
+            // IsMouseVisible = true;
             vibrator = (Android.OS.Vibrator)Activity.GetSystemService(Android.Content.Context.VibratorService);
-            graphics = new GraphicsDeviceManager(this);
-            oknoHry = new Rectangle(0,0,windowWidth, windowHeight);
-            //if (suggestedHeight % borderThick != 0)
-            //{
-            //    WindowHeight = (suggestedHeight / borderThick) * borderThick;
-            //}
-            //else WindowHeight = suggestedHeight;
 
             Content.RootDirectory = "Content";
-
-            //IsMouseVisible = true;
+            graphics = new GraphicsDeviceManager(this);
+            oknoHry = new Rectangle(0, 0, windowWidth, windowHeight);
 
             if (soft)
             {
+                // graphics.PreferredBackBufferWidth = 384;
+                // graphics.PreferredBackBufferHeight = 256;
                 GraphicsAdapter.UseReferenceDevice = true;
-                //graphics.PreferredBackBufferWidth = 384;
-                //graphics.PreferredBackBufferHeight = 256;
             }
-            //else
-            //{ tohle asi na nadroidech nejde
-            //graphics.PreferredBackBufferWidth = WindowWidth;
-            //graphics.PreferredBackBufferHeight = WindowHeight;
-            //}
+            // else
+            // {   // tohle asi na nadroidech nejde
+            //     graphics.PreferredBackBufferWidth = WindowWidth;
+            //     graphics.PreferredBackBufferHeight = WindowHeight;
+            // }
 
             if (debug)
             {
                 debugvar1 = $"HardwareModeSwitch: {graphics.HardwareModeSwitch}";
                 debugvar2 = $"UseDriverType: {GraphicsAdapter.UseDriverType}";
-                debugPrvniDlazdice = string.Empty; debugKolize = string.Empty;
+                debugPrvniDlazdice = string.Empty;
                 debugText.Add(debugvar1); debugText.Add(debugvar2);
-                debugText.Add(debugPrvniDlazdice); debugText.Add(debugKolize);
+                debugText.Add(debugPrvniDlazdice);
             }
             
             graphics.IsFullScreen = true; // default true in android
@@ -1259,18 +1253,8 @@ namespace MojehraDroid
         {
             if (balls.Count < numBalls)
             {
-                if (X == -1)
-                {
-                    balLoc.X = rand.Next(64, oknoHry.Width - 64);
-                    //boxKoule.X = MathHelper.Clamp((int)balLoc.X, ballSprite.Width * 2, openingRect.Width - ballSprite.Width);
-                }
-                else balLoc.X = X;
-                if (Y == -1)
-                {
-                    balLoc.Y = rand.Next(64, oknoHry.Height - 64);
-                    //boxKoule.Y = MathHelper.Clamp((int)balLoc.Y, ballSprite.Width * 2, openingRect.Height - ballSprite.Width);
-                }
-                else balLoc.Y = Y;
+                balLoc.X = X == -1 ? balLoc.X = rand.Next(64, oknoHry.Width - 64) : X;
+                balLoc.Y = Y == -1 ? balLoc.Y = rand.Next(64, oknoHry.Height - 64) : Y;
 
                 balls.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
                     rigid, false, false, false, false, uroven.Bludiste, respawnball, kolize, odraz));
@@ -1284,7 +1268,7 @@ namespace MojehraDroid
                 balLoc.X = X == -1 ? balLoc.X = rand.Next(64, oknoHry.Width - 64) : X;
                 balLoc.Y = Y == -1 ? balLoc.Y = rand.Next(64, oknoHry.Height - 64) : Y;
 
-                byte levych = byte.MinValue; byte pravych = byte.MinValue; byte dolnich = byte.MinValue; byte hornich = byte.MinValue;
+                byte levych = byte.MinValue, pravych = byte.MinValue, dolnich = byte.MinValue, hornich = byte.MinValue;
                 foreach (Ball ball in ballsUtocne)
                 {
                     if (ball.utocnaDolni)
@@ -1293,7 +1277,8 @@ namespace MojehraDroid
                         hornich++;
                     else if (ball.utocnaLeva)
                         levych++;
-                    else pravych++;
+                    else 
+                        pravych++;
                 }
 
                 if (uroven.numUtocnychBallsLeft > levych)
@@ -1312,7 +1297,8 @@ namespace MojehraDroid
                 {
                     SpawnBallDown();
                 }
-                else SpawnRandomAttackBall();
+                else 
+                    SpawnRandomAttackBall();
             }
         }
 
@@ -1321,14 +1307,19 @@ namespace MojehraDroid
             bool leva = false; bool prava = false; bool nahoru = false; bool dolu = false;
             while (!leva && !prava && !nahoru && !dolu)
             {
-                int i = rand.Next(0,4);
+                int i = rand.Next(0, 4);
                 {
-                    if (i == 0) leva = rand.NextDouble() >= 0.5;
-                    else if (i == 1) prava = rand.NextDouble() >= 0.5;
-                    else if (i == 2) nahoru = rand.NextDouble() >= 0.5;
-                    else dolu = rand.NextDouble() >= 0.5;
+                    if (i == 0) 
+                        leva = rand.NextDouble() >= 0.5;
+                    else if (i == 1) 
+                        prava = rand.NextDouble() >= 0.5;
+                    else if (i == 2) 
+                        nahoru = rand.NextDouble() >= 0.5;
+                    else 
+                        dolu = rand.NextDouble() >= 0.5;
                 }
             }
+
             ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
                     rigid, leva, prava, nahoru, dolu, uroven.Bludiste, respawnball, kolize, odraz));
         }
@@ -1337,9 +1328,9 @@ namespace MojehraDroid
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-            {
-                if (ball.utocnaDolni) nalezena++;
-            }
+                if (ball.utocnaDolni) 
+                    nalezena++;
+            
             if (nalezena != uroven.numUtocnychBallsDown)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
@@ -1351,9 +1342,9 @@ namespace MojehraDroid
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-            {
-                if (ball.utocnaHorni) nalezena++;
-            }
+                if (ball.utocnaHorni) 
+                    nalezena++;
+
             if (nalezena != uroven.numUtocnychBallsUp)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
@@ -1365,9 +1356,9 @@ namespace MojehraDroid
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-            {
-                if (ball.utocnaPrava) nalezena++;
-            }
+                if (ball.utocnaPrava) 
+                    nalezena++;
+
             if (nalezena != uroven.numUtocnychBallsRight)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
@@ -1379,9 +1370,9 @@ namespace MojehraDroid
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-            {
-                if (ball.utocnaLeva) nalezena++;
-            }
+                if (ball.utocnaLeva) 
+                    nalezena++;
+
             if (nalezena < uroven.numUtocnychBallsLeft)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,

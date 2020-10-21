@@ -82,7 +82,7 @@ namespace Mojehra
         private readonly List<Zprava> Texty = new List<Zprava>();
         private Color barvaZpravy;
         private readonly List<string> debugText = new List<string>();
-        private string debugvar1, debugvar2, debugPrvniDlazdice, debugKolize;
+        private string debugvar1, debugvar2, debugPrvniDlazdice;
         private bool letiZrovnaText; private string leticiText; private ushort snimkuLeticihoTextu;
         private Vector2 pohybLeticihoTextu, polohaLeticihoTextu;
 
@@ -130,6 +130,32 @@ namespace Mojehra
         private readonly List<Monster> monstra = new List<Monster>();
 
         private Level uroven;
+        
+        internal static void OzivKouli(int indexDlazdice)
+        {
+            foreach (Ball ball in balls)
+            {
+                if (!ball.cinna)
+                {
+                    ball.Obzivni();
+                    break;
+                }
+            }
+
+            if (tiles[indexDlazdice].ozivovaci)
+            {
+                foreach (Ball ball in ballsUtocne)
+                {
+                    if (!ball.cinna)
+                    {
+                        ball.Obzivni();
+                        break;
+                    }
+                }
+            }
+
+            tiles[indexDlazdice].NastavOzivovaci(false);
+        }
 
         internal static void PripravZemetreseni(int indexMiny)
         {
@@ -189,67 +215,34 @@ namespace Mojehra
         public Hlavni()
         {
             IsMouseVisible = true;
-            //vibrator = (Android.OS.Vibrator)Activity.GetSystemService(Android.Content.Context.VibratorService);
+            // vibrator = (Android.OS.Vibrator)Activity.GetSystemService(Android.Content.Context.VibratorService);
+
+            Content.RootDirectory = "Content"; 
             graphics = new GraphicsDeviceManager(this);
             oknoHry = new Rectangle(0, 0, windowWidth, windowHeight);
-            //if (suggestedHeight % borderThick != 0)
-            //{
-            //    WindowHeight = (suggestedHeight / borderThick) * borderThick;
-            //}
-            //else WindowHeight = suggestedHeight;
-
-            Content.RootDirectory = "Content";
-
-            //IsMouseVisible = true;
 
             if (soft)
             {
+                // graphics.PreferredBackBufferWidth = 384;
+                // graphics.PreferredBackBufferHeight = 256;
                 GraphicsAdapter.UseReferenceDevice = true;
-                //graphics.PreferredBackBufferWidth = 384;
-                //graphics.PreferredBackBufferHeight = 256;
             }
-            else
-            {//tohle asi na nadroidech nejde
-                //graphics.PreferredBackBufferWidth = WindowWidth;
-                //graphics.PreferredBackBufferHeight = WindowHeight;
-            }
+            // else
+            // {   // tohle asi na nadroidech nejde
+            //     graphics.PreferredBackBufferWidth = WindowWidth;
+            //     graphics.PreferredBackBufferHeight = WindowHeight;
+            // }
 
             if (debug)
             {
                 debugvar1 = $"HardwareModeSwitch: {graphics.HardwareModeSwitch}";
                 debugvar2 = $"UseDriverType: {GraphicsAdapter.UseDriverType}";
-                debugPrvniDlazdice = string.Empty; debugKolize = string.Empty;
+                debugPrvniDlazdice = string.Empty;
                 debugText.Add(debugvar1); debugText.Add(debugvar2);
-                debugText.Add(debugPrvniDlazdice); debugText.Add(debugKolize);
+                debugText.Add(debugPrvniDlazdice);
             }
 
-            graphics.IsFullScreen = false;  // default true in android
-        }
-
-        internal static void OzivKouli(int indexDlazdice)
-        {
-            foreach (Ball ball in balls)
-            {
-                if (!ball.cinna)
-                {
-                    ball.Obzivni();
-                    break;
-                }
-            }
-
-            if (tiles[indexDlazdice].ozivovaci)
-            {
-                foreach (Ball ball in ballsUtocne)
-                {
-                    if (!ball.cinna)
-                    {
-                        ball.Obzivni();
-                        break;
-                    }
-                }
-            }
-
-            tiles[indexDlazdice].NastavOzivovaci(false);
+            graphics.IsFullScreen = false; // default true in android
         }
 
         /// <summary>
@@ -260,9 +253,6 @@ namespace Mojehra
         /// </summary>
         protected override void Initialize()
         {
-            // openingRect.Width = graphics.PreferredBackBufferWidth;
-            // openingRect.Height = graphics.PreferredBackBufferHeight;
-
             stred = new Vector2(windowWidth / 2, windowHeight / 2);
 
             float vodorovnyPomer = graphics.PreferredBackBufferWidth / (float)windowWidth;
@@ -1235,46 +1225,32 @@ namespace Mojehra
         {
             if (balls.Count < numBalls)
             {
-                if (X == -1)
-                {
-                    balLoc.X = rand.Next(64, oknoHry.Width - 64);
-                    //boxKoule.X = MathHelper.Clamp((int)balLoc.X, ballSprite.Width * 2, openingRect.Width - ballSprite.Width);
-                }
-                else balLoc.X = X;
-                if (Y == -1)
-                {
-                    balLoc.Y = rand.Next(64, oknoHry.Height - 64);
-                    //boxKoule.Y = MathHelper.Clamp((int)balLoc.Y, ballSprite.Width * 2, openingRect.Height - ballSprite.Width);
-                }
-                else balLoc.Y = Y;
+                balLoc.X = X == -1 ? balLoc.X = rand.Next(64, oknoHry.Width - 64) : X;
+                balLoc.Y = Y == -1 ? balLoc.Y = rand.Next(64, oknoHry.Height - 64) : Y;
+
                 balls.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
                     rigid, false, false, false, false, uroven.Bludiste, respawnball, kolize, odraz));
             }
         }
+
         private void SpawnBallsUtocne(int X = -1, int Y = -1)
         {
             if (ballsUtocne.Count < numAttackBalls)
             {
-                if (X == -1)
-                {
-                    balLoc.X = rand.Next(64, oknoHry.Width - 64);
-                    //boxKoule.X = MathHelper.Clamp((int)balLoc.X, ballSprite.Width * 2, openingRect.Width - ballSprite.Width);
-                }
-                else balLoc.X = X;
-                if (Y == -1)
-                {
-                    balLoc.Y = rand.Next(64, oknoHry.Height - 64);
-                    //boxKoule.Y = MathHelper.Clamp((int)balLoc.Y, ballSprite.Width * 2, openingRect.Height - ballSprite.Width);
-                }
-                else balLoc.Y = Y;
+                balLoc.X = X == -1 ? balLoc.X = rand.Next(64, oknoHry.Width - 64) : X;
+                balLoc.Y = Y == -1 ? balLoc.Y = rand.Next(64, oknoHry.Height - 64) : Y;
 
-                byte levych = byte.MinValue; byte pravych = byte.MinValue; byte dolnich = byte.MinValue; byte hornich = byte.MinValue;
+                byte levych = byte.MinValue, pravych = byte.MinValue, dolnich = byte.MinValue, hornich = byte.MinValue;
                 foreach (Ball ball in ballsUtocne)
                 {
-                    if (ball.utocnaDolni) dolnich++;
-                    else if (ball.utocnaHorni) hornich++;
-                    else if (ball.utocnaLeva) levych++;
-                    else pravych++;
+                    if (ball.utocnaDolni) 
+                        dolnich++;
+                    else if (ball.utocnaHorni) 
+                        hornich++;
+                    else if (ball.utocnaLeva) 
+                        levych++;
+                    else 
+                        pravych++;
                 }
 
                 if (uroven.numUtocnychBallsLeft > levych)
@@ -1293,9 +1269,11 @@ namespace Mojehra
                 {
                     SpawnBallDown();
                 }
-                else SpawnRandomAttackBall();
+                else 
+                    SpawnRandomAttackBall();
             }
         }
+
         private void SpawnRandomAttackBall()
         {
             bool leva = false; bool prava = false; bool nahoru = false; bool dolu = false;
@@ -1303,61 +1281,70 @@ namespace Mojehra
             {
                 int i = rand.Next(0, 4);
                 {
-                    if (i == 0) leva = rand.NextDouble() >= 0.5;
-                    else if (i == 1) prava = rand.NextDouble() >= 0.5;
-                    else if (i == 2) nahoru = rand.NextDouble() >= 0.5;
-                    else dolu = rand.NextDouble() >= 0.5;
+                    if (i == 0) 
+                        leva = rand.NextDouble() >= 0.5;
+                    else if (i == 1) 
+                        prava = rand.NextDouble() >= 0.5;
+                    else if (i == 2) 
+                        nahoru = rand.NextDouble() >= 0.5;
+                    else 
+                        dolu = rand.NextDouble() >= 0.5;
                 }
             }
+
             ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
                     rigid, leva, prava, nahoru, dolu, uroven.Bludiste, respawnball, kolize, odraz));
         }
+
         private void SpawnBallDown()
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-            {
-                if (ball.utocnaDolni) nalezena++;
-            }
+                if (ball.utocnaDolni) 
+                    nalezena++;
+            
             if (nalezena != uroven.numUtocnychBallsDown)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
                     rigid, false, false, false, true, uroven.Bludiste, respawnball, kolize, odraz));
             }
         }
+
         private void SpawnBallUp()
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-            {
-                if (ball.utocnaHorni) nalezena++;
-            }
+                if (ball.utocnaHorni) 
+                    nalezena++;
+
             if (nalezena != uroven.numUtocnychBallsUp)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
                     rigid, false, true, false, false, uroven.Bludiste, respawnball, kolize, odraz));
             }
         }
+
         private void SpawnBallRight()
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-            {
-                if (ball.utocnaPrava) nalezena++;
-            }
+                if (ball.utocnaPrava) 
+                    nalezena++;
+
             if (nalezena != uroven.numUtocnychBallsRight)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
                     rigid, false, false, true, false, uroven.Bludiste, respawnball, kolize, odraz));
             }
         }
+
         private void SpawnBallLeft()
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-            {
-                if (ball.utocnaLeva) nalezena++;
-            }
+                if (ball.utocnaLeva) 
+                    nalezena++;
+
             if (nalezena < uroven.numUtocnychBallsLeft)
             {
                 ballsUtocne.Add(new Ball(balLoc, ballVelocity, oknoHry.Width, oknoHry.Height, (byte)tileSize,
