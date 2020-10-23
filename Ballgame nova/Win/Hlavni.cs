@@ -50,7 +50,6 @@ namespace Mojehra
 
         private readonly bool sound = true;
         private readonly bool music = true;
-        private readonly MediaQueue musicFronta = new MediaQueue();
         private readonly List<string> skladby = new List<string>();
         private static Song levelwon, menu, stara, intro;
         private static SoundEffect sezrani, respawnball;
@@ -362,10 +361,12 @@ namespace Mojehra
                     if (skladby.Contains(skladba))
                     {
                         Song level = Content.Load<Song>(@"audio/" + skladba);
-                        MediaPlayer.Play(level); stara = level;
+                        MediaPlayer.Play(level);
                         MediaPlayer.IsRepeating = true;
+                        stara = level;
                     }
-                    else MediaPlayer.Play(menu);
+                    else 
+                        MediaPlayer.Play(menu);
                 }
                 else
                 {
@@ -375,6 +376,7 @@ namespace Mojehra
             }
             else
             {
+                // prvni spusteni
                 menu = Content.Load<Song>(@"audio/menu");
                 levelwon = Content.Load<Song>(@"audio/win");
                 MediaPlayer.Play(menu);
@@ -387,28 +389,26 @@ namespace Mojehra
             ton1 = Content.Load<SoundEffect>(@"audio/ton1");
             ton2 = ton1.CreateInstance(); ton2.Pitch = .6f;
             ton3 = ton1.CreateInstance(); ton3.Volume = 1f; ton3.Pitch = .6f;
-            //ton2 = Content.Load<SoundEffect>(@"audio/ton2");
+            // ton2 = Content.Load<SoundEffect>(@"audio/ton2");
             odraz = Content.Load<SoundEffect>(@"audio/odraz");
-            instanceOdrazu = odraz.CreateInstance();
+            // instanceOdrazu = odraz.CreateInstance();
             kolize = Content.Load<SoundEffect>(@"audio/lost");
             sezrani = Content.Load<SoundEffect>(@"audio/lost2");
-            //zvukKolizeKouli = Content.Load<SoundEffect>(@"audio/explosion");
-            //rachot = zvukKolizeKouli.CreateInstance();
-            //rachot.Volume = .3f;
+            // zvukKolizeKouli = Content.Load<SoundEffect>(@"audio/explosion");
+            // rachot = zvukKolizeKouli.CreateInstance();
+            // rachot.Volume = .3f;
             quake = Content.Load<SoundEffect>(@"audio/zemetreseni");
             zpomalit = Content.Load<SoundEffect>(@"audio/zpomalit");
             respawnball = Content.Load<SoundEffect>(@"audio/ozivKouli");
             zemetres = quake.CreateInstance();
         }
 
-        /// UnloadContent will be called once per game and is the place to unload game-specific content.
+        // UnloadContent will be called once per game and is the place to unload game-specific content.
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
             Content.Unload();
         }
-
-        /// zmena okna
 
         protected override void OnActivated(object sender, System.EventArgs args)
         {
@@ -1030,7 +1030,7 @@ namespace Mojehra
             PlayBoard.okrajeV.Add(PlayBoard.BorderVanim);
 
             player = new Hrac(true, 4, tileSize, -tileSize * 10, rows * tileSize / 2 - tileSize / 2, windowWidth, windowHeight, hracsprite);
-            player.NastavTexturu(new Rectangle(0, 0, tileSize, tileSize));
+            player.NastavTexturu(new Rectangle(0, tileSize, tileSize, tileSize));
             sloupcuAnimace = columns;
             sloupcuAnimace++;
             BuildTiles(sloupcuAnimace, rows, tileSize);
@@ -1102,7 +1102,7 @@ namespace Mojehra
                     if (ball.rect.Right == cilovyXokraje)
                     {
                         ton1.Play();
-                        player.NastavTexturu(new Rectangle(0, 32, tileSize, tileSize));
+                        player.NastavTexturu(new Rectangle(0, tileSize, tileSize, tileSize));
                     }
                     ball.UpdateAnimace(
                         elapsedTime.Milliseconds,
@@ -1137,7 +1137,7 @@ namespace Mojehra
                 else if (trvaniAnimacky < 5 && trvaniAnimacky > 4.93)
                 {
                     NapisVelkouZpravu("or helps you stand", 4000, (short)((sloupcuAnimace - 8) * tileSize), (short)((rows - 3) * tileSize));
-                    player.NastavTexturu(new Rectangle(0, 0, tileSize, tileSize));
+                    player.NastavTexturu(new Rectangle(tileSize, tileSize, tileSize, tileSize));
                 }
                 else if (trvaniAnimacky < 0 && !splashScreen.KreslitSplash)
                     splashScreen.ZatemniSplash(true);
@@ -1497,7 +1497,7 @@ namespace Mojehra
                 {
                     var location = new Vector2(j * tileSize, i * tileSize);
                     bool naokraji = false;
-                    if ((location.X == 0 || location.X == pravyokraj) || (location.Y == 0 || location.Y == dolniokraj))
+                    if (location.X == 0 || location.X == pravyokraj || location.Y == 0 || location.Y == dolniokraj)
                     {
                         naokraji = true;
                     }
@@ -2118,12 +2118,12 @@ namespace Mojehra
         {
             Vector2 poloha = font12.MeasureString(inputString);
             if (x == -9999)
-                poloha.X = (short)(stred.X - poloha.X / 2);
+                poloha.X = stred.X - poloha.X / 2;
             else 
                 poloha.X = x;
 
             if (vyska == -9999)
-                poloha.Y = (short)(stred.Y - poloha.Y / 2);
+                poloha.Y = stred.Y - poloha.Y / 2;
             else
                 poloha.Y = vyska;
 
@@ -2141,12 +2141,12 @@ namespace Mojehra
         {
             Vector2 poloha = font14.MeasureString(inputString);
             if (X == -9999)
-                poloha.X = (short)(stred.X - poloha.X / 2);
+                poloha.X = stred.X - poloha.X / 2;
             else
                 poloha.X = X;
 
             if (vyska == -9999)
-                poloha.Y = (short)(stred.Y - poloha.Y / 2);
+                poloha.Y = stred.Y;
             else
                 poloha.Y = vyska;
 
@@ -2250,11 +2250,11 @@ namespace Mojehra
         private void EndPause()
         {
             //TODO: Resume controller vibration
-            if (stara != null)
-            {
-                if (musicFronta.ActiveSong == levelwon) MediaPlayer.Stop();
+            if (MediaPlayer.Queue.ActiveSong.Name == levelwon.Name)
+                MediaPlayer.Stop();
+            else
                 MediaPlayer.Play(stara);
-            }
+
             pausedByUser = paused = pristeUzNekreslim = options = false;
             if (staryState == Stavy.Menu) gameState = Stavy.Menu;
             else if (staryState == Stavy.Play) gameState = Stavy.Play;
@@ -2266,20 +2266,21 @@ namespace Mojehra
 
         private void CheckPauseKey(GamePadState gamePadState)
         {
-            pauseKeyDownThisFrame = (gamePadState.Buttons.Back == ButtonState.Pressed
-                            || keys.IsKeyDown(Keys.Pause) || keys.IsKeyDown(Keys.Escape));
+            pauseKeyDownThisFrame = gamePadState.Buttons.Back == ButtonState.Pressed
+                            || keys.IsKeyDown(Keys.Pause) || keys.IsKeyDown(Keys.Escape);
 
-            if (pauseKeyDownThisFrame && gameState == Stavy.Menu)
-                Exit();
-
-            // If key was not down before, but is down now, toggle the pause setting
-            if (!pauseKeyDown && pauseKeyDownThisFrame)
+            if (pauseKeyDownThisFrame)
             {
-                if (!paused) 
-                    BeginPause(true);
-                else 
-                    EndPause();
+                // If key was not down before, but is down now, toggle the pause setting
+                if (!pauseKeyDown)
+                {
+                    if (!paused)
+                        BeginPause(true);
+                    else
+                        EndPause();  
+                }                
             }
+
             pauseKeyDown = pauseKeyDownThisFrame;
         }
     }
