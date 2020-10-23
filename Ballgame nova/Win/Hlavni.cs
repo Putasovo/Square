@@ -134,7 +134,7 @@ namespace Mojehra
         {
             foreach (Ball ball in balls)
             {
-                if (!ball.cinna)
+                if (!ball.Cinna)
                 {
                     ball.Obzivni();
                     break;
@@ -145,7 +145,7 @@ namespace Mojehra
             {
                 foreach (Ball ball in ballsUtocne)
                 {
-                    if (!ball.cinna)
+                    if (!ball.Cinna)
                     {
                         ball.Obzivni();
                         break;
@@ -492,7 +492,7 @@ namespace Mojehra
 
                                 foreach (Ball ball in balls)
                                 {
-                                    if (ball.cinna && ball.rect.Intersects(player.hracovo))
+                                    if (ball.Cinna && ball.rect.Intersects(player.hracovo))
                                     {
                                         SmrtKvuliKouli(ball);
                                     }                                    
@@ -527,7 +527,7 @@ namespace Mojehra
                                     }
                                     foreach (Monster monstrum in monstra)
                                     {
-                                        if (monstrum.obdelnik.Intersects(player.hracovo))
+                                        if (monstrum.CheckIntersection(player.hracovo))
                                         {
                                             if (sound)
                                                 sezrani.Play();
@@ -614,11 +614,11 @@ namespace Mojehra
 
             foreach (Rectangle okraj in PlayBoard.okrajeV)
             {
-                spriteBatch.Draw(PlayBoard.texOkrajeV, okraj, Color.White);
+                spriteBatch.Draw(PlayBoard.TexOkrajeV, okraj, Color.White);
             }
             foreach (Rectangle okraj in PlayBoard.okrajeH)
             {
-                spriteBatch.Draw(PlayBoard.texOkrajeH, okraj, Color.White);
+                spriteBatch.Draw(PlayBoard.TexOkrajeH, okraj, Color.White);
             }
 
             if (gameState == Stavy.Pause)
@@ -1019,13 +1019,13 @@ namespace Mojehra
             animovatDlazdici = false; videtDlazdici = false;
 
             barvaVanim = new Color[oknoHry.Height * tileSize * 2];
-            PlayBoard.texOkrajeV = new Texture2D(graphics.GraphicsDevice, tileSize * 2, oknoHry.Height);
+            PlayBoard.TexOkrajeV = new Texture2D(graphics.GraphicsDevice, tileSize * 2, oknoHry.Height);
             PlayBoard.BorderVanim = new Rectangle(oknoHry.Width, 0, tileSize * 2, oknoHry.Height);
 
             for (int i = 0; i < barvaVanim.Length; ++i)
                 barvaVanim[i] = Color.Green;
 
-            PlayBoard.texOkrajeV.SetData(barvaVanim);
+            PlayBoard.TexOkrajeV.SetData(barvaVanim);
             PlayBoard.okrajeV.Clear();
             PlayBoard.okrajeV.Add(PlayBoard.BorderVanim);
 
@@ -1186,7 +1186,7 @@ namespace Mojehra
                 {
                     foreach (Ball ball in balls)
                     {
-                        if (ball.cinna && ball.rect.Intersects(dlazdice.drawRectangle))
+                        if (ball.Cinna && ball.rect.Intersects(dlazdice.drawRectangle))
                         {
                             SmrtKvuliKouli(ball);
                             return;
@@ -1194,7 +1194,7 @@ namespace Mojehra
                     }
                     foreach (Ball ball in ballsUtocne)
                     {
-                        if (ball.cinna && ball.rect.Intersects(dlazdice.drawRectangle))
+                        if (ball.Cinna && ball.rect.Intersects(dlazdice.drawRectangle))
                         {
                             SmrtKvuliKouli(ball);
                             return;
@@ -1241,11 +1241,11 @@ namespace Mojehra
                 byte levych = byte.MinValue, pravych = byte.MinValue, dolnich = byte.MinValue, hornich = byte.MinValue;
                 foreach (Ball ball in ballsUtocne)
                 {
-                    if (ball.utocnaDolni) 
+                    if (ball.UtocnaDolni) 
                         dolnich++;
-                    else if (ball.utocnaHorni) 
+                    else if (ball.UtocnaHorni) 
                         hornich++;
-                    else if (ball.utocnaLeva) 
+                    else if (ball.UtocnaLeva) 
                         levych++;
                     else 
                         pravych++;
@@ -1298,7 +1298,7 @@ namespace Mojehra
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-                if (ball.utocnaDolni) 
+                if (ball.UtocnaDolni) 
                     nalezena++;
             
             if (nalezena != uroven.numUtocnychBallsDown)
@@ -1312,7 +1312,7 @@ namespace Mojehra
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-                if (ball.utocnaHorni) 
+                if (ball.UtocnaHorni) 
                     nalezena++;
 
             if (nalezena != uroven.numUtocnychBallsUp)
@@ -1326,7 +1326,7 @@ namespace Mojehra
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-                if (ball.utocnaPrava) 
+                if (ball.UtocnaPrava) 
                     nalezena++;
 
             if (nalezena != uroven.numUtocnychBallsRight)
@@ -1340,7 +1340,7 @@ namespace Mojehra
         {
             byte nalezena = 0;
             foreach (Ball ball in ballsUtocne)
-                if (ball.utocnaLeva) 
+                if (ball.UtocnaLeva) 
                     nalezena++;
 
             if (nalezena < uroven.numUtocnychBallsLeft)
@@ -2168,7 +2168,7 @@ namespace Mojehra
         {
             for (int i = 0; i < Texty.Count; i++)
             {
-                if (Texty[i].hotova)
+                if (Texty[i].Hotova)
                 {
                     Texty[i] = zprava;
                     return;

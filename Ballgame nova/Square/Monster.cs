@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Square
@@ -8,13 +7,13 @@ namespace Square
     {
         private readonly ushort rychlost;
         private readonly Texture2D textura;
-        public Rectangle obdelnik;
+        private Rectangle obdelnik;
         private Rectangle source;
         private Point source1, source2, source3;
         private Point vychozi;
         private bool poSmeruHodin;
         private readonly ushort maxX, maxY;
-        private ushort i=5;
+        private ushort i = 5;
 
         public Monster(short length, ushort speed, Rectangle position, Texture2D texture, bool direction, ushort maxX, ushort maxY)
         {
@@ -27,6 +26,17 @@ namespace Square
             poSmeruHodin = direction;
             this.maxX = maxX;
             this.maxY = maxY;
+        }
+
+        public void Respawn()
+        {
+            obdelnik.Location = vychozi;
+            poSmeruHodin = !poSmeruHodin;
+        }
+
+        public bool CheckIntersection(Rectangle other)
+        {
+            return obdelnik.Intersects(other);
         }
 
         public void Update()
@@ -65,12 +75,6 @@ namespace Square
             Animuj();
         }
 
-        public void Respawn()
-        {
-            obdelnik.Location = vychozi;
-            poSmeruHodin = !poSmeruHodin;
-        }
-
         public void Draw(SpriteBatch SB)
         {
             SB.Draw(textura, obdelnik, source, Color.White);
@@ -80,8 +84,10 @@ namespace Square
         {
             if (i != 0)
             {
-                if (i == 10) source.Location = source3;
-                else if (i == 5) source.Location = source2;
+                if (i == 10) 
+                    source.Location = source3;
+                else if (i == 5) 
+                    source.Location = source2;
             }
             else
             {

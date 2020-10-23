@@ -10,10 +10,11 @@ namespace Square
         private Color barva;
         private Vector2 souradnice;        
         private int trvani;
-        public bool hotova, vpyj, odpyj;
-        //private bool animovan;
-        //private Vector2 scale, stredOtaceni, pozice;
-        //private float rotace; short kroku, celkemKroku;
+        private readonly bool vpyj, odpyj;        
+        // private bool animovan;
+        // private Vector2 scale, stredOtaceni, pozice;
+        // private float rotace; short kroku, celkemKroku;
+        public bool Hotova { get; private set; }
 
         public Zprava(Vector2 poloha, string text, Color barva, int trvaniZpravy, bool vpyj, bool odpyj, SpriteFont font)
         {
@@ -24,7 +25,8 @@ namespace Square
         public void Update(int milliseconds)
         {
             trvani -= milliseconds;
-            if (trvani <= 0) hotova = true;
+            if (trvani <= 0) 
+                Hotova = true;
             else
             {
                 if (vpyj && barva.A != byte.MaxValue)
@@ -36,7 +38,7 @@ namespace Square
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (!hotova)
+            if (!Hotova)
                 spriteBatch.DrawString(font, zprava, souradnice, barva);
         }
     }

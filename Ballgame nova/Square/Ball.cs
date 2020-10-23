@@ -15,17 +15,12 @@ namespace Square
         private static Vector2 originRotace;
         private readonly float vyslednaRotace;
 
-        private float prolnuti;
-        private readonly Color color1, color2;
-        private bool srazena;
-        private short dobijeni = -100;
-        private readonly bool utocna;
-        public bool cinna, utocnaLeva, utocnaHorni, utocnaPrava, utocnaDolni;
-
         private readonly byte[] nahodnyBajt = new byte[1];
         private readonly System.Security.Cryptography.RNGCryptoServiceProvider safeRand = new System.Security.Cryptography.RNGCryptoServiceProvider();
 
         // private readonly Vector2 vychoziVelocity;
+        private float prolnuti;
+        private readonly Color color1, color2;        
         private Vector2 velocity, minVelocity, maxVelocity;
         public float FaktorRychlosti { get; set; } = 0.01f;
         public Rectangle rect = new Rectangle(0, 0, 32, 32);
@@ -47,6 +42,15 @@ namespace Square
         private static SoundEffect s_respawn;
         private readonly SoundEffect narazDoCesty;
         private static SoundEffectInstance instanceOdrazu;
+        private bool srazena;
+        private short dobijeni = -100;
+        private readonly bool utocna;
+
+        public bool UtocnaLeva { get; }
+        public bool UtocnaHorni { get; }
+        public bool UtocnaPrava { get; }
+        public bool UtocnaDolni { get; }
+        public bool Cinna { get; private set; }
 
         /// <summary>
         ///  Creates ball
@@ -77,25 +81,25 @@ namespace Square
             // Hlavni.hitboxyKouli.Add(rect); // ted jen pro kontrolu stretu
             velocity = ballVec;
             rozmer = dimension; polomer = (byte)(dimension / 2);
-            cinna = rigidita;
+            Cinna = rigidita;
             if (attackDown)
             {
-                utocna = utocnaDolni = attackDown;
+                utocna = UtocnaDolni = attackDown;
                 vyslednaRotace = nahoru;
             }
             else if (attackLeft)
             {
-                utocna = utocnaLeva = attackLeft;
+                utocna = UtocnaLeva = attackLeft;
                 vyslednaRotace = doleva;
             }
             else if (attackRight)
             {
-                utocna = utocnaPrava = attackRight;
+                utocna = UtocnaPrava = attackRight;
                 vyslednaRotace = doprava;
             }
             else if (attackUp)
             {
-                utocna = utocnaHorni = attackUp;
+                utocna = UtocnaHorni = attackUp;
                 vyslednaRotace = dolu;
             }
 
@@ -151,7 +155,7 @@ namespace Square
 
         public void Update(int time)
         {
-            if (cinna)
+            if (Cinna)
             { 
                 prolnuti = (float)dobijeni / 10;
                 faktorCasu = time * FaktorRychlosti;
@@ -223,7 +227,7 @@ namespace Square
             }
             else if (PlayBoard.tiles[indexDlazdice].plna)
             {
-                if (utocnaLeva && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].Pruchodna)
+                if (UtocnaLeva && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].Pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice].Zborit(false);
                     HrajOdraz();
@@ -245,7 +249,7 @@ namespace Square
                 //indexDlazdice != Hlavni.tiles.Count && //ochrana když neni okraj - jinak musim vyplnit posledni roh
                 PlayBoard.tiles[indexDlazdice + 1].plna)
             {
-                if (utocnaPrava && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + 1].plnaPredem && PlayBoard.tiles[indexDlazdice + 1].Pruchodna)
+                if (UtocnaPrava && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + 1].plnaPredem && PlayBoard.tiles[indexDlazdice + 1].Pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice + 1].Zborit(false);
                     HrajOdraz();
@@ -265,7 +269,7 @@ namespace Square
             }
             else if (PlayBoard.tiles[indexDlazdice].plna)
             {
-                if (utocnaHorni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].Pruchodna)
+                if (UtocnaHorni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].Pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice].Zborit(false);
                     HrajOdraz();
@@ -285,7 +289,7 @@ namespace Square
             }
             else if (PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].plna)
             {
-                if (utocnaDolni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].plnaPredem && PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].Pruchodna)
+                if (UtocnaDolni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].plnaPredem && PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].Pruchodna)
                 {
                     PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].Zborit(false);
                     HrajOdraz();
@@ -383,7 +387,7 @@ namespace Square
 
         public void Obzivni()
         {
-            cinna = true;
+            Cinna = true;
             if (utocna) 
                 dobijeni = 10;
 
@@ -392,7 +396,7 @@ namespace Square
 
         public void Zasazen()
         {
-            cinna = false;
+            Cinna = false;
         }
 
         private static void HrajOdraz()
@@ -408,7 +412,7 @@ namespace Square
 
         public void Draw(SpriteBatch spritebatch, Texture2D sprite)
         {
-            if (cinna)
+            if (Cinna)
             { 
                 if (dobijeni == -100)
                 {
