@@ -21,9 +21,9 @@ namespace Square
             rect.Width = rect.Height = sprite.Height;
         }
 
-        public void Nastav(Rectangle novy, short score)
-        {
-            rect = novy;
+        public void Nastav(Hrac player, short score)
+        {            
+            rect = PlayBoard.tiles[player.IndexDlazdice].drawRectangle;
             active = true;
             Obsah = score;
             if (score > 0) 

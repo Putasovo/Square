@@ -11,9 +11,9 @@ namespace Square
         private static short numBalls, numAttackBalls;
         private int koordinat;
         private static int dlazdic;
-        public readonly List<Point> poziceKouli = new List<Point>(4);
-        public readonly List<Point> poziceUtocnychKouli = new List<Point>(4);
-        public sbyte numUtocnychBallsLeft, numUtocnychBallsRight, numUtocnychBallsUp, numUtocnychBallsDown; //stejne poradi spawnu
+        internal readonly List<Point> poziceKouli = new List<Point>(4);
+        internal readonly List<Point> poziceUtocnychKouli = new List<Point>(4);
+        internal static sbyte numUtocnychBallsLeft, numUtocnychBallsRight, numUtocnychBallsUp, numUtocnychBallsDown; //stejne poradi spawnu
         
         public byte Epizoda { get; internal set; } = 1;
         public byte CisloUrovne { get; internal set; }
@@ -23,7 +23,7 @@ namespace Square
         public byte ViteznychProcent { get; internal set; }
         public bool ZrodMonstrum { get; internal set; }
         public bool PoSmeru { get; internal set; }
-        public bool Bludiste { get; internal set; }
+        public static bool Bludiste { get; internal set; }
         public bool PerformanceTest { get; internal set; }
         public bool BezOdchylky { get; internal set; }
         
@@ -87,7 +87,7 @@ namespace Square
                 {
                     case 0: PerformanceTest256(); break;
                     case 1: PerformanceTest512(); break;
-                    case 2: Level10(); Epizoda = 1; CisloUrovne = 0; LevelText = "From the beginning"; break;//"otocena" hra
+                    case 2: Level10(); Epizoda = 1; CisloUrovne = 0; LevelText = Texts.ReturnToStart; break; // otocena hra
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Square
             numUtocnychBallsLeft = numUtocnychBallsRight = numUtocnychBallsDown = numUtocnychBallsUp = 1;
             koordinat = (ushort)(PlayBoard.Sloupcu / 2 + PlayBoard.Sloupcu - 2);
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].okrajova)
+            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].Okrajova)
             {
                 koordinat += PlayBoard.Sloupcu;
                 if (koordinat % 2 == 0) 
@@ -681,7 +681,7 @@ namespace Square
             numUtocnychBallsLeft = 1; numUtocnychBallsRight = 1; numUtocnychBallsDown = numUtocnychBallsUp = 1;
             koordinat = (ushort)(PlayBoard.Sloupcu / 2 + PlayBoard.Sloupcu - 2);
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].okrajova)
+            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].Okrajova)
             {
                 koordinat += PlayBoard.Sloupcu;
                 if (koordinat % 2 == 0) 
@@ -777,7 +777,7 @@ namespace Square
             numUtocnychBallsLeft = 1; numUtocnychBallsRight = 1; numUtocnychBallsDown = numUtocnychBallsUp = 1;
             koordinat = (ushort)(PlayBoard.Sloupcu / 2 + PlayBoard.Sloupcu - 2);
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].okrajova)
+            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].Okrajova)
             {
                 koordinat += PlayBoard.Sloupcu;
                 if (koordinat % 2 == 0) 
@@ -799,7 +799,7 @@ namespace Square
             numUtocnychBallsLeft = 1; numUtocnychBallsRight = 1; numUtocnychBallsDown = numUtocnychBallsUp = 1;
             koordinat = (ushort)(PlayBoard.Sloupcu / 2 + PlayBoard.Sloupcu - 2);
             PlayBoard.tiles[koordinat].VyplnitPredemZvyditelnit();
-            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].okrajova)
+            while (!PlayBoard.tiles[koordinat + PlayBoard.Sloupcu].Okrajova)
             {
                 koordinat += PlayBoard.Sloupcu;
                 if (koordinat % 2 == 0) 

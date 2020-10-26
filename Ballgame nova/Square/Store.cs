@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Square
 {
-    public static class Storage
+    public static class Store
     {
         private static readonly IsolatedStorageFile store = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
             IsolatedStorageFile.GetUserStoreForDomain() :

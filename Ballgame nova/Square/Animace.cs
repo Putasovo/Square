@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 
 namespace Prototyp
 {
-    public class Animation
+    public class Animace
     {
         private readonly List<AnimationFrame> frames = new List<AnimationFrame>();
         private TimeSpan timeIntoAnimation;

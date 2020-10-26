@@ -151,6 +151,15 @@ namespace Square {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to From the beginning.
+        /// </summary>
+        public static string ReturnToStart {
+            get {
+                return ResourceManager.GetString("ReturnToStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to skore saved.
         /// </summary>
         public static string skore_saved {

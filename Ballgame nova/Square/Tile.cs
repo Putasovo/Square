@@ -14,6 +14,8 @@ namespace Square
         // private readonly Texture2D spriteOznaceny2;
         // private readonly Texture2D spriteDruha;
         private readonly Texture2D sprite;
+        private readonly bool debuguju;
+        private readonly bool animated;
         private static Rectangle minaPozice = new Rectangle(0,0,32,32);
         private static Rectangle minaSkrytaPozice = new Rectangle(14, 14, 3, 3);
         private static Rectangle cestaPozice = new Rectangle(32, 0, 32, 32);
@@ -43,22 +45,26 @@ namespace Square
         private static Rectangle exploze6Pozice = new Rectangle(192, 64, 32, 32);
         private static Rectangle exploze7Pozice = new Rectangle(224, 64, 32, 32);
         private Rectangle vyslednaTextura, vyslednaTexturaExploze;
-        private readonly bool animated;
-        private bool visible, zvyrazni, exploduje;
+        
+        private bool zvyrazni, exploduje;
         private byte alfaZvyrazneni;
         private Color barvaZvyrazneni = Color.White;
-
-        private readonly bool debuguju;
+        
         private short krokPlneni; 
         private bool zaplnujese, licha;        
         private Vector2 pozice, origin;
         private Vector2 velocity;
         private float rotace = 0.1f;
         private Color barvaDlazdice;
-        
-        public Rectangle drawRectangle;                
-        public bool okrajova, projeta, kvyplneni, plna, plnaPredem, cilova, zpomalovaci, mina, ozivovaci;
 
+        internal bool visible, plnaPredem, zpomalovaci, mina, ozivovaci;
+        public Rectangle drawRectangle;
+        public bool Okrajova { get; internal set; }
+        public bool Projeta { get; internal set; }
+        public bool Kvyplneni { get; internal set; }
+        public bool Plna { get; set; }
+
+        public bool Cilova { get; private set; }
         public bool Pruchodna { get; set; } = true;
         public byte DosahMiny { get; set; }
         public byte CasExploze { get; set; }
@@ -81,7 +87,7 @@ namespace Square
             this.animated = animated;
             visible = viditelna;
             debuguju = debug;
-            okrajova = naokraji;
+            Okrajova = naokraji;
             barvaDlazdice = Color.White;
             origin = location + new Vector2(width/2); //stred
             //kolem stredu if (animated) this.origin = new Vector2(Hlavni.columns * plnaPozice.Width / 2, Hlavni.rows * plnaPozice.Width / 2);
@@ -110,7 +116,7 @@ namespace Square
                     exploduje = false;
                     if (!mina)
                     {
-                        plna = false;
+                        Plna = false;
                         if (!ozivovaci) visible = false;
                     }
                     if (!Pruchodna) ZpruchodnitHracovi(visible);
@@ -126,15 +132,17 @@ namespace Square
             else if (zaplnujese)
             {
                 krokPlneni -= 1;
-                if (krokPlneni == 16) { vyslednaTextura = plna4Pozice; }
-                else if (krokPlneni == 12) { vyslednaTextura = plna3Pozice; }
-                else if (krokPlneni == 8) { vyslednaTextura = plna2Pozice; }
-                else if (krokPlneni == 4) { vyslednaTextura = plna1Pozice; }
+                if (krokPlneni == 16)       vyslednaTextura = plna4Pozice; 
+                else if (krokPlneni == 12)  vyslednaTextura = plna3Pozice;
+                else if (krokPlneni == 8)   vyslednaTextura = plna2Pozice;
+                else if (krokPlneni == 4)   vyslednaTextura = plna1Pozice;
                 else if (krokPlneni == 0)
                 {
-                    if (licha) vyslednaTextura = plnaPozice;
-                    else vyslednaTextura = plnaPoziceAlt;
                     zaplnujese = false;
+                    if (licha) 
+                        vyslednaTextura = plnaPozice;
+                    else 
+                        vyslednaTextura = plnaPoziceAlt;
                 }
             }
 
@@ -150,10 +158,12 @@ namespace Square
             if (param == 0)
             {
                 Prvni = false; Druha = false;
-                if (!plna) visible = false;
+                if (!Plna) visible = false;
             }
-            else if (param == 1)    { Prvni = true; visible = true; }
-            else if (param == 2)    { Druha = true; visible = true; }
+            else if (param == 1)    
+            { Prvni = true; visible = true; }
+            else if (param == 2)    
+            { Druha = true; visible = true; }
         }
 
         public void NastavOzivovaci(bool anone)
@@ -198,11 +208,13 @@ namespace Square
 #endif
             if (anone)
             {
-                if (debuguju && kvyplneni == true) throw new System.ArgumentException("uz je oznacena");
-                if (debuguju && plna == true) throw new System.ArgumentException("uz je plna");
-                else kvyplneni = true;
+                if (debuguju && Kvyplneni == true) 
+                    throw new ArgumentException("uz je oznacena");
+                if (debuguju && Plna == true) 
+                    throw new ArgumentException("uz je plna");
+                else Kvyplneni = true;
             }
-            else kvyplneni = false;
+            else Kvyplneni = false;
         }
 
         public void OznacitJakoProjetou(bool anone)
@@ -211,13 +223,13 @@ namespace Square
             {
                 if (!visible)
                 { 
-                    projeta = true;
+                    Projeta = true;
                     vyslednaTextura = cestaPozice;
                 }
             }
             else
             {
-                projeta = false;
+                Projeta = false;
             }
         }
 
@@ -231,40 +243,37 @@ namespace Square
         {
             if (anone)
             {
-                cilova = visible = true;
+                Cilova = visible = true;
                 vyslednaTextura = cilovaPozice;
             }
-            else cilova = visible = false;
-        }
-
-        public void Zneviditelnit()
-        {
-            visible = false;
+            else Cilova = visible = false;
         }
 
         public void VyplnitZvyditelnit()
         {
-            visible = plna = zaplnujese = true; kvyplneni = false;
+            visible = Plna = zaplnujese = true;
+            Kvyplneni = false;
             krokPlneni = 16;
             vyslednaTextura = plna5Pozice;
         }
 
         public void VyplnitZvyditelnitOkamzite()
         {
-            visible = true; plna = true; kvyplneni = false;
+            visible = true; Plna = true; 
+            Kvyplneni = false;
             vyslednaTextura = plnaPozice;
         }
 
         public void VyplnitPredemZvyditelnit()
         {
-            plnaPredem = plna = visible = true;
-            kvyplneni = false;
+            plnaPredem = Plna = visible = true;
+            Kvyplneni = false;
             vyslednaTextura = plnaPredemPozice;
         }
 
         public void Znepruchodnit()
         {
-            visible = plna = true; Pruchodna = false;
+            visible = Plna = true; Pruchodna = false;
             vyslednaTextura = nepruchodnaPozice;
         }
 
@@ -295,12 +304,12 @@ namespace Square
         }
         public void Zborit(bool bouchla)
         {
-            if (!plnaPredem) plna = projeta = false;
+            if (!plnaPredem) Plna = Projeta = false;
             if (!bouchla)
             {
                 if (!mina)
                 {
-                    plna = visible = false;
+                    Plna = visible = false;
                 }
                 else vyslednaTextura = minaSkrytaPozice;
             }
@@ -340,11 +349,11 @@ namespace Square
         /// puvodni animace: spriteBatch.Draw(sprite, null, drawRectangle, null, origin, rotace, null, Color.White, SpriteEffects.None, 0 );
         public void Draw(SpriteBatch spriteBatch)
         {
-            if ((visible || projeta) && !okrajova)
+            if ((visible || Projeta) && !Okrajova)
             {
                 if (animated)
                 {
-                    pozice = (drawRectangle.Location.ToVector2());
+                    pozice = drawRectangle.Location.ToVector2();
                     //spriteBatch.Draw(sprite, null, drawRectangle, vyslednaTextura, origin, rotace, null, Color.Black);
                     spriteBatch.Draw(sprite, pozice, vyslednaTextura, Color.Black, rotace, origin, 1f, SpriteEffects.None, 0);
                 }
@@ -357,7 +366,8 @@ namespace Square
             if (zvyrazni)
             {
                 //animuj stlaceni dlazdice
-                if (alfaZvyrazneni <= 0) Odvyrazni();
+                if (alfaZvyrazneni <= 0) 
+                    Odvyrazni();
                 else
                 {
                     barvaZvyrazneni.A = alfaZvyrazneni;

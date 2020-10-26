@@ -21,36 +21,39 @@ namespace Square
         // private readonly Vector2 vychoziVelocity;
         private float prolnuti;
         private readonly Color color1, color2;        
-        private Vector2 velocity, minVelocity, maxVelocity;
-        public float FaktorRychlosti { get; set; } = 0.01f;
-        public Rectangle rect = new Rectangle(0, 0, 32, 32);
+
         private static readonly Rectangle rectBall = new Rectangle(0, 0, 32, 32);
         private static readonly Rectangle rectRed = new Rectangle(32, 0, 32, 32);
         private static readonly Rectangle rectNabijeci = new Rectangle(64, 0, 32, 32);
         private static readonly Rectangle rectZnicena = new Rectangle(96, 0, 32, 32);
 
+        // private readonly ushort maxIndexDlazdice;
+        private int indexDlazdice;
+        private bool srazena;
+        private short dobijeni = -100;
+        private readonly bool utocna;
         private Point novaPoloha;
         private Vector2 presnaPoloha;
+        private Vector2 velocity, minVelocity, maxVelocity;
         private readonly int pravyOkrajDesky, dolniOkrajDesky, levyOkrajDesky, horniOkrajDesky;
         private readonly byte rozmer, polomer;
         private float odchylka;
         private float faktorCasu;
         private int flipped;
         private bool svislyObrat, vodorovnyObrat, povolVariace, predchoziObrat;
-        private int indexDlazdice;
-        // private readonly ushort maxIndexDlazdice;
+        
         private static SoundEffect s_respawn;
         private readonly SoundEffect narazDoCesty;
         private static SoundEffectInstance instanceOdrazu;
-        private bool srazena;
-        private short dobijeni = -100;
-        private readonly bool utocna;
+        
+        public Rectangle rect = new Rectangle(0, 0, 32, 32);
 
         public bool UtocnaLeva { get; }
         public bool UtocnaHorni { get; }
         public bool UtocnaPrava { get; }
         public bool UtocnaDolni { get; }
         public bool Cinna { get; private set; }
+        public float FaktorRychlosti { get; set; } = 0.01f;
 
         /// <summary>
         ///  Creates ball
@@ -69,18 +72,18 @@ namespace Square
         /// <param name="obzivni">respawn sound</param>
         /// <param name="kolize">collide sound</param>
         /// <param name="odraz">deflect sound</param>
-        public Ball(Vector2 ballLoc, Vector2 ballVec, int windowX, int windowY, byte dimension, bool rigidita,
+        public Ball(Vector2 ballLoc, Vector2 ballVec, int windowX, int windowY, bool rigidita,
             bool attackLeft = false, bool attackUp = false, bool attackRight = false, bool attackDown = false,
             bool bludiste = false, SoundEffect obzivni = null, SoundEffect kolize = null, SoundEffect odraz = null)
         {
             // maxIndexDlazdice = (ushort)((windowX / dimension) * (windowY / dimension));
-            originRotace = new Vector2(dimension / 2, dimension / 2);
-            rect.X = MathHelper.Clamp((int)ballLoc.X, dimension * 2, windowX - dimension);
-            rect.Y = MathHelper.Clamp((int)ballLoc.Y, dimension * 2, windowY - dimension);
+            originRotace = new Vector2(PlayBoard.borderSize / 2, PlayBoard.borderSize / 2);
+            rect.X = MathHelper.Clamp((int)ballLoc.X, PlayBoard.borderSize * 2, windowX - PlayBoard.borderSize);
+            rect.Y = MathHelper.Clamp((int)ballLoc.Y, PlayBoard.borderSize * 2, windowY - PlayBoard.borderSize);
             presnaPoloha = new Vector2(rect.X, rect.Y);
             // Hlavni.hitboxyKouli.Add(rect); // ted jen pro kontrolu stretu
             velocity = ballVec;
-            rozmer = dimension; polomer = (byte)(dimension / 2);
+            rozmer = (byte)PlayBoard.borderSize; polomer = (byte)(PlayBoard.borderSize / 2);
             Cinna = rigidita;
             if (attackDown)
             {
@@ -107,10 +110,10 @@ namespace Square
 
             if (!bludiste)
             {
-                pravyOkrajDesky = windowX - dimension;
-                dolniOkrajDesky = windowY - dimension;
-                levyOkrajDesky = dimension;
-                horniOkrajDesky = dimension;
+                pravyOkrajDesky = windowX - PlayBoard.borderSize;
+                dolniOkrajDesky = windowY - PlayBoard.borderSize;
+                levyOkrajDesky = PlayBoard.borderSize;
+                horniOkrajDesky = PlayBoard.borderSize;
             }
             else
             {
@@ -175,9 +178,9 @@ namespace Square
                     flipped += 1;
 
                 // novaPoloha.Y = (int)(presnaPoloha.Y + velocity.Y * faktorCasu);
-                novaPoloha.Y = (int)(presnaPoloha.Y);
+                novaPoloha.Y = (int)presnaPoloha.Y;
                 novaPoloha.X += polomer;
-                indexDlazdice = (novaPoloha.X / rozmer + novaPoloha.Y / rozmer * PlayBoard.Sloupcu);
+                indexDlazdice = novaPoloha.X / rozmer + novaPoloha.Y / rozmer * PlayBoard.Sloupcu;
 
                 if (velocity.Y < 0)
                     HorniNaraz();
@@ -225,7 +228,7 @@ namespace Square
             {
                 OdrazVodorovne();
             }
-            else if (PlayBoard.tiles[indexDlazdice].plna)
+            else if (PlayBoard.tiles[indexDlazdice].Plna)
             {
                 if (UtocnaLeva && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].Pruchodna)
                 {
@@ -247,7 +250,7 @@ namespace Square
             }            
             else if (
                 //indexDlazdice != Hlavni.tiles.Count && //ochrana když neni okraj - jinak musim vyplnit posledni roh
-                PlayBoard.tiles[indexDlazdice + 1].plna)
+                PlayBoard.tiles[indexDlazdice + 1].Plna)
             {
                 if (UtocnaPrava && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + 1].plnaPredem && PlayBoard.tiles[indexDlazdice + 1].Pruchodna)
                 {
@@ -267,7 +270,7 @@ namespace Square
             {
                 OdrazSvisle();
             }
-            else if (PlayBoard.tiles[indexDlazdice].plna)
+            else if (PlayBoard.tiles[indexDlazdice].Plna)
             {
                 if (UtocnaHorni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice].plnaPredem && PlayBoard.tiles[indexDlazdice].Pruchodna)
                 {
@@ -287,7 +290,7 @@ namespace Square
             {
                 OdrazSvisle();
             }
-            else if (PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].plna)
+            else if (PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].Plna)
             {
                 if (UtocnaDolni && dobijeni == 0 && !PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].plnaPredem && PlayBoard.tiles[indexDlazdice + PlayBoard.Sloupcu].Pruchodna)
                 {
