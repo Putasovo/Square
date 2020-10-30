@@ -177,6 +177,7 @@ namespace MojehraDroid
             columns = windowWidth / tileSize;
             rows = (ushort)(windowHeight / tileSize);
             columnsVnitrni = (ushort)(columns - 2);
+            rowsVnitrni = (ushort)(rows - 2);
 
             //graphics.ApplyChanges(); should be called only during update
             //numberOfPixels = graphics.PreferredBackBufferWidth * graphics.PreferredBackBufferHeight;
@@ -1497,18 +1498,18 @@ namespace MojehraDroid
 
         private short VyznacCestuVycistiSpocti()
         {
-            short soucet = 0; 
+#if (debug)
             short i = 0;
+#endif
+            short soucet = 0;
             foreach (Tile dlazdice in PlayBoard.tilesVnitrni)
             {
                 if (dlazdice.Projeta && !dlazdice.Plna)
                 {
                     dlazdice.KVyplneni(true);
 #if (debug)
-                    {
-                        // if (dlazdice.plna) throw new System.Exception("podruhe vyplnujes vnitrni " + i);
-                        // i += 1;
-                    }
+                    // if (dlazdice.plna) throw new System.Exception("podruhe vyplnujes vnitrni " + i);
+                    // i += 1;
 #endif
                 }
                 if (!debug)

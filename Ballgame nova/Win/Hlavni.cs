@@ -70,7 +70,7 @@ namespace Mojehra
 
         private static SpriteFont font12, font14, font20;
         private Vector2 debugTextLocation;
-        private readonly List<Zprava> Texty = new List<Zprava>();
+        private readonly List<Zprava> Texty = new List<Zprava>(2);
         private Color barvaZpravy;
         private readonly List<string> debugText = new List<string>();
         private readonly string debugvar1, debugvar2, debugPrvniDlazdice;
@@ -120,7 +120,6 @@ namespace Mojehra
         public Hlavni()
         {
             IsMouseVisible = true;
-            // vibrator = (Android.OS.Vibrator)Activity.GetSystemService(Android.Content.Context.VibratorService);
 
             Content.RootDirectory = "Content"; 
             graphics = new GraphicsDeviceManager(this);
@@ -198,6 +197,7 @@ namespace Mojehra
             zivoty = pocatecniZivoty;
             zivotuString = $"{zivoty}";
 
+            // Vibrace.Init(null);
             PlayBoard.Init(tileSize, columns, rows);
             uroven = new Level(rows);            
 
@@ -1090,13 +1090,11 @@ namespace Mojehra
             {
                 gameState = Stavy.Prohra;
                 zivotuString = "0";
-                // if (vibrator.HasVibrator)
-                //    vibrator.Vibrate(VibrationEffect.CreateOneShot(1666, VibrationEffect.DefaultAmplitude));
+                Vibrace.Vibruj(1666);
             }
             else
             {
-                // if (vibrator.HasVibrator)
-                //    vibrator.Vibrate(1111);
+                Vibrace.Vibruj(1111);
 
                 PlayBoard.OdznacProjete();
                 zivotuString = $"{zivoty}";
