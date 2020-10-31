@@ -21,12 +21,12 @@ namespace Square
         public static readonly List<Rectangle> okrajeV = new List<Rectangle>(2);         
         public static List<Tile> tiles;
         public static List<Tile> tilesVnitrni;        
-        public static Texture2D TexOkrajeH { get; private set; }
-        public static Texture2D TexOkrajeV { get; set; }
         
-        public static int Sloupcu { get; internal set; }
-        public static bool ProbihaVybuch { get; set; }
-        public static byte Zemetreseni { get; private set; }
+        public static int Sloupcu { get; private set; }
+        public static byte Zemetreseni { get; private set; }        
+        public static Texture2D TexOkrajeH { get; private set; }
+        public static Texture2D TexOkrajeV { get; set; }        
+        public static bool ProbihaVybuch { get; set; }        
 
         public static void Init(short tileSize, int cols, int rows)
         {

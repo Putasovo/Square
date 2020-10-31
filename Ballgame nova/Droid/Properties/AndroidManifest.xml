@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.putasovo.square" android:versionCode="14" android:installLocation="preferExternal" android:versionName="small is cute">
-	<uses-sdk android:targetSdkVersion="30" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.putasovo.square" android:versionCode="15" android:installLocation="preferExternal" android:versionName="multiplat rewrite">
+	<uses-sdk android:targetSdkVersion="30" android:minSdkVersion="19" />
 	<uses-configuration android:reqTouchScreen="finger" />
 	<uses-permission android:name="android.permission.VIBRATE" />
-	<application android:label="Mighty Square" android:icon="@drawable/Icon" />
-  [assembly: MetaData ("com.google.android.gms.games.APP_ID", Value="1064524306844")]
+	<application android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" />
+  [assembly: MetaData ("com.google.android.gms.games.APP_ID", Value="@string/app_id")]
 </manifest>

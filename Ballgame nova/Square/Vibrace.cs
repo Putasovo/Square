@@ -6,13 +6,13 @@ namespace Square
     {
         private static Vibrator vibrator;
         private static VibrationEffect vibe;
-        private static VibFunc vibrace;
+        private static VibFunc vibrace = Null;
         private delegate void VibFunc(int ms);
 
         public static void Init(Vibrator vib)
         {
             vibrator = vib;
-            if (vibrator.HasVibrator)
+            if (vibrator != null && vibrator.HasVibrator)
             {
                 if (Build.VERSION.SdkInt <= BuildVersionCodes.NMr1)
                     vibrace = VibrateOld;
@@ -30,19 +30,13 @@ namespace Square
 
         private static void VibrateOld(int ms)
         {
-            if (vibrator.HasVibrator)
-            {
-                vibrator.Vibrate(ms);
-            }                
+            vibrator.Vibrate(ms);     
         }
 
         private static void Vibrate(int ms)
         {
-            if (vibrator.HasVibrator)
-            {
-                vibe = VibrationEffect.CreateOneShot(ms, VibrationEffect.DefaultAmplitude);
-                vibrator.Vibrate(vibe, null);
-            }
+            vibe = VibrationEffect.CreateOneShot(ms, VibrationEffect.DefaultAmplitude);
+            vibrator.Vibrate(vibe, null);
         }
 
         private static void Null(int ms)

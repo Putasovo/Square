@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="Hello">Hello World, Click Me!</string>
-    <string name="ApplicationName">Droid</string>
+    <string name="app_name">Mighty Square</string>
     <string name="app_id">1064524306844</string>
 </resources>

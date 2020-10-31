@@ -144,7 +144,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Content\AARDC.spritefont" />
     <None Include="Content\audio\level0.ogg" />
     <None Include="Content\audio\level1.ogg" />
     <None Include="Content\audio\level3.ogg" />
