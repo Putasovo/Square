@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Square_PC", "Win\Square_PC.csproj", "{7F41BC1D-1EC7-42F3-81D4-60578193B902}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Square_PC", "Win\Square_PC.csproj", "{7F41BC1D-1EC7-42F3-81D4-60578193B902}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SquareDroid", "Droid\SquareDroid.csproj", "{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}"
 EndProject
@@ -19,27 +19,18 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		mujdroid|Any CPU = mujdroid|Any CPU
-		mujdroid|x64 = mujdroid|x64
-		mujdroid|x86 = mujdroid|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|Any CPU.Build.0 = Debug|x86
+		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|x64.Build.0 = Debug|Any CPU
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|x86.ActiveCfg = Debug|x86
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|x86.Build.0 = Debug|x86
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|x86.Deploy.0 = Debug|x86
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.mujdroid|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.mujdroid|Any CPU.Build.0 = Debug|Any CPU
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.mujdroid|x64.ActiveCfg = mujdroid|Any CPU
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.mujdroid|x64.Build.0 = mujdroid|Any CPU
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.mujdroid|x86.ActiveCfg = mujdroid|x86
-		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.mujdroid|x86.Build.0 = mujdroid|x86
+		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|x86.Build.0 = Debug|Any CPU
+		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Debug|x86.Deploy.0 = Debug|Any CPU
 		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7F41BC1D-1EC7-42F3-81D4-60578193B902}.Release|x64.ActiveCfg = Release|Any CPU
@@ -55,15 +46,6 @@ Global
 		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.Debug|x86.Build.0 = Debug|Any CPU
 		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.Debug|x86.Deploy.0 = Debug|Any CPU
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|Any CPU.ActiveCfg = Release|Any CPU
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|Any CPU.Build.0 = Release|Any CPU
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|Any CPU.Deploy.0 = Release|Any CPU
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|x64.ActiveCfg = Release|x64
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|x64.Build.0 = Release|x64
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|x64.Deploy.0 = Release|x64
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|x86.ActiveCfg = Release|Any CPU
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|x86.Build.0 = Release|Any CPU
-		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.mujdroid|x86.Deploy.0 = Release|Any CPU
 		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E0E038D8-DBF3-46F8-B1E7-245C0813FD6A}.Release|Any CPU.Deploy.0 = Release|Any CPU
@@ -79,12 +61,6 @@ Global
 		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.Debug|x64.Build.0 = Debug|Any CPU
 		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.Debug|x86.Build.0 = Debug|Any CPU
-		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.mujdroid|Any CPU.ActiveCfg = Release|Any CPU
-		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.mujdroid|Any CPU.Build.0 = Release|Any CPU
-		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.mujdroid|x64.ActiveCfg = Release|Any CPU
-		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.mujdroid|x64.Build.0 = Release|Any CPU
-		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.mujdroid|x86.ActiveCfg = Release|Any CPU
-		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.mujdroid|x86.Build.0 = Release|Any CPU
 		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{23CBAB7C-9808-4662-85BB-DB264CD017F6}.Release|x64.ActiveCfg = Release|Any CPU

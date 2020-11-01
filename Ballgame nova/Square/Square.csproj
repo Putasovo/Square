@@ -11,10 +11,11 @@
     <Copyright>Putasovo 2020</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <LangVersion>8.0</LangVersion>
+    <UserSecretsId>09769c25-3f71-486b-ab1f-1148648fba3b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

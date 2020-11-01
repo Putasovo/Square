@@ -13,8 +13,8 @@ namespace Mojehra
         [STAThread]
         private static void Main()
         {
-            using (var game = new Hlavni())
-                game.Run();
+            using var game = new Hlavni();
+            game.Run();
         }
     }
 }
