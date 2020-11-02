@@ -212,9 +212,11 @@ namespace Square
                     throw new ArgumentException("uz je oznacena");
                 if (debuguju && Plna == true) 
                     throw new ArgumentException("uz je plna");
-                else Kvyplneni = true;
+                else 
+                    Kvyplneni = true;
             }
-            else Kvyplneni = false;
+            else 
+                Kvyplneni = false;
         }
 
         public void OznacitJakoProjetou(bool anone)

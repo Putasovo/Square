@@ -120,11 +120,9 @@ namespace Mojehra
         public Hlavni()
         {
             IsMouseVisible = true;
-
-            Content.RootDirectory = "Content"; 
+            Content.RootDirectory = "Content";
             graphics = new GraphicsDeviceManager(this);
             oknoHry = new Rectangle(0, 0, windowWidth, windowHeight);
-
             if (soft)
             {
                 // graphics.PreferredBackBufferWidth = 384;
@@ -132,7 +130,7 @@ namespace Mojehra
                 GraphicsAdapter.UseReferenceDevice = true;
             }
             // else
-            // {   // tohle asi na nadroidech nejde
+            // {   // tohle asi na droidech nejde
             //     graphics.PreferredBackBufferWidth = WindowWidth;
             //     graphics.PreferredBackBufferHeight = WindowHeight;
             // }
@@ -1589,7 +1587,7 @@ namespace Mojehra
             gameState = Stavy.Play;
             byte staraepizoda = uroven.Epizoda;
 
-            hrobSprite = hrobSprite ?? Content.Load<Texture2D>(@"gfx/hrob");
+            hrobSprite ??= Content.Load<Texture2D>(@"gfx/hrob");
             hrob = new Hrobecek(false, Rectangle.Empty, hrobSprite);
 
             StartGame();

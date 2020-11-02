@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>Mojehra</RootNamespace>
     <AssemblyName>Mojehra</AssemblyName>
     <MonoGamePlatform>Windows</MonoGamePlatform>
@@ -54,6 +54,8 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Mighty Square Win.pfx</AssemblyOriginatorKeyFile>
     <StartupObject></StartupObject>
+    <PackageId>Mighty Square</PackageId>
+    <Authors>Putas</Authors>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Content\bin\**" />
@@ -99,9 +101,14 @@
     <Compile Remove="matika.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Content\audio\level0.ogg" />
+    <None Remove="Content\audio\level1.ogg" />
+    <None Remove="Content\audio\level2.ogg" />
+    <None Remove="Content\audio\level3.ogg" />
+    <None Remove="Content\audio\level4.ogg" />
     <None Remove="Content\audio\lost.ogg" />
-    <None Remove="Content\audio\lost.wav" />
     <None Remove="Content\audio\menu.ogg" />
+    <None Remove="mgfxc.pdb" />
     <None Remove="Square_PC.csproj.old" />
   </ItemGroup>
   <ItemGroup>
