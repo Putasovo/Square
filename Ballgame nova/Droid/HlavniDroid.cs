@@ -1480,7 +1480,7 @@ namespace MojehraDroid
             {
                 if (dlazdice.Kvyplneni)
                 {
-                    dlazdice.KVyplneni(false);
+                    dlazdice.BudeKVyplneni(false);
                 }
             }
         }
@@ -1491,7 +1491,7 @@ namespace MojehraDroid
             {
                 if (dlazdice.Kvyplneni && !dlazdice.Druha)
                 {
-                    dlazdice.KVyplneni(false);
+                    dlazdice.BudeKVyplneni(false);
                 }
             }
         }
@@ -1506,7 +1506,7 @@ namespace MojehraDroid
             {
                 if (dlazdice.Projeta && !dlazdice.Plna)
                 {
-                    dlazdice.KVyplneni(true);
+                    dlazdice.BudeKVyplneni(true);
 #if (debug)
                     // if (dlazdice.plna) throw new System.Exception("podruhe vyplnujes vnitrni " + i);
                     // i += 1;
@@ -1536,7 +1536,7 @@ namespace MojehraDroid
                 if (!PlayBoard.tiles[i].Okrajova && !PlayBoard.tiles[i].Plna && !PlayBoard.tiles[i].Projeta && 
                     (PlayBoard.tiles[i - 1].Projeta || PlayBoard.tiles[i + columns].Projeta || PlayBoard.tiles[i + 1].Projeta || PlayBoard.tiles[i - columns].Projeta))
                 {
-                    PlayBoard.tiles[i].KVyplneni(true);
+                    PlayBoard.tiles[i].BudeKVyplneni(true);
                     prvniNalezena = true;
                     if (debug)
                     {
@@ -1564,7 +1564,7 @@ namespace MojehraDroid
                 if (!PlayBoard.tiles[i].Kvyplneni && !PlayBoard.tiles[i].Okrajova && !PlayBoard.tiles[i].Plna && !PlayBoard.tiles[i].Projeta
                     && (PlayBoard.tiles[i + columns].Projeta || PlayBoard.tiles[i + 1].Projeta || PlayBoard.tiles[i - columns].Projeta || PlayBoard.tiles[i - 1].Projeta))
                 {
-                    PlayBoard.tiles[i].KVyplneni(true);
+                    PlayBoard.tiles[i].BudeKVyplneni(true);
                     if (debug)
                         PlayBoard.tiles[i].DebugDlazdice(2);
                     else

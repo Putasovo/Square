@@ -185,7 +185,7 @@ namespace Square
             int indexHorni; int indexDolni;
             while (!tiles[index].Kvyplneni && !tiles[index].Okrajova && !tiles[index].Plna && !tiles[index].Projeta)
             {
-                tiles[index].KVyplneni(true);
+                tiles[index].BudeKVyplneni(true);
                 indexHorni = index - Sloupcu;
                 indexDolni = index + Sloupcu;
                 if (!tiles[indexHorni].Kvyplneni && !tiles[indexHorni].Okrajova && !tiles[indexHorni].Plna && !tiles[indexHorni].Projeta)
@@ -205,7 +205,7 @@ namespace Square
             int indexHorni; int indexDolni;
             while (!tiles[index].Kvyplneni && !tiles[index].Okrajova && !tiles[index].Plna && !tiles[index].Projeta)
             {
-                tiles[index].KVyplneni(true);
+                tiles[index].BudeKVyplneni(true);
                 indexHorni = index - Sloupcu;
                 indexDolni = index + Sloupcu;
                 if (!tiles[indexHorni].Kvyplneni && !tiles[indexHorni].Okrajova && !tiles[indexHorni].Plna && !tiles[indexHorni].Projeta)
@@ -225,7 +225,7 @@ namespace Square
             int indexLevy; int indexPravy;
             while (!tiles[index].Kvyplneni && !tiles[index].Okrajova && !tiles[index].Plna && !tiles[index].Projeta)
             {
-                tiles[index].KVyplneni(true);
+                tiles[index].BudeKVyplneni(true);
                 indexLevy = index - 1;
                 indexPravy = index + 1;
                 if (!tiles[indexLevy].Kvyplneni && !tiles[indexLevy].Okrajova && !tiles[indexLevy].Plna && !tiles[indexLevy].Projeta)
@@ -245,7 +245,7 @@ namespace Square
             int indexLevy; int indexPravy;
             while (!tiles[index].Kvyplneni && !tiles[index].Okrajova && !tiles[index].Plna && !tiles[index].Projeta)
             {
-                tiles[index].KVyplneni(true);
+                tiles[index].BudeKVyplneni(true);
                 indexLevy = index - 1;
                 indexPravy = index + 1;
                 if (!tiles[indexLevy].Kvyplneni && !tiles[indexLevy].Okrajova && !tiles[indexLevy].Plna && !tiles[indexLevy].Projeta)

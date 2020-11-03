@@ -201,7 +201,7 @@ namespace Square
                 licha = true;
         }
 
-        public void KVyplneni(bool anone)
+        public void BudeKVyplneni(bool anone)
         {
 #if (debuguju)
             if (okrajova == true) throw new System.ArgumentException("resis okrajovou?");
