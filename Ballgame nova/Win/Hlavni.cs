@@ -36,7 +36,8 @@ namespace Mojehra
         private const ushort windowWidth = tileSize * 15;
         private const ushort windowWidthProOvladani = windowWidth - 1;
         private const short suggestedHeight = tileSize * 10; // WindowWidth / borderThick * 20; // 16:10
-        private readonly ushort windowHeight = suggestedHeight / tileSize * tileSize;
+        private const ushort windowHeight = suggestedHeight / tileSize * tileSize;
+        private const ushort windowHeigthProOvladani = windowHeight - 1;
         private readonly Rectangle oknoHry;
         //private int suggestedPixels = windowWidth * suggestedHeight;
         //private int numberOfPixels;
@@ -688,7 +689,7 @@ namespace Mojehra
                 {
                     //zadanyPohyb = touch.Position/ new Vector2( (float)Math.Truncate(scaleMatrix.M11), (float)Math.Truncate(scaleMatrix.M22) );
                     zadanyKlik.X = MathHelper.Clamp(mouseState.Position.X / scaleMatrix.M11, 0, windowWidthProOvladani);//jinak pude tukat mimo herni plochu
-                    zadanyKlik.Y = (float)Math.Truncate(mouseState.Position.Y / scaleMatrix.M22);
+                    zadanyKlik.Y = MathHelper.Clamp(mouseState.Position.Y / scaleMatrix.M22, 0, windowHeigthProOvladani);// nestaci (float)Math.Truncate(touch.Position.Y / scaleMatrix.M22); (float)Math.Truncate(mouseState.Position.Y / scaleMatrix.M22);
                 }
             }
 
@@ -887,7 +888,8 @@ namespace Mojehra
                             uroven.NastavLevel(Store.MaxLevel);
                             PustUroven();
                         }
-                        else Intro();
+                        else 
+                            Intro();
                     }
                 }
             }
@@ -1793,6 +1795,7 @@ namespace Mojehra
             pausedByUser = UserInitiated;
             staryState = gameState;
             gameState = Stavy.Pause;
+            stara = MediaPlayer.Queue.ActiveSong;
             MediaPlayer.Pause();
             //TODO: Pause controller vibration
         }
@@ -1802,6 +1805,8 @@ namespace Mojehra
             //TODO: Resume controller vibration
             if (MediaPlayer.Queue.ActiveSong.Name == levelwon.Name)
                 MediaPlayer.Stop();
+            else if (MediaPlayer.State == MediaState.Paused)
+                MediaPlayer.Resume();
             else
                 MediaPlayer.Play(stara);
 

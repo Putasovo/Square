@@ -122,13 +122,13 @@
     <None Include="Content\PressStart2P12.spritefont" />
     <None Include="Content\PressStart2P14.spritefont" />
     <None Include="Content\PressStart2P20.spritefont" />
-    <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Drawable\Icon.png" />
     <AndroidResource Include="Resources\Values\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets\" />
     <Folder Include="Resources\Layout\" />
   </ItemGroup>
   <ItemGroup>

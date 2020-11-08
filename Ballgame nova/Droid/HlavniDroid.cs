@@ -38,7 +38,8 @@ namespace MojehraDroid
         private const ushort windowWidth = tileSize * 15;
         private const ushort windowWidthProOvladani = windowWidth - 1;
         private const short suggestedHeight = tileSize * 10; // WindowWidth / borderThick * 20; // 16:10
-        private readonly ushort windowHeight = suggestedHeight / tileSize * tileSize;
+        private const ushort windowHeight = suggestedHeight / tileSize * tileSize;
+        private const ushort windowHeigthProOvladani = windowHeight - 1;
         private readonly Rectangle oknoHry;
         //private int suggestedPixels = windowWidth * suggestedHeight;
         //private int numberOfPixels;
@@ -696,7 +697,7 @@ namespace MojehraDroid
                     {
                         //zadanyPohyb = touch.Position/ new Vector2( (float)Math.Truncate(scaleMatrix.M11), (float)Math.Truncate(scaleMatrix.M22) );
                         zadanyPohyb.X = MathHelper.Clamp(touch.Position.X / scaleMatrix.M11, 0, windowWidthProOvladani);//jinak pude tukat mimo herni plochu
-                        zadanyPohyb.Y = (float)Math.Truncate(touch.Position.Y / scaleMatrix.M22);
+                        zadanyPohyb.Y = MathHelper.Clamp(touch.Position.Y / scaleMatrix.M22, 0, windowHeigthProOvladani);// nestaci (float)Math.Truncate(touch.Position.Y / scaleMatrix.M22);
                         //if (zadanyPohyb.X > windowWidth) NapisVelkouZpravu14("X", 4444);
                         //if (zadanyPohyb.Y > windowHeight) NapisVelkouZpravu14("Y", 4444);
                         continue;
@@ -916,7 +917,8 @@ namespace MojehraDroid
                             uroven.NastavLevel(Store.MaxLevel);
                             PustUroven();
                         }                            
-                        else Intro();
+                        else 
+                            Intro();
                     }                        
                 }
             }
@@ -1821,6 +1823,7 @@ namespace MojehraDroid
             pausedByUser = UserInitiated;
             staryState = gameState;
             gameState = Stavy.Pause;
+            stara = MediaPlayer.Queue.ActiveSong;
             MediaPlayer.Pause();
             //TODO: Pause controller vibration
         }
@@ -1830,6 +1833,8 @@ namespace MojehraDroid
             //TODO: Resume controller vibration
             if (MediaPlayer.Queue.ActiveSong.Name == levelwon.Name)
                 MediaPlayer.Stop();
+            else if (MediaPlayer.State == MediaState.Paused)
+                MediaPlayer.Resume();
             else
                 MediaPlayer.Play(stara);
 
