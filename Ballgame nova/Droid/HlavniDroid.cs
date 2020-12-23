@@ -260,6 +260,7 @@ namespace MojehraDroid
             BuildTiles(columns, rows, tileSize); // muzu az po assetech
 
             gameState = Stavy.Menu;
+            ScoreData.AllAsync();
         }
 
         private void NahrajHudbu()
@@ -758,6 +759,7 @@ namespace MojehraDroid
                 {
                     if (skore > 0)
                     {
+                        ScoreData.Compare(uroven.Epizoda, uroven.CisloUrovne, skore);
                         if (waitFrames % 4 == 0)
                         {
                             skore--;
@@ -1610,6 +1612,7 @@ namespace MojehraDroid
 
         private void PustUroven()
         {
+            FirebaseHelper.Checked = false;
             waitFrames = 60;
             Store.SaveScore();
             skore = 0; skoreString = string.Empty;
@@ -1634,9 +1637,12 @@ namespace MojehraDroid
             if (uroven.Epizoda != staraepizoda)
             {
                 ZacniNovouEpizodu();
+                ScoreData.AllAsync();
             }
 
-            splashScreen.KresliSplash(true, $"{Level.EpizodaSplash}{System.Environment.NewLine}{System.Environment.NewLine}Level {uroven.CisloUrovne}", false);
+            int rekord;
+            bool vlastniRekord = ScoreData.GetRecord(uroven, out rekord);
+            splashScreen.KresliSplash(true, $"{Level.EpizodaSplash}{System.Environment.NewLine}{System.Environment.NewLine}Level {uroven.CisloUrovne}", false, rekord, vlastniRekord);
             //NapisVelkouZpravu("Level " + Level.cisloUrovne, 7000, -9999, -9999, false, true);
             if (uroven.LevelText != null)
                 procentaString = uroven.LevelText;

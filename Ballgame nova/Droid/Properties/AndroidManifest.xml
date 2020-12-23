@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.putasovo.square" android:versionCode="15" android:installLocation="preferExternal" android:versionName="multiplat rewrite">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.putasovo.square" android:versionCode="16" android:installLocation="preferExternal" android:versionName="leaderboard">
 	<uses-sdk android:targetSdkVersion="30" android:minSdkVersion="19" />
 	<uses-configuration android:reqTouchScreen="finger" />
 	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<application android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" />
   [assembly: MetaData ("com.google.android.gms.games.APP_ID", Value="@string/app_id")]
 </manifest>

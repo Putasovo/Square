@@ -5,7 +5,7 @@ namespace Square
 {
     public class SplashScreen
     {
-        private const ushort pozadovanaVydrz = 60;
+        private const ushort pozadovanaVydrz = 99;
         private static ushort vydrz;
         private static ushort okrajX;
         private static ushort stredXoriznuty;
@@ -16,10 +16,13 @@ namespace Square
         private bool zvysStep, budeUpdate;
         private byte splashStep;
         private string napis;
+        private string rekordNapis = string.Empty;
+        private bool vlastniRekord;
         private static SpriteFont pismo;
         private bool kreslitPismo;
         private Vector2 polohaNapisu;
-        
+        private Vector2 polohaRekordu;
+
         /// <summary>
         /// by these main Update will decide whether to proceed
         /// </summary>
@@ -89,14 +92,25 @@ namespace Square
             }
         }
 
-        public void KresliSplash(bool okamzite, string text, bool zavedPriUpdejtu)
+        public void KresliSplash(bool okamzite, string text, bool zavedPriUpdejtu, int rekord = 0, bool vlastni = false)
         {
             KreslitSplash = true;
+            ProvedUpdate = zavedPriUpdejtu;            
             vydrz = pozadovanaVydrz;
             splashRect.X = 0;
-            polohaNapisu.X = (stredXoriznuty - (pismo.MeasureString(text).X / 2));
-            polohaNapisu.Y = (splashRect.Center.Y - (pismo.MeasureString(text).Y / 2));
+            polohaNapisu.X = stredXoriznuty - (pismo.MeasureString(text).X / 2);
+            polohaNapisu.Y = splashRect.Center.Y - pismo.MeasureString(text).Y;
             napis = text;
+            if (rekord > 0)
+            {
+                vlastniRekord = vlastni;
+                rekordNapis = $"{System.Environment.NewLine}{(vlastni ? string.Empty : "World ")}Best: {rekord}{System.Environment.NewLine}{(vlastni ? "  Yours!" : string.Empty)}";
+                polohaRekordu.X = stredXoriznuty - (pismo.MeasureString(rekordNapis).X / 2);
+                polohaRekordu.Y = splashRect.Center.Y + pismo.MeasureString(text).Y / 2;
+            }
+            else
+                rekordNapis = string.Empty;
+                
             kreslitPismo = true;
             if (!okamzite)
             {
@@ -109,7 +123,6 @@ namespace Square
                 splashStep = byte.MaxValue;
                 budeUpdate = true;
             }
-            ProvedUpdate = zavedPriUpdejtu;
         }
 
         public void ZatemniSplash(bool zavedPriUpdejtu)
@@ -124,7 +137,11 @@ namespace Square
         public void Draw(SpriteBatch sb)
         {
             sb.Draw(splashScreen, splashRect, splashColor);
-            if (kreslitPismo && vydrz > 0) sb.DrawString(pismo, napis, polohaNapisu, splashColor);
+            if (kreslitPismo && vydrz > 0)
+            {
+                sb.DrawString(pismo, napis, polohaNapisu, splashColor);
+                sb.DrawString(pismo, rekordNapis, polohaRekordu, vlastniRekord ? Color.Green : Color.DarkRed);
+            }
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Square
         private const string scoreFilename = "score.txt";
         private const string levelFilename = "uroven";
         private const string volumeFilename = "volumes";
+        private const string levelScoreFileName = "levels";
+        private const string idFileName = "jedinec";
 
         public static bool SaveGameExists { get; set; }
         public static float VolumeSound { get; set; } = .9f;
@@ -24,6 +26,33 @@ namespace Square
         public static byte MaxEpisoda { get; set; }
         public static byte MaxLevel { get; set; }
         public static int RekordSkore { get; private set; }
+
+        internal static Guid LoadId()
+        {
+            Guid idecko = Guid.Empty;
+            if (store.FileExists(idFileName))
+            {                
+                var isoStream = new IsolatedStorageFileStream(idFileName, FileMode.Open, FileAccess.Read);
+                using (var sr = new StreamReader(isoStream))
+                {
+                    _ = Guid.TryParse(sr.ReadLine(), out idecko);
+                }
+                isoStream.Close();
+            }
+            
+            if (idecko == Guid.Empty)
+            {
+                idecko = Guid.NewGuid();
+                var isoStream = new IsolatedStorageFileStream(idFileName, FileMode.Create, FileAccess.Write);
+                using (var sw = new StreamWriter(isoStream))
+                {
+                    sw.WriteLine(idecko);
+                }
+                isoStream.Close();
+            }
+
+            return idecko;
+        }
 
         public static int GetScore()
         {
@@ -106,7 +135,7 @@ namespace Square
         }
 
         /// <summary>
-        /// Saves level, episode and skore
+        /// Saves level, episode and totalSkore
         /// </summary>
         public static void SaveGame(Level uroven)
         {
@@ -177,6 +206,76 @@ namespace Square
                     sw.Flush();
                     sw.WriteLine(VolumeSound.ToString());
                     sw.WriteLine(VolumeHudby.ToString());
+                }
+
+                isoStream.Dispose();
+            }
+        }
+
+        public static ScoreData[] LoadLevelScore()
+        {
+            var data = new ScoreData[21];
+            if (store.FileExists(levelScoreFileName))
+            {
+                var isoStream = new IsolatedStorageFileStream(levelScoreFileName, FileMode.Open, FileAccess.Read);
+                using (var sr = new StreamReader(isoStream))
+                {
+                    string[] lines = sr.ReadToEnd()?.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (lines != null)
+                    {
+                        int i = 0;
+                        foreach (string line in lines)
+                        {
+                            data[i] = new ScoreData
+                            {                                
+                                LevelName = line.Split(',')[0],
+                                PersonId = line.Split(',')[1],
+                                Score = int.Parse(line.Split(',')[2])
+                            };
+                            i++;
+                        }                        
+                    }
+                }
+                isoStream.Dispose();
+            }
+            else
+            {
+                var isoStream = new IsolatedStorageFileStream(levelScoreFileName, FileMode.Create, FileAccess.Write);
+                using (var sw = new StreamWriter(isoStream))
+                {
+                    sw.Flush();
+                    for (int epizoda = 1; epizoda < 4; epizoda++)
+                    {
+                        for (int uroven = 0; uroven < 7; uroven++)
+                        {
+                            sw.WriteAsync($"level{epizoda}{uroven},,0;");
+                            data[((epizoda - 1) * 7) + uroven] = new ScoreData
+                            {
+                                LevelName = $"level{epizoda}{uroven}",
+                                PersonId = string.Empty,
+                                Score = 0
+                            };
+                        }
+                    }
+                }
+                isoStream.Dispose();
+            }
+
+            return data;
+        }
+
+        public static void SaveLevelScore(ScoreData[] scores)
+        {
+            if (store.FileExists(levelScoreFileName))
+            {
+                var isoStream = new IsolatedStorageFileStream(levelScoreFileName, FileMode.Open, FileAccess.Write);
+                using (var sw = new StreamWriter(isoStream))
+                {
+                    sw.Flush();
+                    foreach(ScoreData data in scores)
+                    {
+                        sw.WriteAsync($"{data.LevelName},{data.PersonId},{data.Score};");
+                    }                    
                 }
 
                 isoStream.Dispose();
