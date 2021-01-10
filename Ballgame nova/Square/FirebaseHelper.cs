@@ -32,7 +32,9 @@ namespace Square
 
         public static async Task<ScoreData[]> GetAll(int waitingTime = defaultWaitingTime)
         {
-            return (await firebase.Child("level")
+            try
+            {
+                return (await firebase.Child("level")
                 .OnceAsync<ScoreData>(TimeSpan.FromMilliseconds(waitingTime)).ConfigureAwait(false))
                 .Select(item => new ScoreData
                 {
@@ -40,22 +42,33 @@ namespace Square
                     Score = item.Object.Score,
                     PersonId = item.Object.PersonId
                 }).ToArray();
+            }
+            catch
+            {
+                return Array.Empty<ScoreData>();
+            }
         }
 
         public static async Task UpdateScore(int score, string name)
         {
-            ScoreData toUpdate = await firebase.Child("level").Child(name)
+            try
+            {
+                ScoreData toUpdate = await firebase.Child("level").Child(name)
                 .OnceSingleAsync<ScoreData>(TimeSpan.FromMilliseconds(defaultWaitingTime))
                 .ConfigureAwait(false);
 
-            if (score > toUpdate.Score)
+                if (score > toUpdate.Score)
+                {
+                    await firebase
+                      .Child("level")
+                      .Child(name)
+                      .PutAsync(new ScoreData() { PersonId = PersonId.ToString(), Score = score })
+                      .ConfigureAwait(false);
+                }
+            }
+            catch
             {
-                await firebase
-                  .Child("level")
-                  .Child(name)
-                  .PutAsync(new ScoreData() { PersonId = PersonId.ToString(), Score = score })
-                  .ConfigureAwait(false);
-            }            
+            }
         }
     }
 }
